@@ -109,11 +109,13 @@ app.post('/submitEmergencyReport', async (req, res) => {
   }
 });
 
+app.get('/login', (req, res) => {
+  res.sendFile(__dirname + '/login.js');
+});
 
-  
-  app.get('/register', (req, res) => {
-    res.sendFile(__dirname + '/register.js');
-  });
+app.get('/register', (req, res) => {
+  res.sendFile(__dirname + '/register.js');
+});
   
   app.post('/login', async (req, res) => {
     const { username, password } = req.body;
