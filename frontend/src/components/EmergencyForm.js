@@ -37,7 +37,7 @@ const EmergencyForm = () => {
   const [uploading, setUploading] = useState(false); 
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com/';
+  const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
 
 
   // Handle file selection and create a preview URL for images
@@ -174,7 +174,7 @@ const EmergencyForm = () => {
             userId 
           };
 
-          const response = await fetch(`${API_URL}/submitEmergencyReport`, {
+          const response = await fetch(`https://newdispatchingbackend.onrender.com/submitEmergencyReport`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),

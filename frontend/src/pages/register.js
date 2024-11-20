@@ -35,7 +35,7 @@ function Register() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/register`, {
+      const response = await fetch(`https://newdispatchingbackend.onrender.com/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, firstName, lastName, password }),

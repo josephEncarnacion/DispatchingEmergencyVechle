@@ -24,7 +24,7 @@ function Login() {
     const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
 
     try {
-      const response = await fetch(`https://newdispatchingbackend.onrender.com/login`,{
+      const response = await fetch('https://newdispatchingbackend.onrender.com/login',{
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

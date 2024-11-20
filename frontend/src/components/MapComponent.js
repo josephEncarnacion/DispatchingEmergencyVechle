@@ -17,11 +17,11 @@ const MapComponent = () => {delete L.Icon.Default.prototype._getIconUrl;
     const [emergencies, setEmergencies] = useState([]);
 
     useEffect(() => {
-        fetch(`${API_URL}/complaints`)
+        fetch('https://newdispatchingbackend.onrender.com/complaints')
             .then(response => response.json())
             .then(data => setComplaints(data));
 
-        fetch(`${API_URL}/emergencies`)
+        fetch('https://newdispatchingbackend.onrender.com/emergencies')
             .then(response => response.json())
             .then(data => setEmergencies(data));
     }, []);
