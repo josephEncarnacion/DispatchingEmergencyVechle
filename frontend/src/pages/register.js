@@ -192,7 +192,7 @@ function Register() {
               </Grid>
               <Grid item xs={12} textAlign="center">
                 <Typography variant="body2">
-                  Already have an account? <Link to="/login">Login here</Link>
+                  Already have an account? <Link to="/">Login here</Link>
                 </Typography>
               </Grid>
             </Grid>
