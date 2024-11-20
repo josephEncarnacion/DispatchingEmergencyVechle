@@ -37,7 +37,7 @@ const EmergencyForm = () => {
   const [uploading, setUploading] = useState(false); 
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+  const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com/';
 
 
   // Handle file selection and create a preview URL for images

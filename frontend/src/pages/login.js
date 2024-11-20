@@ -21,7 +21,7 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     
-    const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
 
     try {
       const response = await fetch(`${API_URL}/login`,{

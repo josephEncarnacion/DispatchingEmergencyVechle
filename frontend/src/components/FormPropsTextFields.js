@@ -16,7 +16,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase Storage
 import { storage } from '../pages/firebase';
-const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
 
 const ComplaintForm = () => {
   const [name, setName] = useState('');

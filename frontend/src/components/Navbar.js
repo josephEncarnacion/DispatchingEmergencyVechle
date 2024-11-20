@@ -12,7 +12,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
 
 function Navbar() {
   const [openDrawer, setOpenDrawer] = useState(false);

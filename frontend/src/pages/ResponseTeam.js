@@ -10,7 +10,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import polyline from '@mapbox/polyline';
 import { useAuth } from '../contexts/AuthContext';
-const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
 
 const vehicleIcon = L.divIcon({
   className: 'custom-div-icon',

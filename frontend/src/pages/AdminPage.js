@@ -53,7 +53,7 @@ const AdminPage = () => {
   const [confirmedReports, setConfirmedReports] = useState([]); // New state for confirmed reports
   const [activeResponseTeams, setActiveResponseTeams] = useState(0);  // New state for active teams count
 
-  const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+  const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
 
   const fetchResponseTeamLocations = async () => {
     try {
