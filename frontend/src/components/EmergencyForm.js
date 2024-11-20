@@ -37,6 +37,9 @@ const EmergencyForm = () => {
   const [uploading, setUploading] = useState(false); 
   const [uploadProgress, setUploadProgress] = useState(0);
 
+  const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
+
   // Handle file selection and create a preview URL for images
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -171,7 +174,7 @@ const EmergencyForm = () => {
             userId 
           };
 
-          const response = await fetch('/submitEmergencyReport', {
+          const response = await fetch(`${API_URL}/submitEmergencyReport`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),

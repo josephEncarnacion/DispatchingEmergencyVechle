@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
 const MapComponent = () => {delete L.Icon.Default.prototype._getIconUrl;
 
@@ -16,11 +17,11 @@ const MapComponent = () => {delete L.Icon.Default.prototype._getIconUrl;
     const [emergencies, setEmergencies] = useState([]);
 
     useEffect(() => {
-        fetch('/complaints')
+        fetch(`${API_URL}/complaints`)
             .then(response => response.json())
             .then(data => setComplaints(data));
 
-        fetch('/emergencies')
+        fetch(`${API_URL}/emergencies`)
             .then(response => response.json())
             .then(data => setEmergencies(data));
     }, []);

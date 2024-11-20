@@ -16,6 +16,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase Storage
 import { storage } from '../pages/firebase';
+const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
 const ComplaintForm = () => {
   const [name, setName] = useState('');
@@ -176,7 +177,7 @@ const ComplaintForm = () => {
         userId 
       };
 
-      const response = await fetch('/submitComplaint', {
+      const response = await fetch(`${API_URL}/submitComplaint`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -4,11 +4,17 @@ const cors = require('cors');
 const app = express();
 const API_PORT = process.env.PORT || 5000;
 const bcrypt = require('bcrypt'); // Import bcrypt
+const path = require('path');
 
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Use extended to parse nested objects
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:3000', methods: ['POST', 'GET', 'DELETE'] }));
+
+// Serve static files from the React app (only in production)
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
+}
 
 const responseTeamLocations = {};
 const SALT_ROUNDS = 10; // Define the number of salt rounds for bcrypt hashing
@@ -69,7 +75,7 @@ app.get('/complaints', async (req, res) => {
 app.get('/emergencies', async (req, res) => {
     const { page = 1, pageSize = 10 } = req.query;
     try {
-        const emergencies = await dbOperation.getPaginatedEmergencies(parseInt(page), parseInt(pageSize));
+        const emergencies = await getPaginatedEmergencies(parseInt(page), parseInt(pageSize));
         res.json(emergencies); // Make sure mediaUrl is included in the response
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch emergencies' });
@@ -104,9 +110,6 @@ app.post('/submitEmergencyReport', async (req, res) => {
 });
 
 
-app.get('/login', (req, res) => {
-    res.sendFile(__dirname + '/login.js');
-  });
   
   app.get('/register', (req, res) => {
     res.sendFile(__dirname + '/register.js');
@@ -214,5 +217,11 @@ app.get('/api/notifications/:userId', async (req, res) => {
   }
 });
 
+// Catch-all route to serve React app
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+  });
+}
   
 app.listen(API_PORT, () => console.log(`Server is running on port ${API_PORT}`));

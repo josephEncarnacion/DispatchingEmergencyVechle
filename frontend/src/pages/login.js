@@ -20,8 +20,11 @@ function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    
+    const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
     try {
-      const response = await fetch('/login', {
+      const response = await fetch(`${API_URL}/login`,{
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

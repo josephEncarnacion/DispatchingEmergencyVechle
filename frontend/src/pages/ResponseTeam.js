@@ -10,6 +10,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import polyline from '@mapbox/polyline';
 import { useAuth } from '../contexts/AuthContext';
+const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
 const vehicleIcon = L.divIcon({
   className: 'custom-div-icon',
@@ -56,7 +57,7 @@ const ResponseTeam = () => {
       const authData = JSON.parse(localStorage.getItem('authData'));
       if (authData && authData.id) {
         try {
-          const response = await fetch(`/api/notifications/${authData.id}`);
+          const response = await fetch(`${API_URL}/api/notifications/${authData.id}`);
           const data = await response.json();
           setNotifications(data.notifications);
         } catch (error) {
@@ -74,7 +75,7 @@ const ResponseTeam = () => {
       });
       const { latitude, longitude } = position.coords;
       setCurrentPosition([latitude, longitude]);
-      await axios.post('/api/updateLocation', { latitude, longitude, teamId: 'team1' });
+      await axios.post(`${API_URL}/api/updateLocation`, { latitude, longitude, teamId: 'team1' });
     } catch (error) {
       console.error('Error fetching location:', error);
     }
@@ -82,7 +83,7 @@ const ResponseTeam = () => {
 
   const fetchReports = async () => {
     try {
-      const reportResponse = await axios.get('/api/confirmedReports');
+      const reportResponse = await axios.get(`${API_URL}/api/confirmedReports`);
       setConfirmedReports([
         ...reportResponse.data.complaints,
         ...reportResponse.data.emergencies,

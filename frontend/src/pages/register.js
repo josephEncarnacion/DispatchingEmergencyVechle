@@ -6,6 +6,7 @@ import {
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { validatePassword } from '../utils/validation';
+const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -34,7 +35,7 @@ function Register() {
     }
 
     try {
-      const response = await fetch('/register', {
+      const response = await fetch(`${API_URL}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, firstName, lastName, password }),

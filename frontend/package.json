@@ -1,8 +1,7 @@
 {
-  "name": "nangka-complaint-report",
+  "name": "nangka-frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:5000",
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
@@ -12,42 +11,23 @@
     "@mui/material": "^5.15.11",
     "@mui/styled-engine-sc": "^6.0.0-alpha.17",
     "@react-google-maps/api": "^2.19.3",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.2",
-    "bcrypt": "^5.1.1",
-    "cors": "^2.8.5",
-    "express": "^4.19.2",
     "firebase": "^10.14.1",
     "leaflet": "^1.9.4",
-    "mssql": "^10.0.2",
-    "node-fetch": "^3.3.2",
-    "nodemon": "^3.1.0",
-    "npm-run-all": "^4.1.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",
+    "react-router-dom": "^6.23.0",
     "react-scripts": "5.0.1",
-    "socket.io": "^4.8.0",
     "socket.io-client": "^4.8.0",
     "styled-components": "^6.1.8",
-    "web-vitals": "^2.1.4",
-    "ws": "^8.18.0"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
-    "dev": "run-p server start",
-    "server": "nodemon server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -60,8 +40,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "react-router-dom": "^6.23.0"
   }
 }
