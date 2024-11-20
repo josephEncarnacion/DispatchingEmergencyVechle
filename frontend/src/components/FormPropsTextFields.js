@@ -177,7 +177,7 @@ const ComplaintForm = () => {
         userId 
       };
 
-      const response = await fetch(`https://newdispatchingbackend.onrender.com/submitComplaint`, {
+      const response = await fetch('https://newdispatchingbackend.onrender.com/submitComplaint', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

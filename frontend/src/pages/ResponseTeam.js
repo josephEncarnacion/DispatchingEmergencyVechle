@@ -75,7 +75,7 @@ const ResponseTeam = () => {
       });
       const { latitude, longitude } = position.coords;
       setCurrentPosition([latitude, longitude]);
-      await axios.post(`https://newdispatchingbackend.onrender.com/api/updateLocation`, { latitude, longitude, teamId: 'team1' });
+      await axios.post('https://newdispatchingbackend.onrender.com/api/updateLocation', { latitude, longitude, teamId: 'team1' });
     } catch (error) {
       console.error('Error fetching location:', error);
     }
@@ -83,7 +83,7 @@ const ResponseTeam = () => {
 
   const fetchReports = async () => {
     try {
-      const reportResponse = await axios.get(`https://newdispatchingbackend.onrender.com/api/confirmedReports`);
+      const reportResponse = await axios.get('https://newdispatchingbackend.onrender.com/api/confirmedReports');
       setConfirmedReports([
         ...reportResponse.data.complaints,
         ...reportResponse.data.emergencies,
