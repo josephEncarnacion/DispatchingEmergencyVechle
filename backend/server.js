@@ -3,7 +3,7 @@ const dbOperation = require('./dbfiles/dbOperation');
 const cors = require('cors');
 const app = express();
 const API_PORT = process.env.PORT || 5000;
-const NODE_ENV = peocess.env.NODE_ENV || 'production';
+const NODE_ENV = process.env.NODE_ENV || 'production';
 const bcrypt = require('bcrypt'); // Import bcrypt
 const path = require('path');
 
