@@ -17,10 +17,6 @@ if (NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../frontend/build')));
 }
 
-// Catch-all route to serve React app
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
-  });
 
 const responseTeamLocations = {}; 
 const SALT_ROUNDS = 10; // Define the number of salt rounds for bcrypt hashing
@@ -226,5 +222,9 @@ app.get('/api/notifications/:userId', async (req, res) => {
 });
 
 
+// Catch-all route to serve React app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+});
   
 app.listen(API_PORT, () => console.log(`Server is running on port ${API_PORT}`));
