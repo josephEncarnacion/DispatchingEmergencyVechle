@@ -33,26 +33,25 @@ const AppRoutes = () => {
 
   return (
     <Router>
-            <Routes>
-          {routesConfig.map(({ path, element, protected: isProtected, role }) => (
-            <Route
-              key={path}
-              path={path}
-              element={
-                isProtected ? (
-                  role ? (
-                    <RoleProtectedRoute allowedRoles={[role]}>{element}</RoleProtectedRoute>
-                  ) : (
-                    <ProtectedRoute>{element}</ProtectedRoute>
-                  )
+      <Routes>
+        {routesConfig.map(({ path, element, protected: isProtected, role }) => (
+          <Route
+            key={path}
+            path={path}
+            element={
+              isProtected ? (
+                role ? (
+                  <RoleProtectedRoute allowedRoles={[role]}>{element}</RoleProtectedRoute>
                 ) : (
-                  element
+                  <ProtectedRoute>{element}</ProtectedRoute>
                 )
-              }
-            />
-          ))}
-          <Route path="*" element={<div>Page Not Found</div>} /> {/* Fallback */}
-        </Routes>
+              ) : (
+                element
+              )
+            }
+          />
+        ))}
+      </Routes>
     </Router>
   );
 };
