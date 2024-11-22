@@ -13,7 +13,7 @@ app.use(cors({ origin: 'https://newdispatching.onrender.com', methods: ['POST', 
 
 // Serve static files from the React app (only in production)
 
-  app.use(express.static(path.join(__dirname, 'frontend/build')));
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 
 const responseTeamLocations = {}; 

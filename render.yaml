@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: Backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    plan: free
+    routes:
+      - type: static
+        path: /
+        destination: /frontend/build
+      - type: static
+        path: /static
+        destination: /frontend/build/static
+
+  - type: static_site
+    name: Frontend
+    env: static
+    buildCommand: npm install && npm run build
+    publishDir: frontend/build
+    autoDeploy: true
+    plan: free
