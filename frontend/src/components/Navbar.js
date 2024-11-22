@@ -54,8 +54,7 @@ function Navbar() {
     const fetchNotifications = async () => {
       if (authData && authData.id) {
         try {
-          const response = await fetch('https://newdispatchingbackend.onrender.com/api/notifications/' + authData.id );
-
+          const response = await fetch(`https://newdispatchingbackend.onrender.com/api/notifications/${authData.id}`,{ method: 'GET' });
           const data = await response.json();
           setNotifications(data.notifications);
         } catch (error) {
