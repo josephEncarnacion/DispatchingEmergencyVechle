@@ -195,7 +195,7 @@ const confirmComplaintByName = async (name) => {
              `);
 
              await pool.request()
-             .input('userId', sql.Int, 1005)
+             .input('userId', sql.Int,4)
              .input('message', sql.VarChar, message)
              .query(`
                  INSERT INTO Notifications (user_id, message) 
@@ -254,7 +254,7 @@ const confirmEmergencyByName = async (name) => {
                 `);
 
              await pool.request()
-                .input('userId', sql.Int, 1005)
+                .input('userId', sql.Int, 4)
                 .input('message', sql.VarChar, message)
                 .query(`
                     INSERT INTO Notifications (user_id, message) 
