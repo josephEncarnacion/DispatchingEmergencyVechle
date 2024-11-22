@@ -5,6 +5,7 @@ const app = express();
 const API_PORT = process.env.PORT || 5000;
 const bcrypt = require('bcrypt'); // Import bcrypt
 const path = require('path');
+const NODE_ENV = 'production'; // Replace process.env.NODE_ENV
 
 
 app.use(express.json());
@@ -12,7 +13,7 @@ app.use(express.urlencoded({ extended: true })); // Use extended to parse nested
 app.use(cors({ origin: 'https://newdispatching.onrender.com', methods: ['POST', 'GET', 'DELETE'] }));
 
 // Serve static files from the React app (only in production)
-if (process.env.NODE_ENV === 'production') {
+if (NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../frontend/build')));
 }
 
@@ -223,7 +224,7 @@ app.get('/api/notifications/:userId', async (req, res) => {
 
 // Catch-all route to serve React app
 // Catch-all route to serve React app
-if (process.env.NODE_ENV === 'production') {
+if (NODE_ENV === 'production') {
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
   });
