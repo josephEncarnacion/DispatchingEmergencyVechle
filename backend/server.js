@@ -13,7 +13,7 @@ app.use(cors({ origin: 'https://newdispatching.onrender.com', methods: ['POST', 
 
 // Serve static files from the React app (only in production)
 
-  app.use(express.static(path.join(__dirname, '../frontend/build')));
+  app.use(express.static(path.join(__dirname, 'build')));
 
 
 const responseTeamLocations = {}; 
@@ -223,7 +223,7 @@ app.get('/api/notifications/:userId', async (req, res) => {
 // Catch-all route to serve React app
 // Catch-all route to serve React app
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
   
