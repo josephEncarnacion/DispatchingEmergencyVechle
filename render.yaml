@@ -13,7 +13,7 @@ services:
   - type: static_site
     name: Frontend
     env: static
-    buildCommand: npm install && npm run build
+    buildCommand: npm install && npm run build && ls -R frontend/build
     publishDir: frontend/build
     autoDeploy: true
     plan: free
