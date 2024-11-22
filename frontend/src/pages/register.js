@@ -43,7 +43,7 @@ function Register() {
 
       const data = await response.json();
       if (data.success) {
-      alert('Registration successful!');
+      window.location.href = '/';
       } else {
         setError(data.message || 'Registration failed. Please try again.');
       }
