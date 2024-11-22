@@ -5,19 +5,17 @@ const app = express();
 const API_PORT = process.env.PORT || 5000;
 const bcrypt = require('bcrypt'); // Import bcrypt
 const path = require('path');
-
+const responseTeamLocations = {}; 
+const SALT_ROUNDS = 10; // Define the number of salt rounds for bcrypt hashing
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Use extended to pasrse nested objects
 app.use(cors({ origin: 'https://newdispatching.onrender.com', methods: ['POST', 'GET', 'DELETE'] }));
 
 // Serve static files from the React app (only in production)
-
-
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 
-const responseTeamLocations = {}; 
-const SALT_ROUNDS = 10; // Define the number of salt rounds for bcrypt hashing
+
 
 // API to update the response team's location
 app.post('/api/updateLocation', (req, res) => {
@@ -225,7 +223,8 @@ app.get('/api/notifications/:userId', async (req, res) => {
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build/index.html'), (err) => {
     if (err) {
-      res.status(500).send(err);
+      console.error('Error serving index.html:', err);
+      res.status(500).send('An error occurred');
     }
   });
 });
