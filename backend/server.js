@@ -222,9 +222,8 @@ app.get('/api/notifications/:userId', async (req, res) => {
 
 // Catch-all route to serve React app
 // Catch-all route to serve React app
-
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend/build/index.html'));
+    res.sendFile(path.join(__dirname, 'frontend/build','index.html'));
   });
 
   
