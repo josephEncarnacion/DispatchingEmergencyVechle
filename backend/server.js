@@ -8,7 +8,7 @@ const path = require('path');
 
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // Use extended to parse nested objects
+app.use(express.urlencoded({ extended: true })); // Use extended to pasrse nested objects
 app.use(cors({ origin: 'https://newdispatching.onrender.com', methods: ['POST', 'GET', 'DELETE'] }));
 
 // Serve static files from the React app (only in production)
