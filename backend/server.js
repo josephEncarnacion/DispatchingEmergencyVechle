@@ -223,9 +223,12 @@ app.get('/api/notifications/:userId', async (req, res) => {
 // Catch-all route to serve React app
 // Catch-all route to serve React app
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/build/index.html'), (err) => {
+    if (err) {
+      res.status(500).send(err);
+    }
+  });
 });
-
   
 app.listen(API_PORT, () => console.log(`Server is running on port ${API_PORT}`));
 console.log('Serving static files from:', path.join(__dirname, '../frontend/build'));
