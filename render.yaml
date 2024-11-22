@@ -6,13 +6,9 @@ services:
     startCommand: npm start
     autoDeploy: true
     plan: free
-    routes:
-      - type: static
-        path: /
-        destination: /frontend/build
-      - type: static
-        path: /static
-        destination: /frontend/build/static
+    envVars:
+      - key: NODE_ENV
+        value: production
 
   - type: static_site
     name: Frontend
