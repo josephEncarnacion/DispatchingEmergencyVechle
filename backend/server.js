@@ -13,13 +13,14 @@ app.use(express.urlencoded({ extended: true })); // Use extended to parse nested
 app.use(cors({ origin: 'https://newdispatching.onrender.com', methods: ['POST', 'GET', 'DELETE'] }));
 
 if (NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/build')));
+  const buildPath = path.resolve(__dirname, './frontend/build');
+  console.log(`Serving frontend from: ${buildPath}`);
+  app.use(express.static(buildPath));
 
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+    res.sendFile(path.join(buildPath, 'index.html'));
   });
 }
-
 
 const responseTeamLocations = {}; 
 const SALT_ROUNDS = 10; // Define the number of salt rounds for bcrypt hashing
