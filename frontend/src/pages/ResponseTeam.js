@@ -52,46 +52,18 @@ const ResponseTeam = () => {
     handleNotificationClose();
   };
 
-  useEffect(() => {
     const fetchNotifications = async () => {
-      try {
-        const authData = JSON.parse(localStorage.getItem('authData'));
-        console.log('authData:', authData);
-  
-        if (!authData || !authData.id) {
-          console.error('Missing authData or user ID');
-          return;
-        }
-  
-        const response = await fetch(`${API_URL}/api/notifications/${authData.id}`);
-        console.log('Fetch response:', response);
-  
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-  
-        const data = await response.json();
-        console.log('Fetched notifications:', data);
-  
-        if (Array.isArray(data.notifications)) {
+      const authData = JSON.parse(localStorage.getItem('authData'));
+      if (authData && authData.id) {
+        try {
+          const response = await fetch(`https://newdispatchingbackend.onrender.com/api/notifications/${authData.id}`);
+          const data = await response.json();
           setNotifications(data.notifications);
-        } else {
-          console.error('Invalid notifications format:', data);
+        } catch (error) {
+          console.error('Error fetching notifications:', error);
         }
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
       }
     };
-  
-    // Initial fetch
-    fetchNotifications();
-  
-    // Set interval for periodic updates
-    const intervalId = setInterval(fetchNotifications, 10000); // Fetch every 10 seconds
-  
-    // Cleanup interval on component unmount
-    return () => clearInterval(intervalId);
-  }, []);
 
   const fetchLocation = async () => {
     try {
@@ -120,6 +92,7 @@ const ResponseTeam = () => {
 
   const fetchLocationAndReports = useCallback(async () => {
     await fetchLocation();
+    await fetchNotifications();
     await fetchReports();
   }, []);
 
@@ -177,8 +150,8 @@ const ResponseTeam = () => {
             {notifications.length === 0 ? (
               <MenuItem>No new notifications</MenuItem>
             ) : (
-              notifications.map((notification, index) => (
-                <MenuItem key={notification.id || index }>{notification.message}</MenuItem>
+              notifications.map((notification) => (
+                <MenuItem key={notification.id}>{notification.message}</MenuItem>
               ))
             )}
             <MenuItem onClick={handleClearNotifications}>Clear all</MenuItem>
