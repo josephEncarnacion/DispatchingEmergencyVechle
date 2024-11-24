@@ -302,21 +302,23 @@ const getConfirmedEmergencies = async () => {
 
 const getUserNotifications = async (userId) => {
     try {
-        let pool = await sql.connect(config);
-        const result = await pool.request()
-            .input('userId', sql.Int, userId)
-            .query(`
-                SELECT id, message, is_read, created_at 
-                FROM Notifications 
-                WHERE user_id = @userId AND is_read = 0 
-                ORDER BY created_at DESC
-            `);
-        return result.recordset;
+      let pool = await sql.connect(config);
+      const result = await pool
+        .request()
+        .input('userId', sql.Int, userId)
+        .query(`
+          SELECT id, message, is_read, created_at 
+          FROM Notifications 
+          WHERE user_id = @userId 
+            AND (is_read = 0 OR is_read IS NULL) 
+          ORDER BY created_at DESC
+        `);
+      return result.recordset;
     } catch (error) {
-        console.error('Error fetching notifications:', error);
-        throw error;
+      console.error('Error fetching notifications:', error);
+      throw error;
     }
-};
+  };
 
    
 

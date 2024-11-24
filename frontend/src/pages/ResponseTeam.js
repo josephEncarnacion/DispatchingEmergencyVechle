@@ -52,18 +52,36 @@ const ResponseTeam = () => {
     handleNotificationClose();
   };
 
-    const fetchNotifications = async () => {
-      const authData = JSON.parse(localStorage.getItem('authData'));
-      if (authData && authData.id) {
-        try {
-          const response = await fetch(`https://newdispatchingbackend.onrender.com/api/notifications/${authData.id}`);
-          const data = await response.json();
-          setNotifications(data.notifications);
-        } catch (error) {
-          console.error('Error fetching notifications:', error);
+  const fetchNotifications = async () => {
+    const authData = JSON.parse(localStorage.getItem('authData'));
+    if (authData && authData.id) {
+      try {
+        const response = await fetch(
+          `https://newdispatchingbackend.onrender.com/api/notifications/${authData.id}`,
+          {
+            headers: {
+              'Cache-Control': 'no-cache',
+              Pragma: 'no-cache',
+            },
+          }
+        );
+  
+        if (response.status === 304) {
+          console.log('Notifications not modified, using cached data.');
+          return; // Notifications state remains unchanged
         }
+  
+        if (response.ok) {
+          const data = await response.json();
+          setNotifications(data.notifications || []);
+        } else {
+          console.error('Failed to fetch notifications:', response.status);
+        }
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
       }
-    };
+    }
+  };
 
   const fetchLocation = async () => {
     try {
