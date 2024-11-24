@@ -155,8 +155,8 @@ const ResponseTeam = () => {
             {notifications.length === 0 ? (
               <MenuItem>No new notifications</MenuItem>
             ) : (
-              notifications.map((notification) => (
-                <MenuItem key={notification.id}>{notification.message}</MenuItem>
+              notifications.map((notification, index) => (
+                <MenuItem key={notification.id || index }>{notification.message}</MenuItem>
               ))
             )}
             <MenuItem onClick={handleClearNotifications}>Clear all</MenuItem>
