@@ -190,16 +190,15 @@ const confirmComplaintByName = async (name) => {
              .input('userId', sql.Int, userId)
              .input('message', sql.VarChar, message)
              .query(`
-                 INSERT INTO Notifications (user_id, message) 
-                 VALUES (@userId, @message)
+                 INSERT INTO Notifications (user_id, message, is_read, created_at) 
+                 VALUES (@userId, @message, 0, GETDATE())
              `);
 
              await pool.request()
-             .input('userId', sql.Int,4)
-             .input('message', sql.VarChar, message)
+             .input('userId', sql.Int, 4) // Assuming '4' is the dispatcher ID
              .query(`
-                 INSERT INTO Notifications (user_id, message) 
-                 VALUES (@userId, 'New Comfirmed complaint ready for dispatch')
+                 INSERT INTO Notifications (user_id, message, is_read, created_at) 
+                 VALUES (@userId, 'New confirmed complaint ready for dispatch', 0, GETDATE())
              `);
 
             // Delete the complaint from Complaint_tbl
@@ -249,16 +248,15 @@ const confirmEmergencyByName = async (name) => {
                 .input('userId', sql.Int, userId)
                 .input('message', sql.VarChar, message)
                 .query(`
-                    INSERT INTO Notifications (user_id, message) 
-                    VALUES (@userId, @message)
+                    INSERT INTO Notifications (user_id, message, is_read, created_at) 
+                    VALUES (@userId, @message, 0, GETDATE())
                 `);
 
-             await pool.request()
-                .input('userId', sql.Int, 4)
-                .input('message', sql.VarChar, message)
+            await pool.request()
+                .input('userId', sql.Int, 4) // Assuming '4' is the dispatcher ID
                 .query(`
-                    INSERT INTO Notifications (user_id, message) 
-                    VALUES (@userId, 'New confirmed emergency ready for dispatch')
+                    INSERT INTO Notifications (user_id, message, is_read, created_at) 
+                    VALUES (@userId, 'New confirmed emergency ready for dispatch', 0, GETDATE())
                 `);
 
             // Delete the emergency from Emergency_tbl
