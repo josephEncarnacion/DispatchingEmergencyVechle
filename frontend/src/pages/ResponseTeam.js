@@ -57,7 +57,10 @@ const ResponseTeam = () => {
       const authData = JSON.parse(localStorage.getItem('authData'));
       if (authData && authData.id) {
         try {
-          const response = await fetch('https://newdispatchingbackend.onrender.com/api/notifications/'`${authData.id}`);
+          const response = await fetch(`${API_URL}/api/notifications/${authData.id}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
           const data = await response.json();
           setNotifications(data.notifications);
         } catch (error) {
