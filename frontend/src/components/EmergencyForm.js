@@ -273,7 +273,8 @@ const EmergencyForm = () => {
         </FormControl>
 
         <TextField label="Enter your Emergency" multiline rows={4} variant="outlined" fullWidth value={emergencyText} onChange={handleEmergencyChange} margin="normal" sx={{ mb: 2 }} />
-        <Typography-style-caption>The Maximum total size of the file is {MAX_FILE_SIZE_MB} MB.</Typography-style-caption>
+        <Typography-style-caption align="left ">The Maximum total size of the file is {MAX_FILE_SIZE_MB} MB.</Typography-style-caption>
+        <br/>
         <Box sx={{ mb: 2, textAlign: 'center' }}>
           <Button variant="contained" component="label">
             {buttonText}
