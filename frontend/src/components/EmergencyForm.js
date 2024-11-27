@@ -279,17 +279,7 @@ const EmergencyForm = () => {
           </IconButton>
         </Box>
       )}
-   </Box>
-
-    
-    {uploading && (
-      <Box sx={{ width: '100%', mt: 2 }}>
-        <LinearProgress variant="determinate" value={uploadProgress} />
-        <Typography variant="body2" sx={{ mt: 1 }}>{Math.round(uploadProgress)}%</Typography>
-      </Box>
-    )}
-    
-    {previewUrl && (
+      {previewUrl && (
       <Box sx={{ mt: 2, border: '1px solid #ccc', borderRadius: '4px', padding: 2, textAlign: 'center' }}>
         <Typography variant="body1">Media Preview:</Typography>
         {file.type.startsWith('image/') ? (
@@ -299,6 +289,7 @@ const EmergencyForm = () => {
         )}
       </Box>
     )}
+   </Box>
 
         <Box marginTop={2}>
           <Button variant="contained" color="primary" onClick={handleSubmit}>Submit Report</Button>
