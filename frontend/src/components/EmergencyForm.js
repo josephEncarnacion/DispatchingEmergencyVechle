@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import LinearProgress from '@mui/material/LinearProgress'; // Progress bar
+import CancelIcon from '@mui/icons-material/Cancel';  
 import axios from 'axios';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
@@ -43,27 +44,34 @@ const EmergencyForm = () => {
 
   const MAX_FILE_SIZE_MB = 5;
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
     if (selectedFile) {
-      if (selectedFile.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-        setSnackbarMessage(`File size exceeds ${MAX_FILE_SIZE_MB}MB.`);
-        setSnackbarSeverity('error');
-        setSnackbarOpen(true);
+      const fileSizeMB = selectedFile.size / (1024 * 1024);
+      if (fileSizeMB > MAX_FILE_SIZE_MB) {
+        alert(`File size exceeds ${MAX_FILE_SIZE_MB} MB. Please select a smaller file.`);
         return;
       }
       setFile(selectedFile);
-      setFileName(selectedFile.name);
-      setButtonText('Upload Media');
-
-      if (selectedFile.type.startsWith('image/') || selectedFile.type.startsWith('video/')) {
-        const preview = URL.createObjectURL(selectedFile);
-        setPreviewUrl(preview);
-      } else {
-        setPreviewUrl('');
-      }
+      simulateUpload(selectedFile);
     }
   };
+  const simulateUpload = (file) => {
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 10;
+      setUploadProgress(progress);
+      if (progress >= 100) {
+        clearInterval(interval);
+      }
+    }, 500);
+  };
+
+  const handleCancel = () => {
+    setFile(null);
+    setUploadProgress(0);
+  };
+
 
   // Custom Marker Icon
   const markerIcon = new L.Icon({
@@ -248,15 +256,30 @@ const EmergencyForm = () => {
         <TextField label="Enter your Emergency" multiline rows={4} variant="outlined" fullWidth value={emergencyText} onChange={handleEmergencyChange} margin="normal" sx={{ mb: 2 }} />
 
         <Box sx={{ mb: 2, textAlign: 'center' }}>
-      <Button variant="contained" component="label">
-        {buttonText}
-        <input type="file" hidden accept="image/*,video/*" onChange={handleFileChange} />
-      </Button>
-      {fileName && <Typography variant="body2" sx={{ mt: 1 }}>Selected File: {fileName}</Typography>}
-      <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-        Maximum file size: {MAX_FILE_SIZE_MB} MB
-      </Typography>
-    </Box>
+          <Button variant="contained" component="label">
+            {buttonText}
+            <input type="file" hidden accept="image/*,video/*" onChange={handleFileChange} />
+          </Button>
+          {file && (
+        <Box sx={{ mt: 2, width: '100%', position: 'relative' }}>
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            {file.name} ({(file.size / 1024).toFixed(1)} KB)
+          </Typography>
+          <LinearProgress variant="determinate" value={uploadProgress} />
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            {uploadProgress}%
+          </Typography>
+          <IconButton
+            onClick={handleCancel}
+            size="small"
+            sx={{ position: 'absolute', top: 0, right: 0 }}
+          >
+            <CancelIcon />
+          </IconButton>
+        </Box>
+      )}
+   </Box>
+
     
     {uploading && (
       <Box sx={{ width: '100%', mt: 2 }}>
