@@ -43,7 +43,7 @@ const EmergencyForm = () => {
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
 
 
-  const MAX_FILE_SIZE_MB = 5;
+  const MAX_FILE_SIZE_MB = 200;
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -279,6 +279,7 @@ const EmergencyForm = () => {
             {buttonText}
             <input type="file" hidden accept="image/*,video/*" onChange={handleFileChange} />
           </Button>
+          <Typography-style-caption>The Maximum total size of the file is {MAX_FILE_SIZE_MB}</Typography-style-caption>
           {file && (
             <Box sx={{ mt: 2, width: '100%', position: 'relative' }}>
               <Typography variant="body2" sx={{ mb: 1 }}>{file.name}</Typography>
