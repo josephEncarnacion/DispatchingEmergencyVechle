@@ -54,23 +54,41 @@ const EmergencyForm = () => {
         return;
       }
       setFile(selectedFile);
+      setPreviewUrl(URL.createObjectURL(selectedFile)); // Preview
       simulateUpload(selectedFile);
     }
   };
   const simulateUpload = (file) => {
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 10;
-      setUploadProgress(progress);
-      if (progress >= 100) {
-        clearInterval(interval);
+    setUploading(true);
+    const storageRef = ref(storage, `media/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setUploadProgress(progress);
+      },
+      (error) => {
+        setSnackbarMessage('Upload failed.');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+        setUploading(false);
+      },
+      async () => {
+        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+        setFileUrl(downloadUrl);
+        setButtonText('Uploaded Media');
+        setUploading(false);
       }
-    }, 500);
+    );
   };
 
   const handleCancel = () => {
     setFile(null);
     setUploadProgress(0);
+    setButtonText('Upload Media');
+    setPreviewUrl('');
   };
 
 
@@ -262,34 +280,26 @@ const EmergencyForm = () => {
             <input type="file" hidden accept="image/*,video/*" onChange={handleFileChange} />
           </Button>
           {file && (
-        <Box sx={{ mt: 2, width: '100%', position: 'relative' }}>
-          <Typography variant="body2" sx={{ mb: 1 }}>
-            {file.name} ({(file.size / 1024).toFixed(1)} KB)
-          </Typography>
-          <LinearProgress variant="determinate" value={uploadProgress} />
-          <Typography variant="body2" sx={{ mt: 1 }}>
-            {uploadProgress}%
-          </Typography>
-          <IconButton
-            onClick={handleCancel}
-            size="small"
-            sx={{ position: 'absolute', top: 0, right: 0 }}
-          >
-            <CancelIcon />
-          </IconButton>
+            <Box sx={{ mt: 2, width: '100%', position: 'relative' }}>
+              <Typography variant="body2" sx={{ mb: 1 }}>{file.name}</Typography>
+              <LinearProgress variant="determinate" value={uploadProgress} />
+              <Typography variant="body2" sx={{ mt: 1 }}>{uploadProgress.toFixed(1)}%</Typography>
+              <IconButton onClick={handleCancel} size="small" sx={{ position: 'absolute', top: 0, right: 0 }}>
+                <CancelIcon />
+              </IconButton>
+            </Box>
+          )}
+          {previewUrl && (
+            <Box sx={{ mt: 2, border: '1px solid #ccc', borderRadius: '4px', padding: 2 }}>
+              <Typography variant="body1">Media Preview:</Typography>
+              {file.type.startsWith('image/') ? (
+                <img src={previewUrl} alt="Selected file preview" style={{ maxWidth: '100%' }} />
+              ) : (
+                <video src={previewUrl} controls style={{ maxWidth: '100%' }} />
+              )}
+            </Box>
+          )}
         </Box>
-      )}
-      {previewUrl && (
-      <Box sx={{ mt: 2, border: '1px solid #ccc', borderRadius: '4px', padding: 2, textAlign: 'center' }}>
-        <Typography variant="body1">Media Preview:</Typography>
-        {file.type.startsWith('image/') ? (
-          <img src={previewUrl} alt="Selected file preview" style={{ maxWidth: '100%', marginTop: '10px', borderRadius: '4px' }} />
-        ) : (
-          <video src={previewUrl} controls style={{ maxWidth: '100%', marginTop: '10px', borderRadius: '4px' }} />
-        )}
-      </Box>
-    )}
-   </Box>
 
         <Box marginTop={2}>
           <Button variant="contained" color="primary" onClick={handleSubmit}>Submit Report</Button>
