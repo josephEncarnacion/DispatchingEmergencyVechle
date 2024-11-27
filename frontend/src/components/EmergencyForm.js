@@ -36,22 +36,32 @@ const EmergencyForm = () => {
   const [, setFileName] = useState(''); 
   const [uploading, setUploading] = useState(false); 
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [buttonText, setButtonText] = useState('Upload Media');
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
 
 
-  // Handle file selection and create a preview URL for images
+  const MAX_FILE_SIZE_MB = 5;
+
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-    setFileName(selectedFile ? selectedFile.name : '');
+    if (selectedFile) {
+      if (selectedFile.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+        setSnackbarMessage(`File size exceeds ${MAX_FILE_SIZE_MB}MB.`);
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+        return;
+      }
+      setFile(selectedFile);
+      setFileName(selectedFile.name);
+      setButtonText('Upload Media');
 
-    // Create a local preview URL if it's an image
-    if (selectedFile && (selectedFile.type.startsWith('image/') || selectedFile.type.startsWith('video/'))) {
-      const preview = URL.createObjectURL(selectedFile);
-      setPreviewUrl(preview); // Set local image or video preview
-    } else {
-      setPreviewUrl(''); // Reset if not an image or video
+      if (selectedFile.type.startsWith('image/') || selectedFile.type.startsWith('video/')) {
+        const preview = URL.createObjectURL(selectedFile);
+        setPreviewUrl(preview);
+      } else {
+        setPreviewUrl('');
+      }
     }
   };
 
@@ -237,30 +247,34 @@ const EmergencyForm = () => {
 
         <TextField label="Enter your Emergency" multiline rows={4} variant="outlined" fullWidth value={emergencyText} onChange={handleEmergencyChange} margin="normal" sx={{ mb: 2 }} />
 
-        <Box>
-          <Button variant="contained" component="label">
-            Upload Media
-            <input type="file" hidden accept="image/*,video/*" onChange={handleFileChange} />
-          </Button>
-        </Box>
-
-        {uploading && (
-          <Box sx={{ width: '100%', mt: 2 }}>
-            <LinearProgress variant="determinate" value={uploadProgress} />
-            <Typography variant="body2" sx={{ mt: 1 }}>{Math.round(uploadProgress)}%</Typography>
-          </Box>
+        <Box sx={{ mb: 2, textAlign: 'center' }}>
+      <Button variant="contained" component="label">
+        {buttonText}
+        <input type="file" hidden accept="image/*,video/*" onChange={handleFileChange} />
+      </Button>
+      {fileName && <Typography variant="body2" sx={{ mt: 1 }}>Selected File: {fileName}</Typography>}
+      <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+        Maximum file size: {MAX_FILE_SIZE_MB} MB
+      </Typography>
+    </Box>
+    
+    {uploading && (
+      <Box sx={{ width: '100%', mt: 2 }}>
+        <LinearProgress variant="determinate" value={uploadProgress} />
+        <Typography variant="body2" sx={{ mt: 1 }}>{Math.round(uploadProgress)}%</Typography>
+      </Box>
+    )}
+    
+    {previewUrl && (
+      <Box sx={{ mt: 2, border: '1px solid #ccc', borderRadius: '4px', padding: 2, textAlign: 'center' }}>
+        <Typography variant="body1">Media Preview:</Typography>
+        {file.type.startsWith('image/') ? (
+          <img src={previewUrl} alt="Selected file preview" style={{ maxWidth: '100%', marginTop: '10px', borderRadius: '4px' }} />
+        ) : (
+          <video src={previewUrl} controls style={{ maxWidth: '100%', marginTop: '10px', borderRadius: '4px' }} />
         )}
-
-        {previewUrl && (
-          <Box sx={{ mt: 2, border: '1px solid #ccc', borderRadius: '4px', padding: 2, textAlign: 'center' }}>
-            <Typography variant="body1">Media Preview:</Typography>
-            {file.type.startsWith('image/') ? (
-              <img src={previewUrl} alt="Selected file preview" style={{ maxWidth: '100%', marginTop: '10px', borderRadius: '4px' }} />
-            ) : (
-              <video src={previewUrl} controls style={{ maxWidth: '100%', marginTop: '10px', borderRadius: '4px' }} />
-            )}
-          </Box>
-        )}
+      </Box>
+    )}
 
         <Box marginTop={2}>
           <Button variant="contained" color="primary" onClick={handleSubmit}>Submit Report</Button>
