@@ -273,13 +273,12 @@ const EmergencyForm = () => {
         </FormControl>
 
         <TextField label="Enter your Emergency" multiline rows={4} variant="outlined" fullWidth value={emergencyText} onChange={handleEmergencyChange} margin="normal" sx={{ mb: 2 }} />
-
+        <Typography-style-caption>The Maximum total size of the file is {MAX_FILE_SIZE_MB} MB.</Typography-style-caption>
         <Box sx={{ mb: 2, textAlign: 'center' }}>
           <Button variant="contained" component="label">
             {buttonText}
             <input type="file" hidden accept="image/*,video/*" onChange={handleFileChange} />
           </Button>
-          <Typography-style-caption>The Maximum total size of the file is {MAX_FILE_SIZE_MB}</Typography-style-caption>
           {file && (
             <Box sx={{ mt: 2, width: '100%', position: 'relative' }}>
               <Typography variant="body2" sx={{ mb: 1 }}>{file.name}</Typography>
