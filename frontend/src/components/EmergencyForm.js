@@ -276,58 +276,43 @@ const EmergencyForm = () => {
         <Typography variant="caption" align="left" sx={{ mb: 1, display: 'block' }}>
           The Maximum total size of the file is {MAX_FILE_SIZE_MB} MB.
         </Typography>
-        <br/>
         <Box sx={{ mb: 2, textAlign: 'center' }}>
           <Button variant="contained" component="label">
             {buttonText}
             <input type="file" hidden accept="image/*,video/*" onChange={handleFileChange} />
           </Button>
           {file && (
-  <Box sx={{ mt: 2, width: '100%', position: 'relative' }}>
-    {/* File Name and Size */}
-    <Typography variant="body2" sx={{ mb: 1, display: 'flex', justifyContent: 'space-between' }}>
-      <span>{file.name}</span>
-      <span>{(file.size / (1024 * 1024)).toFixed(2)} MB</span> {/* File size in MB */}
-    </Typography>
-
-        {/* Styled Linear Progress */}
-        <Box sx={{ position: 'relative', height: '12px', borderRadius: '8px', backgroundColor: '#e0e0e0', overflow: 'hidden', mb: 1 }}>
-          <LinearProgress 
-            variant="determinate" 
-            value={uploadProgress} 
-            sx={{ 
-              height: '100%', 
-              borderRadius: '8px', 
-              '& .MuiLinearProgress-bar': { 
-                backgroundColor: '#3f51b5' 
-              } 
-            }} 
-          />
-          <Typography 
-            variant="caption" 
-            sx={{ 
-              position: 'absolute', 
-              top: 0, 
-              left: '50%', 
-              transform: 'translateX(-50%)', 
-              color: 'white', 
-              fontWeight: 'bold' 
-            }}
-          >
-            {uploadProgress.toFixed(1)}%
-          </Typography>
-        </Box>
-
-        {/* Cancel Icon */}
-        <IconButton 
-          onClick={handleCancel} 
-          size="small" 
-          sx={{ position: 'absolute', top: 0, right: 0 }}
-        >
-          <CancelIcon />
-        </IconButton>
-      </Box>
-    )}
+            <Box sx={{ mt: 2, width: '100%', position: 'relative' }}>
+              <Typography variant="body2" sx={{ mb: 1 }}>{file.name}</Typography>
+              <LinearProgress variant="determinate" value={uploadProgress} />
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  position: 'absolute', 
+                  top: 0, 
+                  left: '50%', 
+                  transform: 'translateX(-50%)', 
+                  color: 'white', 
+                  fontWeight: 'bold' 
+                }}
+              >
+                {uploadProgress.toFixed(1)}%
+              </Typography>   
+              <IconButton onClick={handleCancel} size="small" sx={{ position: 'absolute', top: 0, right: 0 }}>
+                <CancelIcon />
+              </IconButton>
+            </Box>
+          )}
+          {previewUrl && (
+            <Box sx={{ mt: 2, border: '1px solid #ccc', borderRadius: '4px', padding: 2 }}>
+              <Typography variant="body1">Media Preview:</Typography>
+              {file.type.startsWith('image/') ? (
+                <img src={previewUrl} alt="Selected file preview" style={{ maxWidth: '100%' }} />
+              ) : (
+                <video src={previewUrl} controls style={{ maxWidth: '100%' }} />
+              )}
+            </Box>
+          )}
           {previewUrl && (
             <Box sx={{ mt: 2, border: '1px solid #ccc', borderRadius: '4px', padding: 2 }}>
               <Typography variant="body1">Media Preview:</Typography>
