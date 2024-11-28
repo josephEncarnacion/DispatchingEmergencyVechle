@@ -274,27 +274,7 @@ const confirmEmergencyByName = async (name) => {
     }
 };
 
-const getRecieveComplaints = async () => {
-    try {
-      let pool = await sql.connect(config);
-      const result = await pool.request().query('SELECT * FROM Complaint_tbl');
-      return result.recordset[0].totalComplaints;
-    } catch (error) {
-      console.error('Error counting complaints:', error);
-      throw error;
-    }
-  };
-  
-  const getRecieveEmergencies = async () => {
-    try {
-      let pool = await sql.connect(config);
-      const result = await pool.request().query('SELECT * FROM Emergency_tbl');
-      return result.recordset[0].totalEmergencies;
-    } catch (error) {
-      console.error('Error counting emergencies:', error);
-      throw error;
-    }
-  };
+
 
 
 const getConfirmedComplaints = async () => {
@@ -340,13 +320,30 @@ const getUserNotifications = async (userId) => {
     }
   };
 
+
+  const getAggregatedCounts = async () => {
+    try {
+      let pool = await sql.connect(config);
+      const result = await pool.request().query(`
+        SELECT 
+          (SELECT COUNT(*) FROM Complaint_tbl) AS totalComplaints,
+          (SELECT COUNT(*) FROM Emergency_tbl) AS totalEmergencies,
+          (SELECT COUNT(*) FROM Complaint_tbl WHERE Confirmed = 1) AS confirmedComplaints,
+          (SELECT COUNT(*) FROM Emergency_tbl WHERE Confirmed = 1) AS confirmedEmergencies
+      `);
+      return result.recordset[0]; // Single row with all counts
+    } catch (error) {
+      console.error('Error fetching aggregated counts:', error);
+      throw error;
+    }
+  };
+
    
 
 module.exports = {
+    getAggregatedCounts,
     insertEmergencyReport,
     getUserNotifications,
-    getRecieveComplaints,
-    getRecieveEmergencies,  
     getPaginatedEmergencies,
     getPaginatedComplaints,
     insertComplaint,

@@ -90,25 +90,12 @@ const AdminPage = () => {
   const fetchReceiveReports = async () => {
     try {
       const response = await axios.get(`https://newdispatchingbackend.onrender.com/api/ReceiveReports`);
-      if (response.data) {
-        // Store the raw data
-        const complaints = response.data.complaints || [];
-        const emergencies = response.data.emergencies || [];
+      const data = response.data;
+      console.log('Aggregated Data:', data); // Debug log to verify response
   
-        // Calculate totals using .filter and .length
-        const totalComplaints = complaints.filter(c => c.ComplaintType).length;
-        const totalEmergencies = emergencies.filter(e => e.EmergencyType).length;
-  
-        // Update the state
-        setReceiveReports({
-          complaints,
-          emergencies,
-          totalComplaints,
-          totalEmergencies,
-        });
-      }
+      setReceiveReports(data); // Store the aggregated data in state
     } catch (error) {
-      console.error('Error fetching receive reports:', error);
+      console.error('Error fetching aggregated reports:', error);
     }
   };
 
@@ -229,11 +216,11 @@ const AdminPage = () => {
       case 'dashboard':
         return (
             <DashboardMetrics
-              totalComplaints={receiveReports.totalComplaints || 0}
-              totalEmergencies={receiveReports.totalEmergencies || 0}
-              confirmedComplaints={confirmedReports.filter(report => report.ComplaintType).length}
-              confirmedEmergencies={confirmedReports.filter(report => report.EmergencyType).length}
-              activeResponseTeams={activeResponseTeams}
+            totalComplaints={receiveReports.totalComplaints || 0}
+            totalEmergencies={receiveReports.totalEmergencies || 0}
+            confirmedComplaints={receiveReports.confirmedComplaints || 0}
+            confirmedEmergencies={receiveReports.confirmedEmergencies || 0}
+            activeResponseTeams={activeResponseTeams}
               />
         );
       case 'map':
@@ -455,7 +442,13 @@ const AdminPage = () => {
     </Box>
   );
 };
-const DashboardMetrics = ({  confirmedComplaints, confirmedEmergencies, totalComplaints, totalEmergencies, activeResponseTeams }) => (
+const DashboardMetrics = ({
+  totalComplaints,
+  totalEmergencies,
+  confirmedComplaints,
+  confirmedEmergencies,
+  activeResponseTeams,
+}) => (
   <Box sx={{ mt: 4 }}>
     <Typography variant="h5" gutterBottom>Dashboard Overview</Typography>
     <Box
@@ -466,15 +459,15 @@ const DashboardMetrics = ({  confirmedComplaints, confirmedEmergencies, totalCom
         mb: 4,
       }}
     >
-       <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e3f2fd', color: '#2196f3' }}>
+      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e3f2fd', color: '#2196f3' }}>
         <CheckCircleIcon sx={{ fontSize: 40, color: '#2196f3' }} />
-        <Typography variant="h6">Receive Complaints</Typography>
+        <Typography variant="h6">Total Complaints</Typography>
         <Typography variant="h4">{totalComplaints}</Typography>
       </Paper>
 
       <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffebee', color: '#e91e63' }}>
         <ReportProblemIcon sx={{ fontSize: 40, color: '#e91e63' }} />
-        <Typography variant="h6">Receive Emergencies</Typography>
+        <Typography variant="h6">Total Emergencies</Typography>
         <Typography variant="h4">{totalEmergencies}</Typography>
       </Paper>
 

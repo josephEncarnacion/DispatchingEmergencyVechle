@@ -41,21 +41,19 @@ app.get('/api/responseTeamLocations', (req, res) => {
 
 
 const { getConfirmedComplaints, getConfirmedEmergencies } = require('./dbfiles/dbOperation');
-const { getRecieveComplaints, getRecieveEmergencies } = require('./dbfiles/dbOperation');
 const { getPaginatedComplaints, getPaginatedEmergencies } = require('./dbfiles/dbOperation');
 
-app.get('/api/ReceiveReports', async (req, res) => { // Fix parentheses
+const { getAggregatedCounts } = require('./dbfiles/dbOperation');
+
+app.get('/api/ReceiveReports', async (req, res) => {
   try {
-    const receiveComplaints = await getRecieveComplaints();
-    const receiveEmergencies = await getRecieveEmergencies();
-    res.json({
-      complaints: receiveComplaints || [],
-      emergencies: receiveEmergencies || [],
-    });
+    const counts = await getAggregatedCounts();
+    res.json(counts); // Return the aggregated counts directly
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch receive reports' });
+    res.status(500).json({ error: 'Failed to fetch aggregated reports' });
   }
 });
+
 
 app.get('/api/confirmedReports', async (req, res) => {
     try {
