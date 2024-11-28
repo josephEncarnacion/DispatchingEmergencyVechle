@@ -52,8 +52,8 @@ const AdminPage = () => {
   const [responseTeamLocations, setResponseTeamLocations] = useState([]);
   const [confirmedReports, setConfirmedReports] = useState([]); // New state for confirmed reports
   const [activeResponseTeams, setActiveResponseTeams] = useState(0);  // New state for active teams count
-  const [totalComplaints, setTotalComplaints] = useState(0);
-  const [totalEmergencies, setTotalEmergencies] = useState(0);
+  const [receiveReports, setReceiveReports] = useState([]); // New state for confirmed reports
+
 
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
@@ -87,25 +87,19 @@ const AdminPage = () => {
     }
   };
 
-  const fetchReceiveComplaint = async () => {
+  const fetchReceiveReports = async () => {
     try {
-      const response = await axios.get(`https://newdispatchingbackend.onrender.com/totalcomplaints/count`);
-      setTotalComplaints(response.data.count);
+      const response = await axios.get(`https://newdispatchingbackend.onrender.com/api/ReceiveReports`); // Correct API URL
+      if (response.data) {
+        setReceiveReports(response.data); // Store in state
+      }
     } catch (error) {
-      console.error('Error fetching metrics:', error);
+      console.error('Error fetching receive reports:', error);
     }
   };
-  const fetchReceiveEmergency = async () => {
-    try {
-      const response = await axios.get(`https://newdispatchingbackend.onrender.com/totalemergency/count`);
-      setTotalEmergencies(response.data.count);
-      } catch (error) {
-        console.error('Error fetching metrics:', error);
-        }
-        };
+
   useEffect(() => {
-    fetchReceiveComplaint();
-    fetchReceiveEmergency();
+    fetchReceiveReports();
     fetchResponseTeamLocations();
     fetchConfirmedReports();
     // Polling every 10 seconds

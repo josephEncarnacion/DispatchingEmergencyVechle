@@ -41,7 +41,22 @@ app.get('/api/responseTeamLocations', (req, res) => {
 
 
 const { getConfirmedComplaints, getConfirmedEmergencies } = require('./dbfiles/dbOperation');
+const { getRecieveComplaints, getRecieveEmergencies } = require('./dbfiles/dbOperation');
 const { getPaginatedComplaints, getPaginatedEmergencies } = require('./dbfiles/dbOperation');
+
+app.get('/api/ReceiveReports', async (req, res) => { // Fix parentheses
+  try {
+    const receiveComplaints = await getRecieveComplaints();
+    const receiveEmergencies = await getRecieveEmergencies();
+    res.json({
+      complaints: receiveComplaints || 0,
+      emergencies: receiveEmergencies || 0,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch receive reports' });
+  }
+});
+
 app.get('/api/confirmedReports', async (req, res) => {
     try {
         const confirmedComplaints = await getConfirmedComplaints();
