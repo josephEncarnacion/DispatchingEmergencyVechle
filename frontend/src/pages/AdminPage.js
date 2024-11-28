@@ -89,7 +89,7 @@ const AdminPage = () => {
 
   const fetchReceiveReports = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/ReceiveReports`);
+      const response = await axios.get(`https://newdispatchingbackend.onrender.com/api/ReceiveReports`);
       if (response.data) {
         // Store the raw data
         const complaints = response.data.complaints || [];
