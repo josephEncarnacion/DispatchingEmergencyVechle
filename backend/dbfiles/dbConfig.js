@@ -1,11 +1,14 @@
 const config ={
-    user: 'josephdev',
-    password: 'Boompanot45!',
-    server: 'dispatchig-app.database.windows.net',
-    database: 'DispatchingApp',
+    user: 'sa',
+    password: '123',
+    server: 'DESKTOP-8AGU46N',
+    database: 'application',
     options: {
-        encrypt: true, // for Azure
+        trustServerCertificate: true,
+        trustedConnection: false,
         enableArithAbort: true,
+        instancename: 'SQLEXPRESS'
     },
+    port: 1433
 }
 module.exports = config;

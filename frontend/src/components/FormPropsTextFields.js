@@ -11,6 +11,8 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import LinearProgress from '@mui/material/LinearProgress'; // Progress bar
 import axios from 'axios';
+import CancelIcon from '@mui/icons-material/Cancel';
+import { IconButton } from '@mui/material';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -37,20 +39,55 @@ const ComplaintForm = () => {
   const [ ,setFileName] = useState(''); 
   const [uploading, setUploading] = useState(false); 
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [buttonText, setButtonText] = useState('Upload Media');
+
+  const MAX_FILE_SIZE_MB = 200;
 
   // Handle file selection and create a preview URL for images
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-    setFileName(selectedFile ? selectedFile.name : '');
-
-    // Create a local preview URL if it's an image
-    if (selectedFile && (selectedFile.type.startsWith('image/') || selectedFile.type.startsWith('video/'))) {
-      const preview = URL.createObjectURL(selectedFile);
-      setPreviewUrl(preview); // Set local image or video preview
-    } else {
-      setPreviewUrl(''); // Reset if not an image or video
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      const fileSizeMB = selectedFile.size / (1024 * 1024);
+      if (fileSizeMB > MAX_FILE_SIZE_MB) {
+        alert(`File size exceeds ${MAX_FILE_SIZE_MB} MB. Please select a smaller file.`);
+        return;
+      }
+      setFile(selectedFile);
+      setPreviewUrl(URL.createObjectURL(selectedFile)); // Preview
+      simulateUpload(selectedFile);
     }
+  };
+  const simulateUpload = (file) => {
+    setUploading(true);
+    const storageRef = ref(storage, `media/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setUploadProgress(progress);
+      },
+      (error) => {
+        setSnackbarMessage('Upload failed.');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+        setUploading(false);
+      },
+      async () => {
+        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+        setFileUrl(downloadUrl);
+        setButtonText('Uploaded Media');
+        setUploading(false);
+      }
+    );
+  };
+
+  const handleCancel = () => {
+    setFile(null);
+    setUploadProgress(0);
+    setButtonText('Upload Media');
+    setPreviewUrl('');
   };
 
 
@@ -348,30 +385,34 @@ const ComplaintForm = () => {
           sx={{ mb: 2 }}
         />
 
-<       Box>
+        <Typography-style-caption align="left ">The Maximum total size of the file is {MAX_FILE_SIZE_MB} MB.</Typography-style-caption>
+        <br/>
+        <Box sx={{ mb: 2, textAlign: 'center' }}>
           <Button variant="contained" component="label">
-            Upload Media
+            {buttonText}
             <input type="file" hidden accept="image/*,video/*" onChange={handleFileChange} />
           </Button>
+          {file && (
+            <Box sx={{ mt: 2, width: '100%', position: 'relative' }}>
+              <Typography variant="body2" sx={{ mb: 1 }}>{file.name}</Typography>
+              <LinearProgress variant="determinate" value={uploadProgress} />
+              <Typography variant="body2" sx={{ mt: 1 }}>{uploadProgress.toFixed(1)}%</Typography>
+              <IconButton onClick={handleCancel} size="small" sx={{ position: 'absolute', top: 0, right: 0 }}>
+                <CancelIcon />
+              </IconButton>
+            </Box>
+          )}
+          {previewUrl && (
+            <Box sx={{ mt: 2, border: '1px solid #ccc', borderRadius: '4px', padding: 2 }}>
+              <Typography variant="body1">Media Preview:</Typography>
+              {file.type.startsWith('image/') ? (
+                <img src={previewUrl} alt="Selected file preview" style={{ maxWidth: '100%' }} />
+              ) : (
+                <video src={previewUrl} controls style={{ maxWidth: '100%' }} />
+              )}
+            </Box>
+          )}
         </Box>
-        
-        {uploading && (
-          <Box sx={{ width: '100%', mt: 2 }}>
-            <LinearProgress variant="determinate" value={uploadProgress} />
-            <Typography variant="body2" sx={{ mt: 1 }}>{Math.round(uploadProgress)}%</Typography>
-          </Box>
-        )}
-
-        {previewUrl && (
-          <Box sx={{ mt: 2, border: '1px solid #ccc', borderRadius: '4px', padding: 2, textAlign: 'center' }}>
-            <Typography variant="body1">Media Preview:</Typography>
-            {file.type.startsWith('image/') ? (
-              <img src={previewUrl} alt="Selected file preview" style={{ maxWidth: '100%', marginTop: '10px', borderRadius: '4px' }} />
-            ) : (
-              <video src={previewUrl} controls style={{ maxWidth: '100%', marginTop: '10px', borderRadius: '4px' }} />
-            )}
-          </Box>
-        )}
 
         <Box marginTop={2}>
           <Button variant="contained" color="primary" onClick={handleSubmit}>Submit Complaint </Button>
