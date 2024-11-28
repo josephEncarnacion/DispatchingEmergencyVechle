@@ -385,7 +385,7 @@ const ComplaintForm = () => {
           sx={{ mb: 2 }}
         />
 
-        <Typography variant="caption" align="left" sx={{ mb: 1, display: 'block' }}>
+<Typography variant="caption" align="left" sx={{ mb: 1, display: 'block' }}>
           The Maximum total size of the file is {MAX_FILE_SIZE_MB} MB.
         </Typography>
         <Box sx={{ mb: 2, textAlign: 'center' }}>
@@ -395,8 +395,23 @@ const ComplaintForm = () => {
           </Button>
           {file && (
             <Box sx={{ mt: 2, width: '100%', position: 'relative' }}>
-              <Typography variant="body2" sx={{ mb: 1 }}>{file.name}</Typography>
-              <LinearProgress variant="determinate" value={uploadProgress} />
+               <Typography variant="body2" sx={{ mb: 1, display: 'flex', justifyContent: 'space-between' }}>
+                <span>{file.name}</span>
+                <span>{(file.size / (1024 * 1024)).toFixed(2)} MB</span> {/* File size in MB */}
+              </Typography>
+              <br/>
+              <Box sx={{ position: 'relative', height: '12px', borderRadius: '8px', backgroundColor: '#e0e0e0', overflow: 'hidden', mb: 1 }}>
+              <LinearProgress 
+                variant="determinate" 
+                value={uploadProgress} 
+                sx={{ 
+                  height: '100%', 
+                  borderRadius: '8px', 
+                  '& .MuiLinearProgress-bar': { 
+                    backgroundColor: '#3f51b5' 
+                  } 
+                }} 
+              />
               <Typography 
                 variant="caption" 
                 sx={{ 
@@ -409,7 +424,8 @@ const ComplaintForm = () => {
                 }}
               >
                 {uploadProgress.toFixed(1)}%
-              </Typography>   
+              </Typography>
+            </Box>
               <IconButton onClick={handleCancel} size="small" sx={{ position: 'absolute', top: 0, right: 0 }}>
                 <CancelIcon />
               </IconButton>
