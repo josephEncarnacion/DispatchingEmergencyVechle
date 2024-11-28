@@ -87,7 +87,7 @@ const AdminPage = () => {
     }
   };
 
-  const fetchComplaint = async () => {
+  const fetchReceiveComplaint = async () => {
     try {
       const response = await axios.get(`https://newdispatchingbackend.onrender.com/totalcomplaints/count`);
       setTotalComplaints(response.data.count);
@@ -95,7 +95,7 @@ const AdminPage = () => {
       console.error('Error fetching metrics:', error);
     }
   };
-  const fetchEmergency = async () => {
+  const fetchReceiveEmergency = async () => {
     try {
       const response = await axios.get(`https://newdispatchingbackend.onrender.com/totalemergency/count`);
       setTotalEmergencies(response.data.count);
@@ -104,8 +104,8 @@ const AdminPage = () => {
         }
         };
   useEffect(() => {
-    fetchComplaint();
-    fetchEmergency();
+    fetchReceiveComplaint();
+    fetchReceiveEmergency();
     fetchResponseTeamLocations();
     fetchConfirmedReports();
     // Polling every 10 seconds
