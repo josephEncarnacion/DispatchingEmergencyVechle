@@ -1,7 +1,7 @@
 const config ={
     user: 'sa',
     password: '123',
-    server: 'DESKTOP-8AGU46N',
+    server: 'localhost',
     database: 'application',
     options: {
         trustServerCertificate: true,
