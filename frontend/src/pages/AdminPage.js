@@ -89,9 +89,23 @@ const AdminPage = () => {
 
   const fetchReceiveReports = async () => {
     try {
-      const response = await axios.get(`https://newdispatchingbackend.onrender.com/api/ReceiveReports`); // Correct API URL
+      const response = await axios.get(`${API_URL}/api/ReceiveReports`);
       if (response.data) {
-        setReceiveReports(response.data); // Store in state
+        // Store the raw data
+        const complaints = response.data.complaints || [];
+        const emergencies = response.data.emergencies || [];
+  
+        // Calculate totals using .filter and .length
+        const totalComplaints = complaints.filter(c => c.ComplaintType).length;
+        const totalEmergencies = emergencies.filter(e => e.EmergencyType).length;
+  
+        // Update the state
+        setReceiveReports({
+          complaints,
+          emergencies,
+          totalComplaints,
+          totalEmergencies,
+        });
       }
     } catch (error) {
       console.error('Error fetching receive reports:', error);
@@ -215,8 +229,8 @@ const AdminPage = () => {
       case 'dashboard':
         return (
             <DashboardMetrics
-              totalComplaints={totalComplaints}
-              totalEmergencies={totalEmergencies}
+              totalComplaints={receiveReports.totalComplaints || 0}
+              totalEmergencies={receiveReports.totalEmergencies || 0}
               confirmedComplaints={confirmedReports.filter(report => report.ComplaintType).length}
               confirmedEmergencies={confirmedReports.filter(report => report.EmergencyType).length}
               activeResponseTeams={activeResponseTeams}

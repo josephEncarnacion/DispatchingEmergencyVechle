@@ -277,7 +277,7 @@ const confirmEmergencyByName = async (name) => {
 const getRecieveComplaints = async () => {
     try {
       let pool = await sql.connect(config);
-      const result = await pool.request().query('SELECT COUNT(*) AS totalComplaints FROM Complaint_tbl');
+      const result = await pool.request().query('SELECT * FROM Complaint_tbl');
       return result.recordset[0].totalComplaints;
     } catch (error) {
       console.error('Error counting complaints:', error);
@@ -288,7 +288,7 @@ const getRecieveComplaints = async () => {
   const getRecieveEmergencies = async () => {
     try {
       let pool = await sql.connect(config);
-      const result = await pool.request().query('SELECT COUNT(*) AS totalEmergencies FROM Emergency_tbl');
+      const result = await pool.request().query('SELECT * FROM Emergency_tbl');
       return result.recordset[0].totalEmergencies;
     } catch (error) {
       console.error('Error counting emergencies:', error);

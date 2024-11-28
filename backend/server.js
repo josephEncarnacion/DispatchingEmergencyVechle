@@ -49,8 +49,8 @@ app.get('/api/ReceiveReports', async (req, res) => { // Fix parentheses
     const receiveComplaints = await getRecieveComplaints();
     const receiveEmergencies = await getRecieveEmergencies();
     res.json({
-      complaints: receiveComplaints || 0,
-      emergencies: receiveEmergencies || 0,
+      complaints: receiveComplaints || [],
+      emergencies: receiveEmergencies || [],
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch receive reports' });
