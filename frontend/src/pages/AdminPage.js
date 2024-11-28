@@ -87,22 +87,25 @@ const AdminPage = () => {
     }
   };
 
-  const fetchMetrics = async () => {
+  const fetchComplaint = async () => {
     try {
-      const [complaintsResponse, emergenciesResponse] = await Promise.all([
-        axios.get(`https://newdispatchingbackend.onrender.com/totalcomplaints/count`),
-        axios.get(`https://newdispatchingbackend.onrender.com/totalemergencies/count`),
-      ]);
-
-      setTotalComplaints(complaintsResponse.data.totalComplaints);
-      setTotalEmergencies(emergenciesResponse.data.totalEmergencies);
+      const response = await axios.get(`https://newdispatchingbackend.onrender.com/totalcomplaints/count`);
+      setTotalComplaints(response.data.count);
     } catch (error) {
       console.error('Error fetching metrics:', error);
     }
   };
-  
+  const fetchEmergency = async () => {
+    try {
+      const response = await axios.get(`https://newdispatchingbackend.onrender.com/totalemergency/count`);
+      setTotalEmergencies(response.data.count);
+      } catch (error) {
+        console.error('Error fetching metrics:', error);
+        }
+        };
   useEffect(() => {
-    fetchMetrics();
+    fetchComplaint();
+    fetchEmergency();
     fetchResponseTeamLocations();
     fetchConfirmedReports();
     // Polling every 10 seconds

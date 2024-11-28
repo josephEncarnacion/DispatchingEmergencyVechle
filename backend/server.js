@@ -229,7 +229,6 @@ app.post('/emergencies/confirm/:name', async (req, res) => {
 app.get('/api/notifications/:userId', async (req, res) => {
   const { userId } = req.params;
   try {
-      console.log(`Fetching notifications for userId: ${userId}`);
       const notifications = await dbOperation.getUserNotifications(userId);
       res.status(200).json({ notifications });
   } catch (error) {
