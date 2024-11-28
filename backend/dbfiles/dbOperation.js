@@ -82,6 +82,30 @@ async function insertUser(user) {
     }
 }
 
+// Get total complaint count
+const getTotalComplaints = async () => {
+    try {
+      let pool = await sql.connect(config);
+      const result = await pool.request().query('SELECT COUNT(*) AS totalComplaints FROM Complaint_tbl');
+      return result.recordset[0].totalComplaints;
+    } catch (error) {
+      console.error('Error counting complaints:', error);
+      throw error;
+    }
+  };
+  
+  // Get total emergency count
+  const getTotalEmergencies = async () => {
+    try {
+      let pool = await sql.connect(config);
+      const result = await pool.request().query('SELECT COUNT(*) AS totalEmergencies FROM Emergency_tbl');
+      return result.recordset[0].totalEmergencies;
+    } catch (error) {
+      console.error('Error counting emergencies:', error);
+      throw error;
+    }
+  };
+
 const getPaginatedComplaints = async (page, pageSize) => {
     try {
         let pool = await sql.connect(config);
@@ -323,6 +347,8 @@ const getUserNotifications = async (userId) => {
 module.exports = {
     insertEmergencyReport,
     getUserNotifications,
+    getTotalComplaints,
+    getTotalEmergencies,  
     getPaginatedEmergencies,
     getPaginatedComplaints,
     insertComplaint,

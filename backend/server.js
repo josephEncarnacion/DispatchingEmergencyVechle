@@ -60,6 +60,26 @@ app.get('/api/confirmedReports', async (req, res) => {
 app.get('/api', (req, res) => {
   res.json({ message: 'API endpoint is working' });
 });
+
+app.get('/totalcomplaints/count', async (req, res) => {
+  try {
+    const totalComplaints = await dbOperations.getTotalComplaints();
+    res.json({ totalComplaints });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to count complaints' });
+  }
+});
+
+// Endpoint to get total emergency count
+app.get('/totalemergencies/count', async (req, res) => {
+  try {
+    const totalEmergencies = await dbOperations.getTotalEmergencies();
+    res.json({ totalEmergencies });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to count emergencies' });
+  }
+});
+
 app.get('/complaints', async (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
   try {
