@@ -432,7 +432,7 @@ const AdminPage = () => {
     </Box>
   );
 };
-const DashboardMetrics = ({  confirmedComplaints, confirmedEmergencies, activeResponseTeams }) => (
+const DashboardMetrics = ({  receivedComplaints, receivedEmergencies , confirmedComplaints, confirmedEmergencies, activeResponseTeams }) => (
   <Box sx={{ mt: 4 }}>
     <Typography variant="h5" gutterBottom>Dashboard Overview</Typography>
     <Box
@@ -443,15 +443,28 @@ const DashboardMetrics = ({  confirmedComplaints, confirmedEmergencies, activeRe
         mb: 4,
       }}
     >
+
       <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e3f2fd', color: '#2196f3' }}>
         <CheckCircleIcon sx={{ fontSize: 40, color: '#2196f3' }} />
-        <Typography variant="h6">Confirmed Complaints</Typography>
+        <Typography variant="h6">Received Complaints</Typography>
+        <Typography variant="h4">{receivedComplaints}</Typography>
+      </Paper>
+
+      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffebee', color: '#e91e63' }}>
+        <ReportProblemIcon sx={{ fontSize: 40, color: '#e91e63' }} />
+        <Typography variant="h6">Received Emergencies</Typography>
+        <Typography variant="h4">{receivedEmergencies}</Typography>
+      </Paper>
+
+      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e3f2fd', color: '#2196f3' }}>
+        <CheckCircleIcon sx={{ fontSize: 40, color: '#2196f3' }} />
+        <Typography variant="h6">Ongoing Complaints</Typography>
         <Typography variant="h4">{confirmedComplaints}</Typography>
       </Paper>
 
       <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffebee', color: '#e91e63' }}>
         <ReportProblemIcon sx={{ fontSize: 40, color: '#e91e63' }} />
-        <Typography variant="h6">Confirmed Emergencies</Typography>
+        <Typography variant="h6">Ongoing Emergencies</Typography>
         <Typography variant="h4">{confirmedEmergencies}</Typography>
       </Paper>
 
