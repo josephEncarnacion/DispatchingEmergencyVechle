@@ -52,8 +52,8 @@ const AdminPage = () => {
   const [responseTeamLocations, setResponseTeamLocations] = useState([]);
   const [confirmedReports, setConfirmedReports] = useState([]); // New state for confirmed reports
   const [activeResponseTeams, setActiveResponseTeams] = useState(0);  // New state for active teams count
-  const [receivedComplaints, setReceivedComplaints] = useState(0);
-  const [receivedEmergencies, setReceivedEmergencies] = useState(0);
+  const [complaintsCount, setComplaintsCount] = useState(0);
+  const [emergenciesCount, setEmergenciesCount] = useState(0);
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
 
@@ -86,23 +86,33 @@ const AdminPage = () => {
     }
   };
 
- const fetchReceivedMetrics = async () => {
+  const fetchComplaintsCount = async () => {
     try {
-      const response = await axios.get(`https://newdispatchingbackend.onrender.com/api/metrics`);
+      const response = await axios.get('https://newdispatchingbackend.onrender.com/api/complaints/count');
       if (response.data.success) {
-        const { receivedComplaints, receivedEmergencies } = response.data.metrics;
-        setReceivedComplaints(receivedComplaints);
-        setReceivedEmergencies(receivedEmergencies);
+        setComplaintsCount(response.data.count);
       }
     } catch (error) {
-      console.error('Error fetching metrics:', error);
+      console.error('Error fetching complaints count:', error);
     }
   };
 
+  // Fetch emergencies count
+  const fetchEmergenciesCount = async () => {
+    try {
+      const response = await axios.get('https://newdispatchingbackend.onrender.com/api/emergencies/count');
+      if (response.data.success) {
+        setEmergenciesCount(response.data.count);
+      }
+    } catch (error) {
+      console.error('Error fetching emergencies count:', error);
+    }
+  };
   
   useEffect(() => {
     // Initial fetch
-    fetchReceivedMetrics();
+    fetchComplaintsCount();
+    fetchEmergenciesCount();
     fetchResponseTeamLocations();
     fetchConfirmedReports();
     // Polling every 10 seconds
@@ -217,8 +227,8 @@ const AdminPage = () => {
       case 'dashboard':
         return (
             <DashboardMetrics
-              receivedComplaints={receivedComplaints}
-              receivedEmergencies={receivedEmergencies}
+              complaintsCount={complaintsCount}
+              emergenciesCount={emergenciesCount}
               confirmedComplaints={confirmedReports.filter(report => report.ComplaintType).length}
               confirmedEmergencies={confirmedReports.filter(report => report.EmergencyType).length}
               activeResponseTeams={activeResponseTeams}
@@ -457,13 +467,13 @@ const DashboardMetrics = ({  receivedComplaints, receivedEmergencies,confirmedCo
       <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ede7f6', color: '#673ab7' }}>
         <ReportProblemIcon sx={{ fontSize: 40, color: '#673ab7' }} />
         <Typography variant="h6">Received Complaints</Typography>
-        <Typography variant="h4">{receivedComplaints}</Typography>
+        <Typography variant="h4">{complaintsCount}</Typography>
       </Paper>
 
       <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#fce4ec', color: '#c2185b' }}>
         <ReportIcon sx={{ fontSize: 40, color: '#c2185b' }} />
         <Typography variant="h6">Received Emergencies</Typography>
-        <Typography variant="h4">{receivedEmergencies}</Typography>
+        <Typography variant="h4">{emergenciesCount}</Typography>
       </Paper>
 
       <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e3f2fd', color: '#2196f3' }}>

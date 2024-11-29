@@ -27,33 +27,29 @@ app.get('/api/complaints/count', async (req, res) => {
   }
 });
 
-// Route for received emergencies count
-app.get('/api/emergencies/count', async (req, res) => {
+// Fetch complaints count
+app.get('/api/complaints/count', async (req, res) => {
   try {
-      const count = await getReceivedEmergenciesCount();
-      res.json({ success: true, count });
+    let pool = await sql.connect(config);
+    const query = 'SELECT COUNT(*) AS count FROM Complaint_tbl';
+    const result = await pool.request().query(query);
+    res.json({ success: true, count: result.recordset[0].count });
   } catch (error) {
-      res.status(500).json({ success: false, message: 'Error fetching emergencies count' });
+    console.error('Error fetching complaints count:', error);
+    res.status(500).json({ success: false, message: 'Error fetching complaints count' });
   }
 });
 
-app.get('/api/metrics', async (req, res) => {
+// Fetch emergencies count
+app.get('/api/emergencies/count', async (req, res) => {
   try {
-      const [complaintsCount, emergenciesCount] = await Promise.all([
-          getReceivedComplaintsCount(),
-          getReceivedEmergenciesCount()
-      ]);
-
-      res.json({
-          success: true,
-          metrics: {
-              receivedComplaints: complaintsCount,
-              receivedEmergencies: emergenciesCount,
-          }
-      });
+    let pool = await sql.connect(config);
+    const query = 'SELECT COUNT(*) AS count FROM Emergency_tbl';
+    const result = await pool.request().query(query);
+    res.json({ success: true, count: result.recordset[0].count });
   } catch (error) {
-      console.error('Error fetching metrics:', error);
-      res.status(500).json({ success: false, message: 'Error fetching metrics' });
+    console.error('Error fetching emergencies count:', error);
+    res.status(500).json({ success: false, message: 'Error fetching emergencies count' });
   }
 });
 
