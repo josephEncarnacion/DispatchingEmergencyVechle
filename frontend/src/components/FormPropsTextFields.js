@@ -404,7 +404,7 @@ const ComplaintForm = () => {
               <LinearProgress 
                 variant="determinate" 
                 value={uploadProgress} 
-                sx={{ 
+                sx={{   
                   height: '100%', 
                   borderRadius: '8px', 
                   '& .MuiLinearProgress-bar': { 
