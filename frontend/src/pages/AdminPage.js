@@ -82,16 +82,25 @@ const AdminPage = () => {
       setEmergencies(response.data.emergencies || []);
       setConfirmedReports([...response.data.complaints, ...response.data.emergencies]);
             // Count total received complaints and emergencies
-            setReceivedComplaintsCount(response.data.complaints.length);
-            setReceivedEmergenciesCount(response.data.emergencies.length);
       
     } catch (error) {
       console.error('Error fetching confirmed reports:', error);
     }
   };
+
+  const fetchRecievedReports =  async () => {
+    try {
+      const response = await axios.get(`https://newdispatchingbackend.onrender.com/api/RecievedReports`);
+      setReceivedComplaintsCount(response.data.recievedcomplaints.length);
+      setReceivedEmergenciesCount(response.data.recievedemergencies.length);
+      } catch (error) {
+        console.error('Error fetching received reports:', error);
+        }
+  }
   
   useEffect(() => {
     // Initial fetch
+    fetchRecievedReports();
     fetchResponseTeamLocations();
     fetchConfirmedReports();
     // Polling every 10 seconds
