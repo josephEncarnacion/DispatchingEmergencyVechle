@@ -88,7 +88,7 @@ const AdminPage = () => {
 
  const fetchReceivedMetrics = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/metrics`);
+      const response = await axios.get(`https://newdispatchingbackend.onrender.com/api/metrics`);
       if (response.data.success) {
         const { receivedComplaints, receivedEmergencies } = response.data.metrics;
         setReceivedComplaints(receivedComplaints);
@@ -465,7 +465,7 @@ const DashboardMetrics = ({  receivedComplaints, receivedEmergencies,confirmedCo
         <Typography variant="h6">Received Emergencies</Typography>
         <Typography variant="h4">{receivedEmergencies}</Typography>
       </Paper>
-      
+
       <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e3f2fd', color: '#2196f3' }}>
         <CheckCircleIcon sx={{ fontSize: 40, color: '#2196f3' }} />
         <Typography variant="h6">Confirmed Complaints</Typography>
