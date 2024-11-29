@@ -177,14 +177,15 @@ const confirmComplaintByName = async (name) => {
                 .input('address', sql.VarChar, complaint.Address)
                 .input('complaintType', sql.VarChar, complaint.ComplaintType)
                 .input('complaintText', sql.Text, complaint.ComplaintText)
+                .input('dateConfirmed', sql.DateTime, new Date()) // Capture current date and time
                 .input('latitude', sql.Float, complaint.Latitude)
                 .input('longitude', sql.Float, complaint.Longitude)
                 .input('mediaUrl', sql.VarChar, mediaUrl)
                 .input('userId', sql.Int, userId)
 
                 .query(`INSERT INTO ConfirmedComplaint_tbl 
-                        (Name, Address, ComplaintType, ComplaintText, Latitude, Longitude, MediaURL, user_id) 
-                        VALUES (@name, @address, @complaintType, @complaintText, @latitude, @longitude, @mediaUrl, @userId)`);
+                        (Name, Address, ComplaintType, ComplaintText, DateConfirmed,Latitude, Longitude, MediaURL, user_id) 
+                        VALUES (@name, @address, @complaintType, @complaintText,  @dateConfirmed,@latitude, @longitude, @mediaUrl, @userId)`);
 
                         
              // Add notification for the user who submitted the emergency
@@ -234,15 +235,16 @@ const confirmEmergencyByName = async (name) => {
                 .input('address', sql.VarChar, emergency.Address)
                 .input('emergencyType', sql.VarChar, emergency.EmergencyType)
                 .input('emergencyText', sql.Text, emergency.EmergencyText)
+                .input('dateConfirmed', sql.DateTime, new Date()) // Capture current date and time
                 .input('latitude', sql.Float, emergency.Latitude)
                 .input('longitude', sql.Float, emergency.Longitude)
                 .input('mediaUrl', sql.VarChar, emergency.MediaURL || null)
                 .input('userId', sql.Int, userId)
                 .query(`
                     INSERT INTO ConfirmedEmergency_tbl 
-                    (Name, Address, EmergencyType, EmergencyText, Latitude, Longitude, MediaURL, user_id) 
+                    (Name, Address, EmergencyType, EmergencyText, DateConfirmed,Latitude, Longitude, MediaURL, user_id) 
                     VALUES 
-                    (@name, @address, @emergencyType, @emergencyText, @latitude, @longitude, @mediaUrl, @userId)
+                    (@name, @address, @emergencyType, @emergencyText,@dateConfirmed. @latitude, @longitude, @mediaUrl, @userId)
                 `);
 
             // Add notification for the user who submitted the emergency
