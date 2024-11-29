@@ -54,10 +54,14 @@ const AdminPage = () => {
   const [responseTeamLocations, setResponseTeamLocations] = useState([]);
   const [confirmedReports, setConfirmedReports] = useState([]); // New state for confirmed reports
   const [activeResponseTeams, setActiveResponseTeams] = useState(0);  // New state for active teams count
-  const [newReportsCount, setNewReportsCount] = useState(0);
+  const [newComplaintsCount, setNewComplaintsCount] = useState(0);
+  const [newEmergenciesCount, setNewEmergenciesCount] = useState(0);
 
+  const prevComplaints = useRef([]);
+  const prevEmergencies = useRef([]);
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
+
   const fetchData = async () => {
     try {
       const [complaintsResponse, emergenciesResponse] = await Promise.all([
@@ -65,17 +69,23 @@ const AdminPage = () => {
         axios.get(`https://newdispatchingbackend.onrender.com/emergencies`),
       ]);
 
-      const newComplaints = complaintsResponse.data.filter(
-        (complaint) => !complaints.some((existing) => existing.id === complaint.id)
+      const currentComplaints = complaintsResponse.data;
+      const currentEmergencies = emergenciesResponse.data;
+
+  const newComplaints = currentComplaints.filter(
+        (complaint) => !prevComplaints.current.some((prev) => prev.id === complaint.id)
       );
 
-      const newEmergencies = emergenciesResponse.data.filter(
-        (emergency) => !emergencies.some((existing) => existing.id === emergency.id)
+      // Identify new emergencies
+      const newEmergencies = currentEmergencies.filter(
+        (emergency) => !prevEmergencies.current.some((prev) => prev.id === emergency.id)
       );
 
-      setComplaints(complaintsResponse.data);
-      setEmergencies(emergenciesResponse.data);
-      setNewReportsCount(newComplaints.length + newEmergencies.length);
+      // Update new counts
+      setNewComplaintsCount(newComplaints.length);
+      setNewEmergenciesCount(newEmergencies.length);
+      prevComplaints.current = currentComplaints;
+      prevEmergencies.current = currentEmergencies;
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -117,10 +127,13 @@ const AdminPage = () => {
     fetchResponseTeamLocations();
     fetchConfirmedReports();
     // Polling every 10 seconds
-    const intervalId = setInterval(fetchResponseTeamLocations,      fetchData,   POLLING_INTERVAL);
-  
+    const intervalId = setInterval(() => {
+      fetchData();
+      fetchResponseTeamLocations();
+    }, POLLING_INTERVAL);
+
     return () => clearInterval(intervalId);
-  }, [complaints, emergencies]);
+  }, []);
   
 
 
@@ -228,7 +241,8 @@ const AdminPage = () => {
       case 'dashboard':
         return (
             <DashboardMetrics
-              newReportsCount={newReportsCount}
+              newComplaintsCount={newComplaintsCount}
+              newEmergenciesCount={newEmergenciesCount}
               confirmedComplaints={confirmedReports.filter(report => report.ComplaintType).length}
               confirmedEmergencies={confirmedReports.filter(report => report.EmergencyType).length}
               activeResponseTeams={activeResponseTeams}
@@ -453,7 +467,7 @@ const AdminPage = () => {
     </Box>
   );
 };
-const DashboardMetrics = ({  newReportsCount,confirmedComplaints, confirmedEmergencies, activeResponseTeams }) => (
+const DashboardMetrics = ({  newComplaintsCount, newEmergenciesCount,confirmedComplaints, confirmedEmergencies, activeResponseTeams }) => (
   <Box sx={{ mt: 4 }}>
     <Typography variant="h5" gutterBottom>Dashboard Overview</Typography>
     <Box
@@ -464,10 +478,16 @@ const DashboardMetrics = ({  newReportsCount,confirmedComplaints, confirmedEmerg
         mb: 4,
       }}
     >
-      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffe0b2', color: '#f57c00' }}>
+    <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffe0b2', color: '#f57c00' }}>
         <NotificationsActiveIcon sx={{ fontSize: 40, color: '#f57c00' }} />
-        <Typography variant="h6">New Reports</Typography>
-        <Typography variant="h4">{newReportsCount}</Typography>
+        <Typography variant="h6">New Complaints</Typography>
+        <Typography variant="h4">{newComplaintsCount}</Typography>
+      </Paper>
+
+      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffebee', color: '#e91e63' }}>
+        <NotificationsActiveIcon sx={{ fontSize: 40, color: '#e91e63' }} />
+        <Typography variant="h6">New Emergencies</Typography>
+        <Typography variant="h4">{newEmergenciesCount}</Typography>
       </Paper>
 
       <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e3f2fd', color: '#2196f3' }}>
