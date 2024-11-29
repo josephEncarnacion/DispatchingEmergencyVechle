@@ -275,30 +275,10 @@ const confirmEmergencyByName = async (name) => {
 };
 
 
-const getComplaints = async() =>{
-try{
-    let pool = await sql.connect(config);
-    const query = 'SELECT Name, Address, ComplaintType, ComplaintText, Latitude, Longitude, MediaUrl FROM Complaint_tbl';
-    const result = await pool.request().query(query);
-    return result.recordset;
-    } catch (error) {
-        console.error('Error getting complaints:', error);
-        throw error;
-}
-}
-const getEmergencies = async() =>{
-    try{
-        let pool = await sql.connect(config);
-        const query = 'SELECT Name, Address, EmergencytType, EmergencyText, Latitude, Longitude, MediaUrl FROM Emergency_tbl';
-        const result = await pool.request().query(query);
-        return result.recordset;
-        } catch (error) {
-            console.error('Error getting complaints:', error);
-            throw error;
-    }
-    }
+
+
 const getConfirmedComplaints = async () => {
-    try {   
+    try {
         let pool = await sql.connect(config);
         const query = 'SELECT Name, Address, ComplaintType, ComplaintText, Latitude, Longitude, MediaUrl FROM ConfirmedComplaint_tbl';
         const result = await pool.request().query(query);
@@ -342,8 +322,6 @@ const getUserNotifications = async (userId) => {
 
 
 module.exports = {
-    getComplaints,
-    getEmergencies,
     insertEmergencyReport,
     getUserNotifications,
     getPaginatedEmergencies,
