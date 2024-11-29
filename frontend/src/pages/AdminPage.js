@@ -128,8 +128,7 @@ const AdminPage = () => {
     fetchConfirmedReports();
     // Polling every 10 seconds
     const intervalId = setInterval(() => {
-      fetchData();
-      fetchResponseTeamLocations();
+    fetchResponseTeamLocations();
     }, POLLING_INTERVAL);
 
     return () => clearInterval(intervalId);
