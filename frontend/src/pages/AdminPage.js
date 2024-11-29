@@ -52,6 +52,8 @@ const AdminPage = () => {
   const [responseTeamLocations, setResponseTeamLocations] = useState([]);
   const [confirmedReports, setConfirmedReports] = useState([]); // New state for confirmed reports
   const [activeResponseTeams, setActiveResponseTeams] = useState(0);  // New state for active teams count
+  const [receivedComplaints, setReceivedComplaints] = useState(0);
+  const [receivedEmergencies, setReceivedEmergencies] = useState(0);
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
 
@@ -83,9 +85,24 @@ const AdminPage = () => {
       console.error('Error fetching confirmed reports:', error);
     }
   };
+
+ const fetchReceivedMetrics = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/metrics`);
+      if (response.data.success) {
+        const { receivedComplaints, receivedEmergencies } = response.data.metrics;
+        setReceivedComplaints(receivedComplaints);
+        setReceivedEmergencies(receivedEmergencies);
+      }
+    } catch (error) {
+      console.error('Error fetching metrics:', error);
+    }
+  };
+
   
   useEffect(() => {
     // Initial fetch
+    fetchReceivedMetrics();
     fetchResponseTeamLocations();
     fetchConfirmedReports();
     // Polling every 10 seconds
@@ -200,6 +217,8 @@ const AdminPage = () => {
       case 'dashboard':
         return (
             <DashboardMetrics
+              receivedComplaints={receivedComplaints}
+              receivedEmergencies={receivedEmergencies}
               confirmedComplaints={confirmedReports.filter(report => report.ComplaintType).length}
               confirmedEmergencies={confirmedReports.filter(report => report.EmergencyType).length}
               activeResponseTeams={activeResponseTeams}
@@ -424,7 +443,7 @@ const AdminPage = () => {
     </Box>
   );
 };
-const DashboardMetrics = ({  confirmedComplaints, confirmedEmergencies, activeResponseTeams }) => (
+const DashboardMetrics = ({  receivedComplaints, receivedEmergencies,confirmedComplaints, confirmedEmergencies, activeResponseTeams }) => (
   <Box sx={{ mt: 4 }}>
     <Typography variant="h5" gutterBottom>Dashboard Overview</Typography>
     <Box
@@ -435,6 +454,18 @@ const DashboardMetrics = ({  confirmedComplaints, confirmedEmergencies, activeRe
         mb: 4,
       }}
     >
+      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ede7f6', color: '#673ab7' }}>
+        <ReportProblemIcon sx={{ fontSize: 40, color: '#673ab7' }} />
+        <Typography variant="h6">Received Complaints</Typography>
+        <Typography variant="h4">{receivedComplaints}</Typography>
+      </Paper>
+
+      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#fce4ec', color: '#c2185b' }}>
+        <ReportIcon sx={{ fontSize: 40, color: '#c2185b' }} />
+        <Typography variant="h6">Received Emergencies</Typography>
+        <Typography variant="h4">{receivedEmergencies}</Typography>
+      </Paper>
+      
       <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e3f2fd', color: '#2196f3' }}>
         <CheckCircleIcon sx={{ fontSize: 40, color: '#2196f3' }} />
         <Typography variant="h6">Confirmed Complaints</Typography>

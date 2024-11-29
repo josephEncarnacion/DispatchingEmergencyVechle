@@ -300,6 +300,8 @@ const getConfirmedEmergencies = async () => {
     }
 };
 
+
+
 const getUserNotifications = async (userId) => {
     try {
       let pool = await sql.connect(config);
@@ -321,7 +323,34 @@ const getUserNotifications = async (userId) => {
   };
 
 
-module.exports = {
+  const getReceivedComplaintsCount = async () => {
+    try {
+        let pool = await sql.connect(config);
+        const query = 'SELECT COUNT(*) AS count FROM Complaint_tbl'; // Adjust table name if necessary
+        const result = await pool.request().query(query);
+        return result.recordset[0].count;
+    } catch (error) {
+        console.error('Error retrieving complaints count:', error);
+        throw error;
+    }
+};
+
+// Function to get the count of received emergencies
+const getReceivedEmergenciesCount = async () => {
+    try {
+        let pool = await sql.connect(config);
+        const query = 'SELECT COUNT(*) AS count FROM Emergency_tbl'; // Adjust table name if necessary
+        const result = await pool.request().query(query);
+        return result.recordset[0].count;
+    } catch (error) {
+        console.error('Error retrieving emergencies count:', error);
+        throw error;
+    }
+};
+
+module.exports = { 
+    getReceivedComplaintsCount,
+    getReceivedEmergenciesCount,
     insertEmergencyReport,
     getUserNotifications,
     getPaginatedEmergencies,

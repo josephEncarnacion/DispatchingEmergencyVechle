@@ -17,6 +17,46 @@ app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 
 
+
+app.get('/api/complaints/count', async (req, res) => {
+  try {
+      const count = await getReceivedComplaintsCount();
+      res.json({ success: true, count });
+  } catch (error) {
+      res.status(500).json({ success: false, message: 'Error fetching complaints count' });
+  }
+});
+
+// Route for received emergencies count
+app.get('/api/emergencies/count', async (req, res) => {
+  try {
+      const count = await getReceivedEmergenciesCount();
+      res.json({ success: true, count });
+  } catch (error) {
+      res.status(500).json({ success: false, message: 'Error fetching emergencies count' });
+  }
+});
+
+app.get('/api/metrics', async (req, res) => {
+  try {
+      const [complaintsCount, emergenciesCount] = await Promise.all([
+          getReceivedComplaintsCount(),
+          getReceivedEmergenciesCount()
+      ]);
+
+      res.json({
+          success: true,
+          metrics: {
+              receivedComplaints: complaintsCount,
+              receivedEmergencies: emergenciesCount,
+          }
+      });
+  } catch (error) {
+      console.error('Error fetching metrics:', error);
+      res.status(500).json({ success: false, message: 'Error fetching metrics' });
+  }
+});
+
 // API to update the response team's location
 app.post('/api/updateLocation', (req, res) => {
   const { latitude, longitude, teamId } = req.body; // Include teamId to track each response team
