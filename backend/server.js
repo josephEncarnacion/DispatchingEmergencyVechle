@@ -17,42 +17,6 @@ app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 
 
-
-app.get('/api/complaints/count', async (req, res) => {
-  try {
-      const count = await getReceivedComplaintsCount();
-      res.json({ success: true, count });
-  } catch (error) {
-      res.status(500).json({ success: false, message: 'Error fetching complaints count' });
-  }
-});
-
-// Fetch complaints count
-app.get('/api/complaints/count', async (req, res) => {
-  try {
-    let pool = await sql.connect(config);
-    const query = 'SELECT COUNT(*) AS count FROM Complaint_tbl';
-    const result = await pool.request().query(query);
-    res.json({ success: true, count: result.recordset[0].count });
-  } catch (error) {
-    console.error('Error fetching complaints count:', error);
-    res.status(500).json({ success: false, message: 'Error fetching complaints count' });
-  }
-});
-
-// Fetch emergencies count
-app.get('/api/emergencies/count', async (req, res) => {
-  try {
-    let pool = await sql.connect(config);
-    const query = 'SELECT COUNT(*) AS count FROM Emergency_tbl';
-    const result = await pool.request().query(query);
-    res.json({ success: true, count: result.recordset[0].count });
-  } catch (error) {
-    console.error('Error fetching emergencies count:', error);
-    res.status(500).json({ success: false, message: 'Error fetching emergencies count' });
-  }
-});
-
 // API to update the response team's location
 app.post('/api/updateLocation', (req, res) => {
   const { latitude, longitude, teamId } = req.body; // Include teamId to track each response team
