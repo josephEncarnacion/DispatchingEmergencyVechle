@@ -52,6 +52,8 @@ const AdminPage = () => {
   const [responseTeamLocations, setResponseTeamLocations] = useState([]);
   const [confirmedReports, setConfirmedReports] = useState([]); // New state for confirmed reports
   const [activeResponseTeams, setActiveResponseTeams] = useState(0);  // New state for active teams count
+  const [receivedComplaintsCount, setReceivedComplaintsCount] = useState(0);
+  const [receivedEmergenciesCount, setReceivedEmergenciesCount] = useState(0);
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
 
@@ -79,6 +81,10 @@ const AdminPage = () => {
       setComplaints(response.data.complaints || []);
       setEmergencies(response.data.emergencies || []);
       setConfirmedReports([...response.data.complaints, ...response.data.emergencies]);
+            // Count total received complaints and emergencies
+            setReceivedComplaintsCount(response.data.complaints.length);
+            setReceivedEmergenciesCount(response.data.emergencies.length);
+      
     } catch (error) {
       console.error('Error fetching confirmed reports:', error);
     }
@@ -200,6 +206,8 @@ const AdminPage = () => {
       case 'dashboard':
         return (
             <DashboardMetrics
+              receivedComplaints={receivedComplaintsCount}
+              receivedEmergencies={receivedEmergenciesCount}
               confirmedComplaints={confirmedReports.filter(report => report.ComplaintType).length}
               confirmedEmergencies={confirmedReports.filter(report => report.EmergencyType).length}
               activeResponseTeams={activeResponseTeams}
