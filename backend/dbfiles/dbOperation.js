@@ -345,9 +345,10 @@ const getUserNotifications = async (userId) => {
                 .input('longitude', sql.Float, complaint.Longitude)
                 .input('mediaUrl', sql.VarChar, complaint.MediaURL)
                 .input('resolvedAt', sql.DateTime, new Date())
+                .input('ConfirmedAt', sql.DateTime, complaint.DateConfirmed)
                 .query(`
-                    INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt)
-                    VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt)
+                    INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt,  ConfirmedAt)
+                    VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt, @ConfirmedAt)
                 `);
 
             // Delete from ConfirmedComplaint_tbl
@@ -378,9 +379,10 @@ const getUserNotifications = async (userId) => {
                 .input('longitude', sql.Float, emergency.Longitude)
                 .input('mediaUrl', sql.VarChar, emergency.MediaURL)
                 .input('resolvedAt', sql.DateTime, new Date())
+                .input('ConfirmedAt', sql.DateTime, emergency.DateConfirmed)
                 .query(`
-                    INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt)
-                    VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt)
+                    INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt, ConfirmedAt)
+                    VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt, @ConfirmedAt)
                 `);
 
             // Delete from ConfirmedEmergency_tbl
