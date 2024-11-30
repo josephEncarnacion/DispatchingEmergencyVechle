@@ -222,6 +222,7 @@ app.get('/api/notifications/:userId', async (req, res) => {
   }
 });
 app.post('/api/resolveReport', async (req, res) => {
+  console.log('Received resolve request:', req.body);
   const { name, reportType } = req.body;
 
   if (!name || !reportType) {
@@ -245,13 +246,19 @@ app.post('/api/resolveReport', async (req, res) => {
 });
 
 // Endpoint to get all resolved reports
-app.get('/api/resolvedReports', async (req, res) => {
+app.post('/api/resolveReport', async (req, res) => {
+  const { name } = req.body;
+
+  if (!name) {
+      return res.status(400).json({ success: false, message: 'Report name is required.' });
+  }
+
   try {
-      const resolvedReports = await dbOperation.getResolvedReports(); // Implement this in dbOperation
-      res.status(200).json({ success: true, resolvedReports });
+      await dbOperation.resolveReportByName(name);
+      res.status(200).json({ success: true, message: 'Report resolved successfully.' });
   } catch (error) {
-      console.error('Error fetching resolved reports:', error);
-      res.status(500).json({ success: false, message: 'Failed to fetch resolved reports.' });
+      console.error('Error resolving report:', error);
+      res.status(500).json({ success: false, message: 'Failed to resolve the report.' });
   }
 });
 
