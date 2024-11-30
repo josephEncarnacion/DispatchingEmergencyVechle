@@ -336,6 +336,7 @@ const getUserNotifications = async (userId) => {
 
             // Insert into ResolvedReports_tbl
             await pool.request()
+                .input('id', sql.Int, emergency.ConfirmedEmergencyID)
                 .input('name', sql.VarChar, complaint.Name)
                 .input('address', sql.VarChar, complaint.Address)
                 .input('type', sql.VarChar, 'complaint')
@@ -345,8 +346,8 @@ const getUserNotifications = async (userId) => {
                 .input('mediaUrl', sql.VarChar, complaint.MediaUrl)
                 .input('resolvedAt', sql.DateTime, new Date())
                 .query(`
-                    INSERT INTO ResolvedReports_tbl ( Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt)
-                    VALUES ( @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt)
+                    INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt)
+                    VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt)
                 `);
 
             // Delete from ConfirmedComplaint_tbl
@@ -368,6 +369,7 @@ const getUserNotifications = async (userId) => {
 
             // Insert into ResolvedReports_tbl
             await pool.request()
+                .input('id', sql.Int, emergency.ConfirmedEmergencyID)
                 .input('name', sql.VarChar, emergency.Name)
                 .input('address', sql.VarChar, emergency.Address)
                 .input('type', sql.VarChar, 'emergency')
@@ -377,8 +379,8 @@ const getUserNotifications = async (userId) => {
                 .input('mediaUrl', sql.VarChar, emergency.MediaUrl)
                 .input('resolvedAt', sql.DateTime, new Date())
                 .query(`
-                    INSERT INTO ResolvedReports_tbl ( Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt)
-                    VALUES (@name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt)
+                    INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt)
+                    VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt)
                 `);
 
             // Delete from ConfirmedEmergency_tbl
