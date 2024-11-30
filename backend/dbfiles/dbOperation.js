@@ -336,7 +336,7 @@ const getUserNotifications = async (userId) => {
 
             // Insert into ResolvedReports_tbl
             await pool.request()
-                .input('id', sql.Int, emergency.ConfirmedEmergencyID)
+                .input('id', sql.Int, complaint.ConfirmedComplaintID)
                 .input('name', sql.VarChar, complaint.Name)
                 .input('address', sql.VarChar, complaint.Address)
                 .input('type', sql.VarChar, 'complaint')
