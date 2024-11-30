@@ -343,7 +343,7 @@ const getUserNotifications = async (userId) => {
                 .input('text', sql.Text, complaint.ComplaintText)
                 .input('latitude', sql.Float, complaint.Latitude)
                 .input('longitude', sql.Float, complaint.Longitude)
-                .input('mediaUrl', sql.VarChar, complaint.MediaUrl)
+                .input('mediaUrl', sql.VarChar, complaint.MediaURL)
                 .input('resolvedAt', sql.DateTime, new Date())
                 .query(`
                     INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt)
@@ -376,7 +376,7 @@ const getUserNotifications = async (userId) => {
                 .input('text', sql.Text, emergency.EmergencyText)
                 .input('latitude', sql.Float, emergency.Latitude)
                 .input('longitude', sql.Float, emergency.Longitude)
-                .input('mediaUrl', sql.VarChar, emergency.MediaUrl)
+                .input('mediaUrl', sql.VarChar, emergency.MediaURL)
                 .input('resolvedAt', sql.DateTime, new Date())
                 .query(`
                     INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt)
