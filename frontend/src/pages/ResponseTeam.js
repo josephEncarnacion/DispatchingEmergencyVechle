@@ -152,7 +152,7 @@ const ResponseTeam = () => {
    // New function to handle resolving a report
    const resolveReport = async (reportId, reportType) => {
     try {
-        await axios.post(`${API_URL}/api/resolveReport`, { name: reportId, reportType });
+        await axios.post(`https://newdispatchingbackend.onrender.com/api/resolveReport`, { name: reportId, reportType });
         setConfirmedReports((prevReports) => prevReports.filter((report) => report.id !== reportId));
     } catch (error) {
         console.error('Error resolving report:', error);
