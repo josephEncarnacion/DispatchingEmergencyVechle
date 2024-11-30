@@ -149,6 +149,16 @@ const ResponseTeam = () => {
     }
   };
 
+   // New function to handle resolving a report
+   const resolveReport = async (reportId, reportType) => {
+    try {
+        await axios.post(`${API_URL}/api/resolveReport`, { name: reportId, reportType });
+        setConfirmedReports((prevReports) => prevReports.filter((report) => report.id !== reportId));
+    } catch (error) {
+        console.error('Error resolving report:', error);
+    }
+};
+
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
       <AppBar position="static">
@@ -213,6 +223,14 @@ const ResponseTeam = () => {
                     )}                    <Typography> </Typography>
                     <Button variant="contained" onClick={() => getDirections(report, index)}>
                       Get Directions
+                    </Button>
+                    <Button
+                       variant="contained"
+                       color="success"
+                       onClick={() => resolveReport(report.id, report.type === 'complaint' ? 'complaint' : 'emergency')}
+                       sx={{ ml: 1 }}
+                    >
+                      Resolve
                     </Button>
                   </Popup>
                 </Marker>

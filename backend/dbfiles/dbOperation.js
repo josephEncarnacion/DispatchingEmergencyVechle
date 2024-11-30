@@ -322,8 +322,107 @@ const getUserNotifications = async (userId) => {
     }
   };
 
+  const resolveComplaintByName = async (name) => {
+    try {
+        let pool = await sql.connect(config);
+
+        // Select the confirmed complaint to resolve
+        let complaintResult = await pool.request()
+            .input('name', sql.VarChar, name)
+            .query('SELECT * FROM ConfirmedComplaint_tbl WHERE Name = @name');
+
+        if (complaintResult.recordset.length > 0) {
+            const complaint = complaintResult.recordset[0];
+
+            // Move the complaint to ResolvedReports_tbl
+            await pool.request()
+                .input('id', sql.Int, complaint.id)
+                .input('name', sql.VarChar, complaint.Name)
+                .input('address', sql.VarChar, complaint.Address)
+                .input('type', sql.VarChar, 'complaint') // Fixed type as 'complaint'
+                .input('text', sql.Text, complaint.ComplaintText)
+                .input('latitude', sql.Float, complaint.Latitude)
+                .input('longitude', sql.Float, complaint.Longitude)
+                .input('mediaUrl', sql.VarChar, complaint.MediaUrl)
+                .input('resolvedAt', sql.DateTime, new Date()) // Current date-time
+                .query(`INSERT INTO ResolvedReports_tbl 
+                        (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt) 
+                        VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt)`);
+
+            // Delete the confirmed complaint
+            await pool.request()
+                .input('name', sql.VarChar, name)
+                .query('DELETE FROM ConfirmedComplaint_tbl WHERE Name = @name');
+        } else {
+            throw new Error(`Complaint with name ${name} not found in ConfirmedComplaint_tbl.`);
+        }
+    } catch (error) {
+        console.error('Error resolving complaint:', error);
+        throw error;
+    }
+};
+
+const resolveEmergencyByName = async (name) => {
+    try {
+        let pool = await sql.connect(config);
+
+        // Select the confirmed emergency to resolve
+        let emergencyResult = await pool.request()
+            .input('name', sql.VarChar, name)
+            .query('SELECT * FROM ConfirmedEmergency_tbl WHERE Name = @name');
+
+        if (emergencyResult.recordset.length > 0) {
+            const emergency = emergencyResult.recordset[0];
+
+            // Move the emergency to ResolvedReports_tbl
+            await pool.request()
+                .input('id', sql.Int, emergency.id)
+                .input('name', sql.VarChar, emergency.Name)
+                .input('address', sql.VarChar, emergency.Address)
+                .input('type', sql.VarChar, 'emergency') // Fixed type as 'emergency'
+                .input('text', sql.Text, emergency.EmergencyText)
+                .input('latitude', sql.Float, emergency.Latitude)
+                .input('longitude', sql.Float, emergency.Longitude)
+                .input('mediaUrl', sql.VarChar, emergency.MediaUrl)
+                .input('resolvedAt', sql.DateTime, new Date()) // Current date-time
+                .query(`INSERT INTO ResolvedReports_tbl 
+                        (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt) 
+                        VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt)`);
+
+            // Delete the confirmed emergency
+            await pool.request()
+                .input('name', sql.VarChar, name)
+                .query('DELETE FROM ConfirmedEmergency_tbl WHERE Name = @name');
+        } else {
+            throw new Error(`Emergency with name ${name} not found in ConfirmedEmergency_tbl.`);
+        }
+    } catch (error) {
+        console.error('Error resolving emergency:', error);
+        throw error;
+    }
+};
+const getResolvedReports = async () => {
+    try {
+        let pool = await sql.connect(config);
+        const query = `
+            SELECT id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt
+            FROM ResolvedReports_tbl
+            ORDER BY ResolvedAt DESC
+        `;
+        const result = await pool.request().query(query);
+        return result.recordset;
+    } catch (error) {
+        console.error('Error retrieving resolved reports:', error);
+        throw error;
+    }
+};
+
+
 
 module.exports = {
+    getResolvedReports,
+    resolveComplaintByName,
+    resolveEmergencyByName,
     insertEmergencyReport,
     getUserNotifications,
     getPaginatedEmergencies,

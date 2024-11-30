@@ -221,7 +221,39 @@ app.get('/api/notifications/:userId', async (req, res) => {
       res.status(500).json({ success: false, message: 'Error fetching notifications.' });
   }
 });
+app.post('/api/resolveReport', async (req, res) => {
+  const { name, reportType } = req.body;
 
+  if (!name || !reportType) {
+      return res.status(400).json({ success: false, message: 'Report name and type are required.' });
+  }
+
+  try {
+      if (reportType === 'complaint') {
+          await dbOperation.resolveComplaintByName(name);
+      } else if (reportType === 'emergency') {
+          await dbOperation.resolveEmergencyByName(name);
+      } else {
+          return res.status(400).json({ success: false, message: 'Invalid report type.' });
+      }
+
+      res.status(200).json({ success: true, message: 'Report resolved successfully.' });
+  } catch (error) {
+      console.error('Error resolving report:', error);
+      res.status(500).json({ success: false, message: 'Failed to resolve the report.' });
+  }
+});
+
+// Endpoint to get all resolved reports
+app.get('/api/resolvedReports', async (req, res) => {
+  try {
+      const resolvedReports = await dbOperation.getResolvedReports(); // Implement this in dbOperation
+      res.status(200).json({ success: true, resolvedReports });
+  } catch (error) {
+      console.error('Error fetching resolved reports:', error);
+      res.status(500).json({ success: false, message: 'Failed to fetch resolved reports.' });
+  }
+});
 
 // Catch-all route to serve React app
 // Catch-all route to serve React app
