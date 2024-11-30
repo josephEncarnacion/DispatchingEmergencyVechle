@@ -222,7 +222,6 @@ app.get('/api/notifications/:userId', async (req, res) => {
   }
 });
 
-
 // Endpoint to get all resolved reports
 app.post('/api/resolveReport', async (req, res) => {
   const { name } = req.body;
