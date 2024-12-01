@@ -238,6 +238,15 @@ app.post('/api/resolveReport', async (req, res) => {
       res.status(500).json({ success: false, message: 'Failed to resolve the report.' });
   }
 });
+app.get('/api/resolvedReports', async (req, res) => {
+  try {
+      const resolvedReports = await dbOperation.getResolvedReports(); // Ensure this returns data
+      res.status(200).json({ resolvedReports });
+  } catch (error) {
+      console.error('Error fetching resolved reports:', error);
+      res.status(500).json({ message: 'Failed to fetch resolved reports.' });
+  }
+});
 
 // Catch-all route to serve React app
 // Catch-all route to serve React app

@@ -399,10 +399,25 @@ const getUserNotifications = async (userId) => {
         throw error;
     }
 };
+const getResolvedReports = async () => {
+    try {
+        let pool = await sql.connect(config);
+        const query = `
+            SELECT *  FROM ResolvedReports_tbl
+            ORDER BY ResolvedAt DESC
+        `;
+        const result = await pool.request().query(query);
+        return result.recordset;
+    } catch (error) {
+        console.error('Error retrieving resolved reports:', error);
+        throw error;
+    }
+};
 
 
 module.exports = {
     resolveReportByName,
+    getResolvedReports,
     insertEmergencyReport,
     getUserNotifications,
     getPaginatedEmergencies,

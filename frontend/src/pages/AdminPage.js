@@ -262,6 +262,8 @@ const AdminPage = () => {
               confirmedComplaints={confirmedReports.filter(report => report.ComplaintType).length}
               confirmedEmergencies={confirmedReports.filter(report => report.EmergencyType).length}
               activeResponseTeams={activeResponseTeams}
+              resolvedReportsCount={resolvedReports.length} // Pass resolved reports count here
+              onClickResolvedReports={() => handleSectionChange('resolvedReports')} // Pass navigation handler
               />
         );
       case 'map':
@@ -413,12 +415,11 @@ const AdminPage = () => {
             />
           </Container>
         );
-            case 'resolvedReports':
+        case 'resolvedReports': // Add new case for resolved reports list
         return (
             <Container sx={{ mt: 4 }}>
-                <Typography variant="h5" gutterBottom>
-                    Resolved Reports
-                </Typography>
+                <Typography variant="h5" gutterBottom>Resolved Reports</Typography>
+                {/* Resolved reports table */}
                 <TableContainer component={Paper}>
                     <Table>
                         <TableHead>
@@ -432,7 +433,7 @@ const AdminPage = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {resolvedReports.slice(resolvedPage * resolvedRowsPerPage, resolvedPage * resolvedRowsPerPage + resolvedRowsPerPage).map((report) => (
+                            {resolvedReports.map((report) => (
                                 <TableRow key={report.id}>
                                     <TableCell>{report.Name}</TableCell>
                                     <TableCell>{report.Address}</TableCell>
@@ -441,7 +442,7 @@ const AdminPage = () => {
                                     <TableCell>
                                         {report.MediaUrl ? (
                                             report.MediaUrl.endsWith('.jpg') || report.MediaUrl.endsWith('.png') ? (
-                                                <img src={report.MediaUrl} alt="Report Media" style={{ maxWidth: '100px' }} />
+                                                <img src={report.MediaUrl} alt="Media" style={{ maxWidth: '100px' }} />
                                             ) : (
                                                 <a href={report.MediaUrl} target="_blank" rel="noopener noreferrer">View Media</a>
                                             )
@@ -453,17 +454,6 @@ const AdminPage = () => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <TablePagination
-                    component="div"
-                    count={resolvedReports.length}
-                    page={resolvedPage}
-                    onPageChange={(event, newPage) => setResolvedPage(newPage)}
-                    rowsPerPage={resolvedRowsPerPage}
-                    onRowsPerPageChange={(event) => {
-                        setResolvedRowsPerPage(parseInt(event.target.value, 10));
-                        setResolvedPage(0);
-                    }}
-                />
             </Container>
         );
 
@@ -542,7 +532,16 @@ const AdminPage = () => {
     </Box>
   );
 };
-const DashboardMetrics = ({  resolvedReports, newComplaintsCount, newEmergenciesCount,confirmedComplaints, confirmedEmergencies, activeResponseTeams }) => (
+const DashboardMetrics = ({  
+   newComplaintsCount,
+   newEmergenciesCount,
+   confirmedComplaints,
+   confirmedEmergencies,
+   activeResponseTeams,
+   resolvedReportsCount, // New prop for resolved reports count
+   onClickResolvedReports // New prop for navigation
+    
+    }) => (
   <Box sx={{ mt: 4 }}>
     <Typography variant="h5" gutterBottom>Dashboard Overview</Typography>
     <Box
@@ -583,11 +582,20 @@ const DashboardMetrics = ({  resolvedReports, newComplaintsCount, newEmergencies
         <Typography variant="h4">{activeResponseTeams}</Typography>
       </Paper>
 
-      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#f3e5f5', color: '#9c27b0', cursor: 'pointer' }}
-        onClick={() => handleSectionChange('resolvedReports')}>
-        <CheckCircleIcon sx={{ fontSize: 40, color: '#9c27b0' }} />
+      <Paper
+        elevation={3}
+        sx={{ 
+          p: 3, 
+          textAlign: 'center', 
+          backgroundColor: '#d1c4e9', 
+          color: '#673ab7', 
+          cursor: 'pointer' 
+        }}
+        onClick={onClickResolvedReports} // Navigate to resolved reports list
+      >
+        <CheckCircleIcon sx={{ fontSize: 40, color: '#673ab7' }} />
         <Typography variant="h6">Resolved Reports</Typography>
-        <Typography variant="h4">{resolvedReports.length}</Typography>
+        <Typography variant="h4">{resolvedReportsCount}</Typography>
       </Paper>
     </Box>
   </Box>
