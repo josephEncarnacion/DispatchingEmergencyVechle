@@ -56,11 +56,28 @@ const AdminPage = () => {
   const [activeResponseTeams, setActiveResponseTeams] = useState(0);  // New state for active teams count
   const [newComplaintsCount, setNewComplaintsCount] = useState(0);
   const [newEmergenciesCount, setNewEmergenciesCount] = useState(0);
+  const [resolvedReports, setResolvedReports] = useState([]); // New state for resolved reports
+  const [resolvedPage, setResolvedPage] = useState(0);
+  const [resolvedRowsPerPage, setResolvedRowsPerPage] = useState(10);
 
   const prevComplaints = useRef([]);
   const prevEmergencies = useRef([]);
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
+
+  const fetchResolvedReports = async () => {
+    try {
+        const response = await axios.get(`https://newdispatchingbackend.onrender.com/api/resolvedReports`);
+        setResolvedReports(response.data.resolvedReports || []);
+    } catch (error) {
+        console.error('Error fetching resolved reports:', error);
+    }
+  };
+    useEffect(() => {
+      if (selectedSection === 'resolvedReports') {
+          fetchResolvedReports();
+      }
+  }, [selectedSection]);
 
   const fetchData = async () => {
     try {
@@ -396,6 +413,59 @@ const AdminPage = () => {
             />
           </Container>
         );
+            case 'resolvedReports':
+        return (
+            <Container sx={{ mt: 4 }}>
+                <Typography variant="h5" gutterBottom>
+                    Resolved Reports
+                </Typography>
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Address</TableCell>
+                                <TableCell>Type</TableCell>
+                                <TableCell>Description</TableCell>
+                                <TableCell>Media</TableCell>
+                                <TableCell>Resolved At</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {resolvedReports.slice(resolvedPage * resolvedRowsPerPage, resolvedPage * resolvedRowsPerPage + resolvedRowsPerPage).map((report) => (
+                                <TableRow key={report.id}>
+                                    <TableCell>{report.Name}</TableCell>
+                                    <TableCell>{report.Address}</TableCell>
+                                    <TableCell>{report.Type}</TableCell>
+                                    <TableCell>{report.Text}</TableCell>
+                                    <TableCell>
+                                        {report.MediaUrl ? (
+                                            report.MediaUrl.endsWith('.jpg') || report.MediaUrl.endsWith('.png') ? (
+                                                <img src={report.MediaUrl} alt="Report Media" style={{ maxWidth: '100px' }} />
+                                            ) : (
+                                                <a href={report.MediaUrl} target="_blank" rel="noopener noreferrer">View Media</a>
+                                            )
+                                        ) : 'No Media'}
+                                    </TableCell>
+                                    <TableCell>{new Date(report.ResolvedAt).toLocaleString()}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <TablePagination
+                    component="div"
+                    count={resolvedReports.length}
+                    page={resolvedPage}
+                    onPageChange={(event, newPage) => setResolvedPage(newPage)}
+                    rowsPerPage={resolvedRowsPerPage}
+                    onRowsPerPageChange={(event) => {
+                        setResolvedRowsPerPage(parseInt(event.target.value, 10));
+                        setResolvedPage(0);
+                    }}
+                />
+            </Container>
+        );
 
       default:
         return <Typography variant="h4" align="center">Welcome to the Dashboard</Typography>;
@@ -456,6 +526,12 @@ const AdminPage = () => {
               </ListItemIcon>
               <ListItemText primary="Monitoring" />
             </ListItem>
+            <ListItem button onClick={() => handleSectionChange('resolvedReports')}>
+              <ListItemIcon>
+                <CheckCircleIcon /> {/* You can use a different icon */}
+              </ListItemIcon>
+              <ListItemText primary="Resolve Reports" />
+            </ListItem>
           </List>
         </Box>
       </Drawer>
@@ -466,7 +542,7 @@ const AdminPage = () => {
     </Box>
   );
 };
-const DashboardMetrics = ({  newComplaintsCount, newEmergenciesCount,confirmedComplaints, confirmedEmergencies, activeResponseTeams }) => (
+const DashboardMetrics = ({  resolvedReports, newComplaintsCount, newEmergenciesCount,confirmedComplaints, confirmedEmergencies, activeResponseTeams }) => (
   <Box sx={{ mt: 4 }}>
     <Typography variant="h5" gutterBottom>Dashboard Overview</Typography>
     <Box
@@ -505,6 +581,13 @@ const DashboardMetrics = ({  newComplaintsCount, newEmergenciesCount,confirmedCo
         <GroupIcon sx={{ fontSize: 40, color: '#4caf50' }} />
         <Typography variant="h6">Active Response Teams</Typography>
         <Typography variant="h4">{activeResponseTeams}</Typography>
+      </Paper>
+
+      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#f3e5f5', color: '#9c27b0', cursor: 'pointer' }}
+        onClick={() => handleSectionChange('resolvedReports')}>
+        <CheckCircleIcon sx={{ fontSize: 40, color: '#9c27b0' }} />
+        <Typography variant="h6">Resolved Reports</Typography>
+        <Typography variant="h4">{resolvedReports.length}</Typography>
       </Paper>
     </Box>
   </Box>
