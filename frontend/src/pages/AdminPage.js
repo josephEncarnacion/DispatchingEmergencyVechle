@@ -261,6 +261,9 @@ const AdminPage = () => {
               activeResponseTeams={activeResponseTeams}
               resolvedReportsCount={resolvedReports.length} // Pass resolved reports count here
               onClickResolvedReports={() => handleSectionChange('resolvedReports')} // Pass navigation handler
+              onClickNewComplaints={() => handleSectionChange('complaints')}
+              onClickNewEmergencies={() => handleSectionChange('emergencies')}
+              onClickOngoingReports={() => handleSectionChange('monitoring')}
               />
         );
       case 'map':
@@ -536,7 +539,11 @@ const DashboardMetrics = ({
    confirmedEmergencies,
    activeResponseTeams,
    resolvedReportsCount, // New prop for resolved reports count
-   onClickResolvedReports // New prop for navigation
+   onClickResolvedReports,
+   onClickNewComplaints, 
+    onClickNewEmergencies, 
+    onClickOngoingReports
+
     
     }) => (
   <Box sx={{ mt: 4 }}>
@@ -549,31 +556,36 @@ const DashboardMetrics = ({
         mb: 4,
       }}
     >
-    <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffe0b2', color: '#f57c00' }}>
+    <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffe0b2', color: '#f57c00' }}
+      onClick={onClickNewComplaints} >
         <NotificationsActiveIcon sx={{ fontSize: 40, color: '#f57c00' }} />
         <Typography variant="h6">New Complaints</Typography>
         <Typography variant="h4">{newComplaintsCount}</Typography>
       </Paper>
 
-      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffebee', color: '#e91e63' }}>
+      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffebee', color: '#e91e63' }}
+       onClick={onClickNewEmergencies} >
         <NotificationsActiveIcon sx={{ fontSize: 40, color: '#e91e63' }} />
         <Typography variant="h6">New Emergencies</Typography>
         <Typography variant="h4">{newEmergenciesCount}</Typography>
       </Paper>
 
-      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e3f2fd', color: '#2196f3' }}>
+      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e3f2fd', color: '#2196f3' }}
+      onClick={onClickOngoingReports} >
         <CheckCircleIcon sx={{ fontSize: 40, color: '#2196f3' }} />
         <Typography variant="h6">Ongoing Complaints</Typography>
         <Typography variant="h4">{confirmedComplaints}</Typography>
       </Paper>
 
-      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffebee', color: '#e91e63' }}>
+      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffebee', color: '#e91e63' }}
+      onClick={onClickOngoingReports} >
         <ReportProblemIcon sx={{ fontSize: 40, color: '#e91e63' }} />
         <Typography variant="h6">Ongoing Emergencies</Typography>
         <Typography variant="h4">{confirmedEmergencies}</Typography>
       </Paper>
 
-      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e8f5e9', color: '#4caf50' }}>
+      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e8f5e9', color: '#4caf50',cursor: 'pointer'  }}
+      onClick={onClickOngoingReports} >
         <GroupIcon sx={{ fontSize: 40, color: '#4caf50' }} />
         <Typography variant="h6">Active Response Teams</Typography>
         <Typography variant="h4">{activeResponseTeams}</Typography>
