@@ -73,11 +73,7 @@ const AdminPage = () => {
         console.error('Error fetching resolved reports:', error);
     }
   };
-    useEffect(() => {
-      if (selectedSection === 'resolvedReports') {
-          fetchResolvedReports();
-      }
-  }, [selectedSection]);
+
 
   const fetchData = async () => {
     try {
@@ -140,6 +136,7 @@ const AdminPage = () => {
   
   useEffect(() => {
     // Initial fetch
+    fetchResolvedReports();
     fetchData();
     fetchResponseTeamLocations();
     fetchConfirmedReports();
