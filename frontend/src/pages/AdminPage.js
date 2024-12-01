@@ -556,28 +556,28 @@ const DashboardMetrics = ({
         mb: 4,
       }}
     >
-    <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffe0b2', color: '#f57c00' }}
+    <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffe0b2', color: '#f57c00' ,cursor: 'pointer'}}
       onClick={onClickNewComplaints} >
         <NotificationsActiveIcon sx={{ fontSize: 40, color: '#f57c00' }} />
         <Typography variant="h6">New Complaints</Typography>
         <Typography variant="h4">{newComplaintsCount}</Typography>
       </Paper>
 
-      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffebee', color: '#e91e63' }}
+      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffebee', color: '#e91e63',cursor: 'pointer' }}
        onClick={onClickNewEmergencies} >
         <NotificationsActiveIcon sx={{ fontSize: 40, color: '#e91e63' }} />
         <Typography variant="h6">New Emergencies</Typography>
         <Typography variant="h4">{newEmergenciesCount}</Typography>
       </Paper>
 
-      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e3f2fd', color: '#2196f3' }}
+      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e3f2fd', color: '#2196f3',cursor: 'pointer' }}
       onClick={onClickOngoingReports} >
         <CheckCircleIcon sx={{ fontSize: 40, color: '#2196f3' }} />
         <Typography variant="h6">Ongoing Complaints</Typography>
         <Typography variant="h4">{confirmedComplaints}</Typography>
       </Paper>
 
-      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffebee', color: '#e91e63' }}
+      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffebee', color: '#e91e63',cursor: 'pointer' }}
       onClick={onClickOngoingReports} >
         <ReportProblemIcon sx={{ fontSize: 40, color: '#e91e63' }} />
         <Typography variant="h6">Ongoing Emergencies</Typography>
