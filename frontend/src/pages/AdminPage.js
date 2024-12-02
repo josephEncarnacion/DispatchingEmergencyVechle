@@ -57,8 +57,7 @@ const AdminPage = () => {
   const [newComplaintsCount, setNewComplaintsCount] = useState(0);
   const [newEmergenciesCount, setNewEmergenciesCount] = useState(0);
   const [resolvedReports, setResolvedReports] = useState([]); // New state for resolved reports
-  const [resolvedPage, setResolvedPage] = useState(0);
-  const [resolvedRowsPerPage, setResolvedRowsPerPage] = useState(10);
+
 
   const prevComplaints = useRef([]);
   const prevEmergencies = useRef([]);
@@ -429,6 +428,7 @@ const AdminPage = () => {
                                 <TableCell>Type</TableCell>
                                 <TableCell>Description</TableCell>
                                 <TableCell>Media</TableCell>
+                                <TableCell>Dispatch At</TableCell>
                                 <TableCell>Resolved At</TableCell>
                             </TableRow>
                         </TableHead>
@@ -448,6 +448,7 @@ const AdminPage = () => {
                                             )
                                         ) : 'No Media'}
                                     </TableCell>
+                                    <TableCell>{report.ConfirmedAt}</TableCell>
                                     <TableCell>{new Date(report.ResolvedAt).toLocaleString()}</TableCell>
                                 </TableRow>
                             ))}
