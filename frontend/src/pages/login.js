@@ -1,18 +1,20 @@
 // src/pages/Login.js
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Grid, IconButton, TextField, Button, Typography, Paper, Box,InputAdornment } from '@mui/material';
+import { Grid, IconButton, TextField, Button, Typography, Paper, Box, InputAdornment } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 function Login() {
-  const [username, setUsername] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [usernameError, setUsernameError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [generalError, setGeneralError] = useState('');
   const navigate = useNavigate();
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -20,18 +22,19 @@ function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
-    const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
+
+    setUsernameError('');
+    setPasswordError('');
+    setGeneralError('');
 
     try {
-      const response = await fetch('https://newdispatchingbackend.onrender.com/login',{
+      const response = await fetch('https://newdispatchingbackend.onrender.com/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       });
       const data = await response.json();
       if (data.success) {
-        // Store user info in localStorage
         localStorage.setItem(
           'authData',
           JSON.stringify({
@@ -39,22 +42,22 @@ function Login() {
             role: data.role,
             firstName: data.first_name,
             lastName: data.last_name,
-            name: data.name
+            name: data.name,
           })
         );
         login(data.role);
-        if (data.role === 'Admin') {
-          navigate('/admin');
-        } else if (data.role === 'Response') {
-          navigate('/response');
-        } else {
-          navigate('/');
-        }
+        navigate(data.role === 'Admin' ? '/admin' : data.role === 'Response' ? '/response' : '/');
       } else {
-        alert('Invalid credentials');
+        if (data.errors) {
+          if (data.errors.username) setUsernameError(data.errors.username);
+          if (data.errors.password) setPasswordError(data.errors.password);
+        } else {
+          setGeneralError('Invalid credentials');
+        }
       }
     } catch (error) {
       console.error('Error logging in:', error);
+      setGeneralError('An unexpected error occurred. Please try again.');
     }
   };
 
@@ -73,6 +76,8 @@ function Login() {
                   value={username}
                   onChange={(event) => setUsername(event.target.value)}
                   fullWidth
+                  error={!!usernameError}
+                  helperText={usernameError}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -83,6 +88,8 @@ function Login() {
                   onChange={(event) => setPassword(event.target.value)}
                   fullWidth
                   required
+                  error={!!passwordError}
+                  helperText={passwordError}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -90,10 +97,17 @@ function Login() {
                           {showPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
-                    )
+                    ),
                   }}
                 />
               </Grid>
+              {generalError && (
+                <Grid item xs={12}>
+                  <Typography color="error" variant="body2" align="center">
+                    {generalError}
+                  </Typography>
+                </Grid>
+              )}
               <Grid item xs={12}>
                 <Button variant="contained" color="primary" type="submit" fullWidth>
                   Login
@@ -101,8 +115,7 @@ function Login() {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="body2" align="center">
-                  Don't have an account?{' '}
-                  <Link to="/register">Register here</Link>
+                  Don't have an account? <Link to="/register">Register here</Link>
                 </Typography>
               </Grid>
             </Grid>

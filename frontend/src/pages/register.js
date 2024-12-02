@@ -15,7 +15,11 @@ function Register() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
-  const [error, setError] = useState('');
+  const [usernameError, setUsernameError] = useState('');
+  const [firstNameError, setFirstNameError] = useState('');
+  const [lastNameError, setLastNameError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [generalError, setGeneralError] = useState('');
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -23,14 +27,19 @@ function Register() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError('');
 
-    if (!validatePassword(password)) {
-      setError('Password must be at least 8 characters long, include an uppercase letter, a number, and a special character.');
+    setUsernameError('');
+    setFirstNameError('');
+    setLastNameError('');
+    setPasswordError('');
+    setGeneralError('');
+
+   if (!validatePassword(password)) {
+      setPasswordError('Password must be at least 8 characters long, include an uppercase letter, a number, and a special character.');
       return;
     }
     if (!agreeTerms) {
-      setError('You must agree to the terms and conditions.');
+      setGeneralError('You must agree to the terms and conditions.');
       return;
     }
 
@@ -43,13 +52,20 @@ function Register() {
 
       const data = await response.json();
       if (data.success) {
-      window.location.href = '/';
+        window.location.href = '/';
       } else {
-        setError(data.message || 'Registration failed. Please try again.');
+        if (data.errors) {
+          if (data.errors.username) setUsernameError(data.errors.username);
+          if (data.errors.firstName) setFirstNameError(data.errors.firstName);
+          if (data.errors.lastName) setLastNameError(data.errors.lastName);
+          if (data.errors.password) setPasswordError(data.errors.password);
+        } else {
+          setGeneralError(data.message || 'Registration failed. Please try again.');  
+        }
       }
     } catch (error) {
       console.error('Error registering:', error);
-      setError('An error occurred during registration. Please try again later.');
+      setGeneralError('An error occurred during registration. Please try again later.');
     }
   };
 
@@ -61,9 +77,7 @@ function Register() {
             <Typography variant="h4" component="h1" fontWeight="bold">Register</Typography>
           </Box>
           <Divider sx={{ marginBottom: 2 }} />
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>
-          )}
+          {generalError && <Alert severity="error" sx={{ mb: 2 }}>{generalError}</Alert>}
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
@@ -73,6 +87,8 @@ function Register() {
                   onChange={(event) => setUsername(event.target.value)}
                   fullWidth
                   required
+                  error={!!usernameError}
+                  helperText={usernameError}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -82,6 +98,8 @@ function Register() {
                   onChange={(event) => setFirstName(event.target.value)}
                   fullWidth
                   required
+                  error={!!firstNameError}
+                  helperText={firstNameError}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -91,6 +109,8 @@ function Register() {
                   onChange={(event) => setLastName(event.target.value)}
                   fullWidth
                   required
+                  error={!!lastNameError}
+                  helperText={lastNameError}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -101,6 +121,8 @@ function Register() {
                   onChange={(event) => setPassword(event.target.value)}
                   fullWidth
                   required
+                  error={!!passwordError}
+                  helperText={passwordError}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
