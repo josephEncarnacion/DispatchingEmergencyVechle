@@ -15,6 +15,8 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import GroupIcon from '@mui/icons-material/Group';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import TablePagination from '@mui/material/TablePagination';
+
 
 
 const defaultMarkerIcon = L.icon({
@@ -57,6 +59,9 @@ const AdminPage = () => {
   const [newComplaintsCount, setNewComplaintsCount] = useState(0);
   const [newEmergenciesCount, setNewEmergenciesCount] = useState(0);
   const [resolvedReports, setResolvedReports] = useState([]); // New state for resolved reports
+
+  const [resolvedRowsPerPage, setResolvedRowsPerPage] = useState(10);
+  const [resolvedPage, setResolvedPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all'); // Options: 'all', 'day', 'month', 'year'
   const [filteredReports, setFilteredReports] = useState([]);
