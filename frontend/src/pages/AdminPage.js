@@ -448,7 +448,7 @@ const AdminPage = () => {
                                             )
                                         ) : 'No Media'}
                                     </TableCell>
-                                    <TableCell>{report.ConfirmedAt}</TableCell>
+                                    <TableCell>{new Date(report.ConfirmedAt).toLocaleString()}</TableCell>
                                     <TableCell>{new Date(report.ResolvedAt).toLocaleString()}</TableCell>
                                 </TableRow>
                             ))}
