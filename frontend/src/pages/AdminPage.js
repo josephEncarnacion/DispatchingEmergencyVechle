@@ -57,13 +57,68 @@ const AdminPage = () => {
   const [newComplaintsCount, setNewComplaintsCount] = useState(0);
   const [newEmergenciesCount, setNewEmergenciesCount] = useState(0);
   const [resolvedReports, setResolvedReports] = useState([]); // New state for resolved reports
-
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState('all'); // Options: 'all', 'day', 'month', 'year'
+  const [filteredReports, setFilteredReports] = useState([]);
 
   const prevComplaints = useRef([]);
   const prevEmergencies = useRef([]);
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
 
+  // Handle search input change
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+    applyFilters(event.target.value, filterType);
+  };
+
+  // Handle filter dropdown change
+  const handleFilterChange = (event) => {
+    setFilterType(event.target.value);
+    applyFilters(searchQuery, event.target.value);
+  };
+
+  // Apply search and filters
+  const applyFilters = (query, filter) => {
+    let filtered = resolvedReports;
+
+    if (query) {
+        filtered = filtered.filter((report) =>
+            report.Name.toLowerCase().includes(query.toLowerCase())
+        );
+    }
+
+    const now = new Date();
+    filtered = filtered.filter((report) => {
+        const resolvedDate = new Date(report.ResolvedAt);
+
+        switch (filter) {
+            case 'day':
+                return (
+                    resolvedDate.getDate() === now.getDate() &&
+                    resolvedDate.getMonth() === now.getMonth() &&
+                    resolvedDate.getFullYear() === now.getFullYear()
+                );
+            case 'month':
+                return (
+                    resolvedDate.getMonth() === now.getMonth() &&
+                    resolvedDate.getFullYear() === now.getFullYear()
+                );
+            case 'year':
+                return resolvedDate.getFullYear() === now.getFullYear();
+            default:
+                return true;
+        }
+    });
+
+    setFilteredReports(filtered);
+  };
+
+  // Use effect to initialize filtered reports
+  useEffect(() => {
+    setFilteredReports(resolvedReports);
+  }, [resolvedReports]);
+  
   const fetchResolvedReports = async () => {
     try {
         const response = await axios.get(`https://newdispatchingbackend.onrender.com/api/resolvedReports`);
@@ -265,7 +320,7 @@ const AdminPage = () => {
               onClickOngoingReports={() => handleSectionChange('monitoring')}
               />
         );
-      case 'map':
+        case 'map':
         return <MapComponent />;
         case'monitoring':
         return (
@@ -418,6 +473,28 @@ const AdminPage = () => {
         return (
             <Container sx={{ mt: 4 }}>
                 <Typography variant="h5" gutterBottom>Resolved Reports</Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                  <TextField
+                      label="Search by Name"
+                      variant="outlined"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                      sx={{ width: '60%' }}
+                  />
+                  <FormControl sx={{ width: '35%' }}>
+                      <InputLabel>Filter by</InputLabel>
+                      <Select
+                          value={filterType}
+                          onChange={handleFilterChange}
+                          label="Filter by"
+                      >
+                          <MenuItem value="all">All</MenuItem>
+                          <MenuItem value="day">Today</MenuItem>
+                          <MenuItem value="month">This Month</MenuItem>
+                          <MenuItem value="year">This Year</MenuItem>
+                      </Select>
+                  </FormControl>
+              </Box>
                 {/* Resolved reports table */}
                 <TableContainer component={Paper}>
                     <Table>
@@ -455,6 +532,17 @@ const AdminPage = () => {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <TablePagination
+                component="div"
+                count={filteredReports.length}
+                page={resolvedPage}
+                onPageChange={(event, newPage) => setResolvedPage(newPage)}
+                rowsPerPage={resolvedRowsPerPage}
+                onRowsPerPageChange={(event) => {
+                    setResolvedRowsPerPage(parseInt(event.target.value, 10));
+                    setResolvedPage(0);
+                }}
+            />
             </Container>
         );
 
