@@ -237,7 +237,7 @@ const EmergencyForm = () => {
       <Box sx={{ width: '100%', padding: { xs: 2, md: 4 }, boxShadow: 2, borderRadius: 4, backgroundColor: 'background.paper', textAlign: 'center' }}>
         <Typography align="center" variant="h5" gutterBottom>Emergency Form</Typography>
 
-        <TextField label="Name" variant="outlined" fullWidth value={name} onChange={handleNameChange} margin="normal" sx={{ mb: 2 }} />
+        <TextField label="Complainant" variant="outlined" fullWidth value={name} onChange={handleNameChange} margin="normal" sx={{ mb: 2 }} />
         <TextField label="Address" variant="outlined" fullWidth value={address} onChange={handleAddressChange} margin="normal" autoComplete="off" sx={{ mb: 2 }} />
         
         {addressSuggestions.length > 0 && (
@@ -266,15 +266,19 @@ const EmergencyForm = () => {
           <InputLabel id="complaint-type-label">Emergency Type</InputLabel>
           <Select labelId="complaint-type-label" id="complaint-type" value={emergencyType} onChange={handleEmergencyTypeChange} label="Emergency Type">
             <MenuItem value="Earthquake">Earthquake</MenuItem>
-            <MenuItem value="Fire">Fire</MenuItem>
+            <MenuItem value="Fire">Fire and Explosions </MenuItem>
             <MenuItem value="Flood">Flood</MenuItem>
             <MenuItem value="Medical Emergencies">Medical Emergencies</MenuItem>
+            <MenuItem value="Violence/Terrorism Acts">Violence/Terrorism Acts</MenuItem>
           </Select>
         </FormControl>
 
-        <TextField label="Enter your Emergency" multiline rows={4} variant="outlined" fullWidth value={emergencyText} onChange={handleEmergencyChange} margin="normal" sx={{ mb: 2 }} />
+        <TextField label="Emergency Description" multiline rows={4} variant="outlined" fullWidth value={emergencyText} onChange={handleEmergencyChange} margin="normal" sx={{ mb: 2 }} />
         <Typography variant="caption" align="left" sx={{ mb: 1, display: 'block' }}>
           The Maximum total size of the file is {MAX_FILE_SIZE_MB} MB.
+        </Typography>
+        <Typography variant="caption" align="left" sx={{ mb: 1, display: 'block' }}>
+          Supported media file types include .jpg, .jpeg, .gif, .png, .bmp, .tif, .tiff, .svg, .wav, .mp3, and .mp4.
         </Typography>
         <Box sx={{ mb: 2, textAlign: 'center' }}>
           <Button variant="contained" component="label">

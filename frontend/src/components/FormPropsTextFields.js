@@ -278,7 +278,7 @@ const ComplaintForm = () => {
         </Typography>
 
         <TextField 
-         label="Name"
+         label="Complainant"
          variant="outlined" 
          fullWidth value={name}
          onChange={handleNameChange}
@@ -365,16 +365,16 @@ const ComplaintForm = () => {
             onChange={handleComplaintTypeChange}
             label="Complaint Type"
           >
-            <MenuItem value="Noise Complaint">Noise Complaint</MenuItem>
-            <MenuItem value="Garbage Collection Issue">Garbage Collection Issue</MenuItem>
+            <MenuItem value="Noise Disturbances"> Noise Disturbances</MenuItem>
+            <MenuItem value="Garbage Issues">Garbage Issues</MenuItem>
             <MenuItem value="Street Light Outage">Street Light Outage</MenuItem>
-            <MenuItem value="Pet Wastes">Pet Wastes</MenuItem>
+            <MenuItem value="Pet Issues">Pet Issues</MenuItem>
             <MenuItem value="Illegal Parking">Illegal Parking</MenuItem>
             <MenuItem value="Traffic Violation">Traffic Violation</MenuItem>
           </Select>
         </FormControl>
         <TextField
-          label="Enter your Complaint"
+          label="Complaint Description"
           variant="outlined"
           fullWidth
           value={complaintText}
