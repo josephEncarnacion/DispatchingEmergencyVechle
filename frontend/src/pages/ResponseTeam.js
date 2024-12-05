@@ -193,7 +193,7 @@ const ResponseTeam = () => {
 
       <Container sx={{ py: 4 }}>
         <Typography variant="h4" align="center" gutterBottom>
-          Emergency Response Map
+          Monitor Response Team
         </Typography>
 
         {currentPosition && (

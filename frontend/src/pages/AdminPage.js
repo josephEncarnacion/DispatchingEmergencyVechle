@@ -657,14 +657,14 @@ const DashboardMetrics = ({
     <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffe0b2', color: '#f57c00' ,cursor: 'pointer'}}
       onClick={onClickNewComplaints} >
         <NotificationsActiveIcon sx={{ fontSize: 40, color: '#f57c00' }} />
-        <Typography variant="h6">Incomming Complaints</Typography>
+        <Typography variant="h6">New Complaints</Typography>
         <Typography variant="h4">{newComplaintsCount}</Typography>
       </Paper>
 
       <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffebee', color: '#e91e63',cursor: 'pointer' }}
        onClick={onClickNewEmergencies} >
         <NotificationsActiveIcon sx={{ fontSize: 40, color: '#e91e63' }} />
-        <Typography variant="h6">Incomming Emergencies</Typography>
+        <Typography variant="h6">New Emergencies</Typography>
         <Typography variant="h4">{newEmergenciesCount}</Typography>
       </Paper>
 
