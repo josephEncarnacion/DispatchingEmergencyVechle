@@ -346,9 +346,10 @@ const getUserNotifications = async (userId) => {
                 .input('mediaUrl', sql.VarChar, complaint.MediaURL)
                 .input('resolvedAt', sql.DateTime, new Date())
                 .input('ConfirmedAt', sql.DateTime, complaint.DateConfirmed)
+                .input('resolvedBy', sql.VarChar, resolverName) // Add resolver's name
                 .query(`
-                    INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt,  ConfirmedAt)
-                    VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt, @ConfirmedAt)
+                    INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt, ConfirmedAt, ResolvedBy)
+                    VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt, @ConfirmedAt, @resolvedBy)
                 `);
 
             // Delete from ConfirmedComplaint_tbl
