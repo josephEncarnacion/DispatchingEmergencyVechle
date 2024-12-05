@@ -501,25 +501,20 @@ const AdminPage = () => {
               </Box>
                 {/* Resolved reports table */}
                 <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Address</TableCell>
-                            <TableCell>Type</TableCell>
-                            <TableCell>Description</TableCell>
-                            <TableCell>Media</TableCell>
-                            <TableCell>Dispatch At</TableCell>
-                            <TableCell>Resolved At</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filteredReports
-                            .slice(
-                                resolvedPage * resolvedRowsPerPage,
-                                resolvedPage * resolvedRowsPerPage + resolvedRowsPerPage
-                            )
-                            .map((report) => (
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Address</TableCell>
+                                <TableCell>Type</TableCell>
+                                <TableCell>Description</TableCell>
+                                <TableCell>Media</TableCell>
+                                <TableCell>Dispatch At</TableCell>
+                                <TableCell>Resolved At</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {resolvedReports.map((report) => (
                                 <TableRow key={report.id}>
                                     <TableCell>{report.Name}</TableCell>
                                     <TableCell>{report.Address}</TableCell>
@@ -538,9 +533,9 @@ const AdminPage = () => {
                                     <TableCell>{new Date(report.ResolvedAt).toLocaleString()}</TableCell>
                                 </TableRow>
                             ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
                 <TablePagination
                 component="div"
                 count={filteredReports.length}
