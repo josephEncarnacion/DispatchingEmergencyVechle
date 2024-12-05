@@ -325,7 +325,7 @@ const ComplaintForm = () => {
         )}
         <Box marginTop={2} marginBottom={2}>
           <Button variant="contained" color="primary" onClick={handleGetLocation}>
-            Get My Location
+            Get My Current Location
           </Button>
           {locationError && (
             <Typography variant="body1" color="error" marginTop={2}>
@@ -385,8 +385,11 @@ const ComplaintForm = () => {
           sx={{ mb: 2 }}
         />
 
-<Typography variant="caption" align="left" sx={{ mb: 1, display: 'block' }}>
+        <Typography variant="caption" align="left" sx={{ mb: 1, display: 'block' }}>
           The Maximum total size of the file is {MAX_FILE_SIZE_MB} MB.
+        </Typography>
+        <Typography variant="caption" align="left" sx={{ mb: 1, display: 'block' }}>
+          Supported media file types include .jpg, .jpeg, .png,  .mp3, and .mp4.
         </Typography>
         <Box sx={{ mb: 2, textAlign: 'center' }}>
           <Button variant="contained" component="label">
