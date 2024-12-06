@@ -246,7 +246,7 @@ const confirmEmergencyByName = async (name, emergencyCode) => {
                     INSERT INTO ConfirmedEmergency_tbl 
                     (Name, Address, EmergencyType, EmergencyText, DateConfirmed,Latitude, Longitude, MediaURL, user_id, EmergencyCodee) 
                     VALUES 
-                    (@name, @address, @emergencyType, @emergencyText,@dateConfirmed. @latitude, @longitude, @mediaUrl, @userId, @emergencyCode)
+                    (@name, @address, @emergencyType, @emergencyText,@dateConfirmed, @latitude, @longitude, @mediaUrl, @userId, @emergencyCode)
                 `);
 
             // Add notification for the user who submitted the emergency
