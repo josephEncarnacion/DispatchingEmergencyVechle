@@ -248,7 +248,22 @@ const AdminPage = () => {
 
   const handleConfirmComplaint = async (name) => {
     if (window.confirm('Are you sure you want to confirm this complaint?')) {
-      const response = await fetch(`https://newdispatchingbackend.onrender.com/complaints/confirm/${name}`, { method: 'POST' });
+      const emergencyCode = prompt(
+        'Select an emergency code: \n1. red (High Priority) \n2. yellow (Medium Priority) \n3. blue (Default)',
+        'blue' // Default value
+     );
+    const validCodes = ['red', 'yellow', 'blue'];
+
+    if (!validCodes.includes(emergencyCode)) {
+        alert('Invalid emergency code. Confirmation canceled.');
+        return;
+    }
+    
+      const response = await fetch(`https://newdispatchingbackend.onrender.com/complaints/confirm/${name}`, 
+        { method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ emergencyCode }),
+       });
       const result = await response.json();
       if (result.success) {
         fetchComplaints(complaintPage, complaintRowsPerPage);
@@ -274,7 +289,18 @@ const AdminPage = () => {
 
   const handleConfirmEmergency = async (name) => {
     if (window.confirm('Are you sure you want to confirm this emergency?')) {
-      const response = await fetch(`https://newdispatchingbackend.onrender.com/emergencies/confirm/${name}`, { method: 'POST' });
+      const emergencyCode = prompt(
+        'Select an emergency code: \n1. red (High Priority) \n2. yellow (Medium Priority) \n3. blue (Default)',
+        'blue' // Default value
+    );
+    const validCodes = ['red', 'yellow', 'blue'];
+
+    if (!validCodes.includes(emergencyCode)) {
+        alert('Invalid emergency code. Confirmation canceled.');
+        return;
+    }
+      const response = await fetch(`https://newdispatchingbackend.onrender.com/emergencies/confirm/${name}`, { method: 'POST',  headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emergencyCode }), });
       const result = await response.json();
       if (result.success) {
         fetchEmergencies(emergencyPage, emergencyRowsPerPage);
@@ -306,7 +332,14 @@ const AdminPage = () => {
   const handleSectionChange = (section) => {
     setSelectedSection(section);
   };
-
+  const renderEmergencyCodeDropdown = (selectedCode, onSelectCode) => (
+    <select value={selectedCode} onChange={(e) => onSelectCode(e.target.value)}>
+        <option value="blue">Default</option>
+        <option value="yellow">Yellow</option>
+        <option value="red">Red</option>
+    </select>
+);
+  
   const renderSection = () => {
     switch (selectedSection) {
       case 'dashboard':
@@ -397,6 +430,12 @@ const AdminPage = () => {
                     'No media attached'
                   )}
                 </TableCell>
+                <TableCell>
+                    {renderEmergencyCodeDropdown(
+                        complaint.EmergencyCode || 'blue', // Default to 'blue' if no code is set
+                        (newCode) => handleSetEmergencyCode(complaint.id, newCode)
+                    )}
+                </TableCell>
                       <TableCell>
                         <Button onClick={() => handleConfirmComplaint(complaint.Name)} color="primary">Dispatch</Button>
                         <Button onClick={() => handleDeleteComplaint(complaint.Name)} color="secondary">Delete</Button>
@@ -453,6 +492,12 @@ const AdminPage = () => {
                     'No media attached'
                   )}
                 </TableCell>
+                <TableCell>
+                  {renderEmergencyCodeDropdown(
+                   complaint.EmergencyCode || 'blue', // Default to 'blue' if no code is set
+                   (newCode) => handleSetEmergencyCode(complaint.id, newCode)
+                  )}
+                  </TableCell>
                       <TableCell>
                         <Button onClick={() => handleConfirmEmergency(emergency.Name)} color="primary">Dispatch</Button>
                         <Button onClick={() => handleDeleteEmergency(emergency.Name)} color="secondary">Delete</Button>

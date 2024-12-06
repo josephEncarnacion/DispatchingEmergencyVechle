@@ -154,7 +154,7 @@ const deleteEmergencyByName = async (name) => {
         throw error;
     }
 };
-const confirmComplaintByName = async (name) => {
+const confirmComplaintByName = async (name, emergencyCode = 'blue') => {
     try {
         let pool = await sql.connect(config);
 
@@ -165,11 +165,9 @@ const confirmComplaintByName = async (name) => {
 
         if (complaintResult.recordset.length > 0) {
             const complaint = complaintResult.recordset[0];
-
             const mediaUrl = complaint.MediaURL || null;
             const userId = complaint.user_id;
-            const message = 'Your emergency report has been confirmed';
-
+            const message = 'Your complaint has been confirmed';
 
             // Insert the complaint into ConfirmedComplaint_tbl
             await pool.request()
@@ -182,27 +180,29 @@ const confirmComplaintByName = async (name) => {
                 .input('longitude', sql.Float, complaint.Longitude)
                 .input('mediaUrl', sql.VarChar, mediaUrl)
                 .input('userId', sql.Int, userId)
+                .input('emergencyCode', sql.VarChar, emergencyCode) // New field
+                .query(`
+                    INSERT INTO ConfirmedComplaint_tbl 
+                    (Name, Address, ComplaintType, ComplaintText, DateConfirmed, Latitude, Longitude, MediaURL, user_id, EmergencyCode) 
+                    VALUES (@name, @address, @complaintType, @complaintText, @dateConfirmed, @latitude, @longitude, @mediaUrl, @userId, @emergencyCode)
+                `);
 
-                .query(`INSERT INTO ConfirmedComplaint_tbl 
-                        (Name, Address, ComplaintType, ComplaintText, DateConfirmed,Latitude, Longitude, MediaURL, user_id) 
-                        VALUES (@name, @address, @complaintType, @complaintText,  @dateConfirmed,@latitude, @longitude, @mediaUrl, @userId)`);
+            // Add notification for the user who submitted the complaint
+            await pool.request()
+                .input('userId', sql.Int, userId)
+                .input('message', sql.VarChar, message)
+                .query(`
+                    INSERT INTO Notifications (user_id, message, is_read, created_at) 
+                    VALUES (@userId, @message, 0, GETDATE())
+                `);
 
-                        
-             // Add notification for the user who submitted the emergency
-             await pool.request()
-             .input('userId', sql.Int, userId)
-             .input('message', sql.VarChar, message)
-             .query(`
-                 INSERT INTO Notifications (user_id, message, is_read, created_at) 
-                 VALUES (@userId, @message, 0, GETDATE())
-             `);
-
-             await pool.request()
-             .input('userId', sql.Int, 4) // Assuming '4' is the dispatcher ID
-             .query(`
-                 INSERT INTO Notifications (user_id, message, is_read, created_at) 
-                 VALUES (@userId, 'New confirmed complaint ready for dispatch', 0, GETDATE())
-             `);
+            // Notify dispatcher
+            await pool.request()
+                .input('userId', sql.Int, 4) // Assuming '4' is the dispatcher ID
+                .query(`
+                    INSERT INTO Notifications (user_id, message, is_read, created_at) 
+                    VALUES (@userId, 'New confirmed complaint ready for dispatch', 0, GETDATE())
+                `);
 
             // Delete the complaint from Complaint_tbl
             await pool.request()
@@ -215,11 +215,12 @@ const confirmComplaintByName = async (name) => {
     }
 };
 
-const confirmEmergencyByName = async (name) => {
+
+const confirmEmergencyByName = async (name, emergencyCode = 'blue') => {
     try {
         let pool = await sql.connect(config);
 
-        // Select the emergency to be confirmed along with user_id
+        // Select the emergency to be confirmed
         let emergencyResult = await pool.request()
             .input('name', sql.VarChar, name)
             .query('SELECT * FROM Emergency_tbl WHERE Name = @name');
@@ -227,7 +228,7 @@ const confirmEmergencyByName = async (name) => {
         if (emergencyResult.recordset.length > 0) {
             const emergency = emergencyResult.recordset[0];
             const userId = emergency.user_id;
-            const message = 'Your emergency report has been confirmed';
+            const message = 'Your emergency has been confirmed';
 
             // Insert the emergency into ConfirmedEmergency_tbl
             await pool.request()
@@ -240,11 +241,11 @@ const confirmEmergencyByName = async (name) => {
                 .input('longitude', sql.Float, emergency.Longitude)
                 .input('mediaUrl', sql.VarChar, emergency.MediaURL || null)
                 .input('userId', sql.Int, userId)
+                .input('emergencyCode', sql.VarChar, emergencyCode) // New field
                 .query(`
                     INSERT INTO ConfirmedEmergency_tbl 
-                    (Name, Address, EmergencyType, EmergencyText, DateConfirmed,Latitude, Longitude, MediaURL, user_id) 
-                    VALUES 
-                    (@name, @address, @emergencyType, @emergencyText,@dateConfirmed. @latitude, @longitude, @mediaUrl, @userId)
+                    (Name, Address, EmergencyType, EmergencyText, DateConfirmed, Latitude, Longitude, MediaURL, user_id, EmergencyCode) 
+                    VALUES (@name, @address, @emergencyType, @emergencyText, @dateConfirmed, @latitude, @longitude, @mediaUrl, @userId, @emergencyCode)
                 `);
 
             // Add notification for the user who submitted the emergency
@@ -256,6 +257,7 @@ const confirmEmergencyByName = async (name) => {
                     VALUES (@userId, @message, 0, GETDATE())
                 `);
 
+            // Notify dispatcher
             await pool.request()
                 .input('userId', sql.Int, 4) // Assuming '4' is the dispatcher ID
                 .query(`
@@ -275,6 +277,7 @@ const confirmEmergencyByName = async (name) => {
         throw error;
     }
 };
+
 
 
 

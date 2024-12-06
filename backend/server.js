@@ -191,8 +191,14 @@ app.delete('/emergencies/:name', async (req, res) => {
 
 app.post('/complaints/confirm/:name', async (req, res) => {
   const { name } = req.params;
+  const { emergencyCode } = req.body;
+
+  if (!name || !emergencyCode) {
+      return res.status(400).json({ success: false, message: 'Name and emergency code are required.' });
+  }
+
   try {
-      await dbOperation.confirmComplaintByName(name);
+      await dbOperation.confirmComplaintByName(name, emergencyCode);
       res.status(200).json({ success: true, message: 'Complaint confirmed successfully.' });
   } catch (error) {
       console.error('Error confirming complaint:', error);
@@ -201,9 +207,14 @@ app.post('/complaints/confirm/:name', async (req, res) => {
 });
 
 app.post('/emergencies/confirm/:name', async (req, res) => {
-  const { name } = req.params; 
+  const { emergencyCode } = req.body;
+
+  if (!name || !emergencyCode) {
+      return res.status(400).json({ success: false, message: 'Name and emergency code are required.' });
+  }
+
   try {
-      await dbOperation.confirmEmergencyByName(name);   
+      await dbOperation.confirmEmergencyByName(name, emergencyCode);
       res.status(200).json({ success: true, message: 'Emergency confirmed successfully.' });
   } catch (error) {
       console.error('Error confirming emergency:', error);
