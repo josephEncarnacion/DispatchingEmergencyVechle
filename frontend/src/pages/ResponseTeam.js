@@ -61,7 +61,7 @@ const getMarkerIcon = (emergencyCodee) => {
     case 'Code Blue':
       return codeBlueIcon;
     default:
-      return defaultMarkerIcon;
+      return codeBlueIcon;
   }
 };
 
