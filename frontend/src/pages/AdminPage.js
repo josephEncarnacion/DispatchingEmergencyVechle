@@ -373,136 +373,151 @@ const AdminPage = () => {
           </div>
         </Container>
         );
-      case 'complaints':
-        return (
-          <Container sx={{ mt: 4 }}>
-            <Typography variant="h5" gutterBottom>
-              Complaints
-            </Typography>
-            <TableContainer component={Paper} sx={{ mb: 4 }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Address</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Description</TableCell>
-                    <TableCell>Media </TableCell>
-                    <TableCell>Emergency Code</TableCell>  
-                    <TableCell>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {complaints.map((complaint) => (
-                    <TableRow key={complaint.Name}>
-                      <TableCell>{complaint.Name}</TableCell>
-                      <TableCell>{complaint.Address}</TableCell>
-                      <TableCell>{complaint.ComplaintType}</TableCell>
-                      <TableCell>{complaint.ComplaintText}</TableCell>
-                      <TableCell>
-                  {complaint.MediaUrl ? (
-                    complaint.MediaUrl.endsWith('.jpg') || complaint.MediaUrl.endsWith('.jpeg') || complaint.MediaUrl.endsWith('.png') ? (
-                      <img src={complaint.MediaUrl} alt="complaint Media" style={{ maxWidth: '100px' }} />
-                    ) : (
-                      <a href={complaint.MediaUrl} target="_blank" rel="noopener noreferrer">View Media Upload</a>
-                    )
-                  ) : (
-                    'No media attached'
-                  )}
-                </TableCell>
-                <TableCell>
-                    <select value={emergencyCode} onChange={(e) => setEmergencyCode(e.target.value)}>
-                        <option value="">Select Code</option>
-                        <option value="Code Red">Code Red</option>
-                        <option value="Code Yellow">Code Yellow</option>
-                        <option value="Code Blue">Code Blue</option>
-                    </select>
-                </TableCell>
-                      <TableCell>
-                        <Button onClick={() => handleConfirmComplaint(complaint.Name)} color="primary">Dispatch</Button>
-                        <Button onClick={() => handleDeleteComplaint(complaint.Name)} color="secondary">Delete</Button>
-                      </TableCell>
+        case 'complaints':
+          return (
+            <Container sx={{ mt: 4 }}>
+              <Typography variant="h5" gutterBottom>
+                Complaints
+              </Typography>
+              <TableContainer component={Paper} sx={{ mb: 4 }}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Name</TableCell>
+                      <TableCell>Address</TableCell>
+                      <TableCell>Type</TableCell>
+                      <TableCell>Description</TableCell>
+                      <TableCell>Media</TableCell>
+                      <TableCell>Emergency Code</TableCell>
+                      <TableCell>Actions</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              component="div"
-              count={complaints.length}
-              page={complaintPage}
-              onPageChange={handleComplaintPageChange}
-              rowsPerPage={complaintRowsPerPage}
-              onRowsPerPageChange={handleComplaintRowsPerPageChange}
-              ActionsComponent={CustomPaginationActions}
-            />
-          </Container>
-        );
-      case 'emergencies':
-        return (
-          <Container sx={{ mt: 4 }}>
-            <Typography variant="h5" gutterBottom>
-              Emergencies
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Address</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Description</TableCell>
-                    <TableCell>Media</TableCell>
-                    <TableCell>Emergency Code</TableCell>  
-                    <TableCell>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {emergencies.map((emergency) => (
-                    <TableRow key={emergency.Name}>
-                      <TableCell>{emergency.Name}</TableCell>
-                      <TableCell>{emergency.Address}</TableCell>
-                      <TableCell>{emergency.EmergencyType}</TableCell>
-                      <TableCell>{emergency.EmergencyText}</TableCell>
-                      <TableCell>
-                  {emergency.MediaUrl ? (
-                    emergency.MediaUrl.endsWith('.jpg') || emergency.MediaUrl.endsWith('.jpeg') || emergency.MediaUrl.endsWith('.png') ? (
-                      <img src={emergency.MediaUrl} alt="Emergency Media" style={{ maxWidth: '100px' }} />
-                    ) : (
-                      <a href={emergency.MediaUrl} target="_blank" rel="noopener noreferrer">View Media Upload</a>
-                    )
-                  ) : (
-                    'No media attached'
-                  )}
-                </TableCell>
-                <TableCell>
-                    <select value={emergencyCode} onChange={(e) => setEmergencyCode(e.target.value)}>
-                        <option value="">Select Code</option>
-                        <option value="Code Red">Code Red</option>
-                        <option value="Code Yellow">Code Yellow</option>
-                        <option value="Code Blue">Code Blue</option>
-                    </select>
-                </TableCell>
-                      <TableCell>
-                        <Button onClick={() => handleConfirmEmergency(emergency.Name)} color="primary">Dispatch</Button>
-                        <Button onClick={() => handleDeleteEmergency(emergency.Name)} color="secondary">Delete</Button>
-                      </TableCell>
+                  </TableHead>
+                  <TableBody>
+                    {complaints.map((complaint) => {
+                      const [emergencyCode, setEmergencyCode] = useState(complaint.EmergencyCode || '');
+                      return (
+                        <TableRow key={complaint.Name}>
+                          <TableCell>{complaint.Name}</TableCell>
+                          <TableCell>{complaint.Address}</TableCell>
+                          <TableCell>{complaint.ComplaintType}</TableCell>
+                          <TableCell>{complaint.ComplaintText}</TableCell>
+                          <TableCell>
+                            {complaint.MediaUrl ? (
+                              complaint.MediaUrl.endsWith('.jpg') || complaint.MediaUrl.endsWith('.jpeg') || complaint.MediaUrl.endsWith('.png') ? (
+                                <img src={complaint.MediaUrl} alt="Complaint Media" style={{ maxWidth: '100px' }} />
+                              ) : (
+                                <a href={complaint.MediaUrl} target="_blank" rel="noopener noreferrer">View Media Upload</a>
+                              )
+                            ) : (
+                              'No media attached'
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <select value={emergencyCode} onChange={(e) => setEmergencyCode(e.target.value)}>
+                              <option value="">Select Code</option>
+                              <option value="Code Red">Code Red</option>
+                              <option value="Code Yellow">Code Yellow</option>
+                              <option value="Code Blue">Code Blue</option>
+                            </select>
+                          </TableCell>
+                          <TableCell>
+                            <Button onClick={() => handleConfirmComplaint(complaint.Name, emergencyCode)} color="primary">
+                              Dispatch
+                            </Button>
+                            <Button onClick={() => handleDeleteComplaint(complaint.Name)} color="secondary">
+                              Delete
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                component="div"
+                count={complaints.length}
+                page={complaintPage}
+                onPageChange={handleComplaintPageChange}
+                rowsPerPage={complaintRowsPerPage}
+                onRowsPerPageChange={handleComplaintRowsPerPageChange}
+                ActionsComponent={CustomPaginationActions}
+              />
+            </Container>
+          );
+        
+        case 'emergencies':
+          return (
+            <Container sx={{ mt: 4 }}>
+              <Typography variant="h5" gutterBottom>
+                Emergencies
+              </Typography>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Name</TableCell>
+                      <TableCell>Address</TableCell>
+                      <TableCell>Type</TableCell>
+                      <TableCell>Description</TableCell>
+                      <TableCell>Media</TableCell>
+                      <TableCell>Emergency Code</TableCell>
+                      <TableCell>Actions</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              component="div"
-              count={emergencies.length}
-              page={emergencyPage}
-              onPageChange={handleEmergencyPageChange}
-              rowsPerPage={emergencyRowsPerPage}
-              onRowsPerPageChange={handleEmergencyRowsPerPageChange}
-              ActionsComponent={CustomPaginationActions}
-            />
-          </Container>
-        );
+                  </TableHead>
+                  <TableBody>
+                    {emergencies.map((emergency) => {
+                      const [emergencyCode, setEmergencyCode] = useState(emergency.EmergencyCode || '');
+                      return (
+                        <TableRow key={emergency.Name}>
+                          <TableCell>{emergency.Name}</TableCell>
+                          <TableCell>{emergency.Address}</TableCell>
+                          <TableCell>{emergency.EmergencyType}</TableCell>
+                          <TableCell>{emergency.EmergencyText}</TableCell>
+                          <TableCell>
+                            {emergency.MediaUrl ? (
+                              emergency.MediaUrl.endsWith('.jpg') || emergency.MediaUrl.endsWith('.jpeg') || emergency.MediaUrl.endsWith('.png') ? (
+                                <img src={emergency.MediaUrl} alt="Emergency Media" style={{ maxWidth: '100px' }} />
+                              ) : (
+                                <a href={emergency.MediaUrl} target="_blank" rel="noopener noreferrer">View Media Upload</a>
+                              )
+                            ) : (
+                              'No media attached'
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <select value={emergencyCode} onChange={(e) => setEmergencyCode(e.target.value)}>
+                              <option value="">Select Code</option>
+                              <option value="Code Red">Code Red</option>
+                              <option value="Code Yellow">Code Yellow</option>
+                              <option value="Code Blue">Code Blue</option>
+                            </select>
+                          </TableCell>
+                          <TableCell>
+                            <Button onClick={() => handleConfirmEmergency(emergency.Name, emergencyCode)} color="primary">
+                              Dispatch
+                            </Button>
+                            <Button onClick={() => handleDeleteEmergency(emergency.Name)} color="secondary">
+                              Delete
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                component="div"
+                count={emergencies.length}
+                page={emergencyPage}
+                onPageChange={handleEmergencyPageChange}
+                rowsPerPage={emergencyRowsPerPage}
+                onRowsPerPageChange={handleEmergencyRowsPerPageChange}
+                ActionsComponent={CustomPaginationActions}
+              />
+            </Container>
+          );
         case 'resolvedReports': // Add new case for resolved reports list
         return (
             <Container sx={{ mt: 4 }}>
