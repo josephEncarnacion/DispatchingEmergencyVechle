@@ -501,7 +501,6 @@ const AdminPage = () => {
               </Box>
                 {/* Resolved reports table */}
                 <TableContainer component={Paper}>
-<<<<<<< HEAD
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -517,28 +516,6 @@ const AdminPage = () => {
                         </TableHead>
                         <TableBody>
                             {resolvedReports.map((report) => (
-=======
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Address</TableCell>
-                            <TableCell>Type</TableCell>
-                            <TableCell>Description</TableCell>
-                            <TableCell>Media</TableCell>
-                            <TableCell>Dispatch At</TableCell>
-                            <TableCell>Resolved At</TableCell>
-                            <TableCell>Resolved By</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filteredReports
-                            .slice(
-                                resolvedPage * resolvedRowsPerPage,
-                                resolvedPage * resolvedRowsPerPage + resolvedRowsPerPage
-                            )
-                            .map((report) => (
->>>>>>> 6ef40f5f2d85b4521053576c723fb2e16487b250
                                 <TableRow key={report.id}>
                                     <TableCell>{report.Name}</TableCell>
                                     <TableCell>{report.Address}</TableCell>
