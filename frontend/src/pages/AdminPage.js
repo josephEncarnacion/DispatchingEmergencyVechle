@@ -64,6 +64,7 @@ const AdminPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all'); // Options: 'all', 'day', 'month', 'year'
   const [filteredReports, setFilteredReports] = useState([]);
+  const [emergencyCodes, setEmergencyCodes] = useState({});
 
   const prevComplaints = useRef([]);
   const prevEmergencies = useRef([]);
@@ -247,17 +248,26 @@ const AdminPage = () => {
   };
 
   const handleConfirmComplaint = async (name) => {
-    if (window.confirm('Are you sure you want to confirm this complaint?')) {
-      const response = await fetch(`https://newdispatchingbackend.onrender.com/complaints/confirm/${name}`, { method: 'POST' });
-      const result = await response.json();
-      if (result.success) {
-        fetchComplaints(complaintPage, complaintRowsPerPage);
-       
-      } else {
-        alert('Failed to confirm complaint');
-      }
+    const emergencyCode = emergencyCodes[name];
+    if (!emergencyCode) {
+        alert("Please select an emergency code before confirming.");
+        return;
     }
-  };
+
+    if (window.confirm('Are you sure you want to confirm this complaint?')) {
+        const response = await fetch(`https://newdispatchingbackend.onrender.com/complaints/confirm/${name}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ emergencyCode }),
+        });
+        const result = await response.json();
+        if (result.success) {
+            fetchComplaints();
+        } else {
+            alert('Failed to confirm complaint');
+        }
+    }
+};
 
   const handleDeleteEmergency = async (name) => {
     if (window.confirm('Are you sure you want to delete this emergency?')) {
@@ -273,8 +283,18 @@ const AdminPage = () => {
   };
 
   const handleConfirmEmergency = async (name) => {
+    const emergencyCode = emergencyCodes[name];
+    if (!emergencyCode) {
+      alert("Please select an emergency code before confirming.");
+      return;
+  }
+
     if (window.confirm('Are you sure you want to confirm this emergency?')) {
-      const response = await fetch(`https://newdispatchingbackend.onrender.com/emergencies/confirm/${name}`, { method: 'POST' });
+      const response = await fetch(`https://newdispatchingbackend.onrender.com/emergencies/confirm/${name}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emergencyCode }),
+       });
       const result = await response.json();
       if (result.success) {
         fetchEmergencies(emergencyPage, emergencyRowsPerPage);
@@ -306,6 +326,12 @@ const AdminPage = () => {
   const handleSectionChange = (section) => {
     setSelectedSection(section);
   };
+
+  const setEmergencyCode = (name, code) => {
+    setEmergencyCodes((prev) => ({ ...prev, [name]: code }));
+};
+
+
 
   const renderSection = () => {
     switch (selectedSection) {
@@ -364,49 +390,61 @@ const AdminPage = () => {
       case 'complaints':
         return (
           <Container sx={{ mt: 4 }}>
-            <Typography variant="h5" gutterBottom>
+          <Typography variant="h5" gutterBottom>
               Complaints
-            </Typography>
-            <TableContainer component={Paper} sx={{ mb: 4 }}>
+          </Typography>
+          <TableContainer component={Paper} sx={{ mb: 4 }}>
               <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Address</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Description</TableCell>
-                    <TableCell>Media </TableCell>
-                    <TableCell>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {complaints.map((complaint) => (
-                    <TableRow key={complaint.Name}>
-                      <TableCell>{complaint.Name}</TableCell>
-                      <TableCell>{complaint.Address}</TableCell>
-                      <TableCell>{complaint.ComplaintType}</TableCell>
-                      <TableCell>{complaint.ComplaintText}</TableCell>
-                      <TableCell>
-                  {complaint.MediaUrl ? (
-                    complaint.MediaUrl.endsWith('.jpg') || complaint.MediaUrl.endsWith('.jpeg') || complaint.MediaUrl.endsWith('.png') ? (
-                      <img src={complaint.MediaUrl} alt="complaint Media" style={{ maxWidth: '100px' }} />
-                    ) : (
-                      <a href={complaint.MediaUrl} target="_blank" rel="noopener noreferrer">View Media Upload</a>
-                    )
-                  ) : (
-                    'No media attached'
-                  )}
-                </TableCell>
-                      <TableCell>
-                        <Button onClick={() => handleConfirmComplaint(complaint.Name)} color="primary">Dispatch</Button>
-                        <Button onClick={() => handleDeleteComplaint(complaint.Name)} color="secondary">Delete</Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
+                  <TableHead>
+                      <TableRow>
+                          <TableCell>Name</TableCell>
+                          <TableCell>Address</TableCell>
+                          <TableCell>Type</TableCell>
+                          <TableCell>Description</TableCell>
+                          <TableCell>Media</TableCell>
+                          <TableCell>Emergency Code</TableCell>
+                          <TableCell>Actions</TableCell>
+                      </TableRow>
+                  </TableHead>
+                  <TableBody>
+                      {complaints.map((complaint) => (
+                          <TableRow key={complaint.Name}>
+                              <TableCell>{complaint.Name}</TableCell>
+                              <TableCell>{complaint.Address}</TableCell>
+                              <TableCell>{complaint.ComplaintType}</TableCell>
+                              <TableCell>{complaint.ComplaintText}</TableCell>
+                              <TableCell>
+                                  {complaint.MediaUrl ? (
+                                      complaint.MediaUrl.endsWith('.jpg') || complaint.MediaUrl.endsWith('.jpeg') || complaint.MediaUrl.endsWith('.png') ? (
+                                          <img src={complaint.MediaUrl} alt="complaint Media" style={{ maxWidth: '100px' }} />
+                                      ) : (
+                                          <a href={complaint.MediaUrl} target="_blank" rel="noopener noreferrer">View Media Upload</a>
+                                      )
+                                  ) : (
+                                      'No media attached'
+                                  )}
+                              </TableCell>
+                              <TableCell>
+                                  <Select
+                                      defaultValue=""
+                                      onChange={(e) => setEmergencyCode(complaint.Name, e.target.value)}
+                                      style={{ width: 150 }}
+                                  >
+                                      <MenuItem value="Code Red">Code Red</MenuItem>
+                                      <MenuItem value="Code Yellow">Code Yellow</MenuItem>
+                                      <MenuItem value="Code Blue">Code Blue</MenuItem>
+                                  </Select>
+                              </TableCell>
+                              <TableCell>
+                                  <Button onClick={() => handleConfirmComplaint(complaint.Name)} color="primary">Dispatch</Button>
+                                  <Button onClick={() => handleDeleteComplaint(complaint.Name)} color="secondary">Delete</Button>
+                              </TableCell>
+                          </TableRow>
+                      ))}
+                  </TableBody>
               </Table>
-            </TableContainer>
-            <TablePagination
+          </TableContainer>
+          <TablePagination
               component="div"
               count={complaints.length}
               page={complaintPage}
@@ -414,8 +452,8 @@ const AdminPage = () => {
               rowsPerPage={complaintRowsPerPage}
               onRowsPerPageChange={handleComplaintRowsPerPageChange}
               ActionsComponent={CustomPaginationActions}
-            />
-          </Container>
+          />
+      </Container>
         );
       case 'emergencies':
         return (
@@ -432,6 +470,7 @@ const AdminPage = () => {
                     <TableCell>Type</TableCell>
                     <TableCell>Description</TableCell>
                     <TableCell>Media</TableCell>
+                    <TableCell>Emergency Code</TableCell>
                     <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
@@ -453,6 +492,17 @@ const AdminPage = () => {
                     'No media attached'
                   )}
                 </TableCell>
+                <TableCell>
+                       <Select
+                        defaultValue=""
+                        onChange={(e) => setEmergencyCode(emergency.Name, e.target.value)}
+                        style={{ width: 150 }}
+                        >
+                        <MenuItem value="Code Red">Code Red</MenuItem>
+                        <MenuItem value="Code Yellow">Code Yellow</MenuItem>
+                        <MenuItem value="Code Blue">Code Blue</MenuItem>
+                    </Select>
+                  </TableCell>
                       <TableCell>
                         <Button onClick={() => handleConfirmEmergency(emergency.Name)} color="primary">Dispatch</Button>
                         <Button onClick={() => handleDeleteEmergency(emergency.Name)} color="secondary">Delete</Button>

@@ -189,8 +189,9 @@ app.delete('/emergencies/:name', async (req, res) => {
   }
 });
 
-app.post('/complaints/confirm/:name', async (req, res) => {
+aapp.post('/complaints/confirm/:name', async (req, res) => {
   const { name } = req.params;
+  const { emergencyCode } = req.body; // Retrieve emergency code from request body
   try {
       await dbOperation.confirmComplaintByName(name, emergencyCode);
       res.status(200).json({ success: true, message: 'Complaint confirmed successfully.' });
@@ -200,8 +201,10 @@ app.post('/complaints/confirm/:name', async (req, res) => {
   }
 });
 
-app.post('/emergencies/confirm/:name', async (req, res) => {
 
+app.post('/emergencies/confirm/:name', async (req, res) => {
+  const { name } = req.params;
+  const { emergencyCode } = req.body; // Retrieve emergency code from request body
   try {
       await dbOperation.confirmEmergencyByName(name, emergencyCode);
       res.status(200).json({ success: true, message: 'Emergency confirmed successfully.' });

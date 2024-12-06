@@ -154,7 +154,7 @@ const deleteEmergencyByName = async (name) => {
         throw error;
     }
 };
-const confirmComplaintByName = async (name) => {
+const confirmComplaintByName = async (name, emergencyCode) => {
     try {
         let pool = await sql.connect(config);
 
@@ -182,10 +182,11 @@ const confirmComplaintByName = async (name) => {
                 .input('longitude', sql.Float, complaint.Longitude)
                 .input('mediaUrl', sql.VarChar, mediaUrl)
                 .input('userId', sql.Int, userId)
+                .input('emergencyCode', sql.VarChar, emergencyCode)
 
                 .query(`INSERT INTO ConfirmedComplaint_tbl 
-                        (Name, Address, ComplaintType, ComplaintText, DateConfirmed,Latitude, Longitude, MediaURL, user_id) 
-                        VALUES (@name, @address, @complaintType, @complaintText,  @dateConfirmed,@latitude, @longitude, @mediaUrl, @userId)`);
+                        (Name, Address, ComplaintType, ComplaintText, DateConfirmed,Latitude, Longitude, MediaURL, user_id, EmergencyCodee) 
+                        VALUES (@name, @address, @complaintType, @complaintText,  @dateConfirmed,@latitude, @longitude, @mediaUrl, @userId, @emergencyCode)`);
 
                         
              // Add notification for the user who submitted the emergency
@@ -215,7 +216,7 @@ const confirmComplaintByName = async (name) => {
     }
 };
 
-const confirmEmergencyByName = async (name) => {
+const confirmEmergencyByName = async (name, emergencyCode) => {
     try {
         let pool = await sql.connect(config);
 
@@ -240,11 +241,12 @@ const confirmEmergencyByName = async (name) => {
                 .input('longitude', sql.Float, emergency.Longitude)
                 .input('mediaUrl', sql.VarChar, emergency.MediaURL || null)
                 .input('userId', sql.Int, userId)
+                .input('emergencyCode', sql.VarChar, emergencyCode)
                 .query(`
                     INSERT INTO ConfirmedEmergency_tbl 
-                    (Name, Address, EmergencyType, EmergencyText, DateConfirmed,Latitude, Longitude, MediaURL, user_id) 
+                    (Name, Address, EmergencyType, EmergencyText, DateConfirmed,Latitude, Longitude, MediaURL, user_id, EmergencyCodee) 
                     VALUES 
-                    (@name, @address, @emergencyType, @emergencyText,@dateConfirmed. @latitude, @longitude, @mediaUrl, @userId)
+                    (@name, @address, @emergencyType, @emergencyText,@dateConfirmed. @latitude, @longitude, @mediaUrl, @userId, @emergencyCode)
                 `);
 
             // Add notification for the user who submitted the emergency
