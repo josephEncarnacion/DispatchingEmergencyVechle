@@ -284,7 +284,7 @@ const confirmEmergencyByName = async (name, emergencyCode) => {
 const getConfirmedComplaints = async () => {
     try {
         let pool = await sql.connect(config);
-        const query = 'SELECT Name, Address, ComplaintType, ComplaintText, Latitude, Longitude, MediaUrl FROM ConfirmedComplaint_tbl';
+        const query = 'SELECT Name, Address, ComplaintType, ComplaintText, Latitude, Longitude, MediaUrl, EmergencyCodee FROM ConfirmedComplaint_tbl';
         const result = await pool.request().query(query);
         return result.recordset;
     } catch (error) {
@@ -295,7 +295,7 @@ const getConfirmedComplaints = async () => {
 const getConfirmedEmergencies = async () => {
     try {
         let pool = await sql.connect(config);
-        const query = 'SELECT Name, Address, EmergencyType, EmergencyText, Latitude, Longitude, MediaUrl FROM ConfirmedEmergency_tbl';
+        const query = 'SELECT Name, Address, EmergencyType, EmergencyText, Latitude, Longitude, MediaUrl, EmergencyCodee FROM ConfirmedEmergency_tbl';
         const result = await pool.request().query(query);
         return result.recordset;
     } catch (error) {
