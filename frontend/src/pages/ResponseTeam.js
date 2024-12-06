@@ -23,23 +23,15 @@ const vehicleIcon = L.divIcon({
   iconAnchor: [16, 16]
 });
 
-const getCustomMarkerIcon = (code) => {
-  const iconUrl = {
-    'Code Red': 'https://cdn-icons-png.flaticon.com/512/190/190406.png', // Red marker
-    'Code Yellow': 'https://cdn-icons-png.flaticon.com/512/190/190411.png', // Yellow marker
-    'Code Blue': 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png', // Blue marker
-  }[code] || 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png'; // Default marker
-
-  return L.icon({
-    iconUrl: iconUrl,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    tooltipAnchor: [16, -28],
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-    shadowSize: [41, 41],
-  });
-};
+const defaultMarkerIcon = L.icon({
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  shadowSize: [41, 41],
+});
 
 const POLLING_INTERVAL = 10000; // 10 seconds
 
@@ -220,7 +212,7 @@ const ResponseTeam = () => {
                 <Popup>Your Location</Popup>
               </Marker>
               {confirmedReports.map((report, index) => (
-                <Marker key={index} position={[report.Latitude, report.Longitude]}   icon={getCustomMarkerIcon(report.EmergencyCode || 'blue')}  >
+                <Marker key={index} position={[report.Latitude, report.Longitude]} icon={defaultMarkerIcon}>
                   <Popup>
                     <strong>Name:</strong> {report.Name} <br />
                     <strong>Address:</strong> {report.Address} <br />
@@ -232,7 +224,6 @@ const ResponseTeam = () => {
                         <a href={report.MediaUrl} target="_blank" rel="noopener noreferrer">View Media</a>
                       )
                     )}
-                    <strong>Emergency Code:</strong> {report.EmergencyCode || 'blue'}
                     {routeDetails[index] && (
                       <Box sx={{ mt: 1 }}>
                         <Typography variant="body2">Distance: {routeDetails[index].distance} km</Typography>

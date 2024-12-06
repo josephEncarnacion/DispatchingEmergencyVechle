@@ -64,19 +64,11 @@ const AdminPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all'); // Options: 'all', 'day', 'month', 'year'
   const [filteredReports, setFilteredReports] = useState([]);
-  const [emergencyCodes, setEmergencyCodes] = useState({});
 
   const prevComplaints = useRef([]);
   const prevEmergencies = useRef([]);
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
-
-  const updateEmergencyCode = (name, code) => {
-    setEmergencyCodes((prev) => ({
-      ...prev,
-      [name]: code,
-    }));
-  };
 
   // Handle search input change
   const handleSearchChange = (event) => {
@@ -254,24 +246,18 @@ const AdminPage = () => {
     }
   };
 
-  const handleConfirmComplaint = async (name, emergencyCode) => {
-    if (window.confirm(`Are you sure you want to confirm this complaint with Emergency Code: ${emergencyCode}?`)) {
-        const response = await fetch(
-            `https://newdispatchingbackend.onrender.com/complaints/confirm/${name}`, 
-            { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ emergencyCode }) 
-            }
-        );
-        const result = await response.json();
-        if (result.success) {
-            fetchComplaints(complaintPage, complaintRowsPerPage);
-        } else {
-            alert('Failed to confirm complaint');
-        }
+  const handleConfirmComplaint = async (name) => {
+    if (window.confirm('Are you sure you want to confirm this complaint?')) {
+      const response = await fetch(`https://newdispatchingbackend.onrender.com/complaints/confirm/${name}`, { method: 'POST' });
+      const result = await response.json();
+      if (result.success) {
+        fetchComplaints(complaintPage, complaintRowsPerPage);
+       
+      } else {
+        alert('Failed to confirm complaint');
+      }
     }
-};
+  };
 
   const handleDeleteEmergency = async (name) => {
     if (window.confirm('Are you sure you want to delete this emergency?')) {
@@ -286,24 +272,18 @@ const AdminPage = () => {
     }
   };
 
-  const handleConfirmEmergency = async (name, emergencyCode) => {
-    if (window.confirm(`Are you sure you want to confirm this emergency with Emergency Code: ${emergencyCode}?`)) {
-        const response = await fetch(
-            `https://newdispatchingbackend.onrender.com/emergencies/confirm/${name}`, 
-            { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ emergencyCode }) 
-            }
-        );
-        const result = await response.json();
-        if (result.success) {
-            fetchEmergencies(emergencyPage, emergencyRowsPerPage);
-        } else {
-            alert('Failed to confirm emergency');
-        }
+  const handleConfirmEmergency = async (name) => {
+    if (window.confirm('Are you sure you want to confirm this emergency?')) {
+      const response = await fetch(`https://newdispatchingbackend.onrender.com/emergencies/confirm/${name}`, { method: 'POST' });
+      const result = await response.json();
+      if (result.success) {
+        fetchEmergencies(emergencyPage, emergencyRowsPerPage);
+       
+      } else {
+        alert('Failed to confirm emergency');
+      }
     }
-};
+  };
 
   const handleComplaintPageChange = (event, newPage) => {
     setComplaintPage(newPage);
@@ -326,7 +306,7 @@ const AdminPage = () => {
   const handleSectionChange = (section) => {
     setSelectedSection(section);
   };
-  
+
   const renderSection = () => {
     switch (selectedSection) {
       case 'dashboard':
@@ -381,159 +361,118 @@ const AdminPage = () => {
           </div>
         </Container>
         );
-        case 'complaints':
-          return (
-            <Container sx={{ mt: 4 }}>
-              <Typography variant="h5" gutterBottom>
-                Complaints
-              </Typography>
-              <TableContainer component={Paper} sx={{ mb: 4 }}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Address</TableCell>
-                      <TableCell>Type</TableCell>
-                      <TableCell>Description</TableCell>
-                      <TableCell>Media</TableCell>
-                      <TableCell>Emergency Code</TableCell>
-                      <TableCell>Actions</TableCell>
+      case 'complaints':
+        return (
+          <Container sx={{ mt: 4 }}>
+            <Typography variant="h5" gutterBottom>
+              Complaints
+            </Typography>
+            <TableContainer component={Paper} sx={{ mb: 4 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Address</TableCell>
+                    <TableCell>Type</TableCell>
+                    <TableCell>Description</TableCell>
+                    <TableCell>Media </TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {complaints.map((complaint) => (
+                    <TableRow key={complaint.Name}>
+                      <TableCell>{complaint.Name}</TableCell>
+                      <TableCell>{complaint.Address}</TableCell>
+                      <TableCell>{complaint.ComplaintType}</TableCell>
+                      <TableCell>{complaint.ComplaintText}</TableCell>
+                      <TableCell>
+                  {complaint.MediaUrl ? (
+                    complaint.MediaUrl.endsWith('.jpg') || complaint.MediaUrl.endsWith('.jpeg') || complaint.MediaUrl.endsWith('.png') ? (
+                      <img src={complaint.MediaUrl} alt="complaint Media" style={{ maxWidth: '100px' }} />
+                    ) : (
+                      <a href={complaint.MediaUrl} target="_blank" rel="noopener noreferrer">View Media Upload</a>
+                    )
+                  ) : (
+                    'No media attached'
+                  )}
+                </TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleConfirmComplaint(complaint.Name)} color="primary">Dispatch</Button>
+                        <Button onClick={() => handleDeleteComplaint(complaint.Name)} color="secondary">Delete</Button>
+                      </TableCell>
                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {complaints.map((complaint) => {
-                    const emergencyCode = complaint.EmergencyCode || 'DefaultCode'; // Ensure fallback for undefined values
-                    return (
-                        <TableRow key={complaint.Name}>
-                          <TableCell>{complaint.Name}</TableCell>
-                          <TableCell>{complaint.Address}</TableCell>
-                          <TableCell>{complaint.ComplaintType}</TableCell>
-                          <TableCell>{complaint.ComplaintText}</TableCell>
-                          <TableCell>
-                            {complaint.MediaUrl ? (
-                              complaint.MediaUrl.endsWith('.jpg') || complaint.MediaUrl.endsWith('.jpeg') || complaint.MediaUrl.endsWith('.png') ? (
-                                <img src={complaint.MediaUrl} alt="Complaint Media" style={{ maxWidth: '100px' }} />
-                              ) : (
-                                <a href={complaint.MediaUrl} target="_blank" rel="noopener noreferrer">View Media Upload</a>
-                              )
-                            ) : (
-                              'No media attached'
-                            )}
-                          </TableCell>
-                           <TableCell>
-                            <Select
-                              value={emergencyCodes[complaint.Name] || ''} // Retrieve the emergency code from state
-                              onChange={(e) => updateEmergencyCode(complaint.Name, e.target.value)} // Update state
-                              displayEmpty
-                            >
-                              <MenuItem value="">Select Code</MenuItem>
-                              <MenuItem value="Code Red">Code Red</MenuItem>
-                              <MenuItem value="Code Yellow">Code Yellow</MenuItem>
-                              <MenuItem value="Code Blue">Code Blue</MenuItem>
-                            </Select>
-                          </TableCell>
-                          <TableCell>
-                            <Button onClick={() => handleConfirmComplaint(complaint.Name, emergencyCode)} color="primary">
-                              Dispatch
-                            </Button>
-                            <Button onClick={() => handleDeleteComplaint(complaint.Name)} color="secondary">
-                              Delete
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                component="div"
-                count={complaints.length}
-                page={complaintPage}
-                onPageChange={handleComplaintPageChange}
-                rowsPerPage={complaintRowsPerPage}
-                onRowsPerPageChange={handleComplaintRowsPerPageChange}
-                ActionsComponent={CustomPaginationActions}
-              />
-            </Container>
-          );
-        
-        case 'emergencies':
-          return (
-            <Container sx={{ mt: 4 }}>
-              <Typography variant="h5" gutterBottom>
-                Emergencies
-              </Typography>
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Address</TableCell>
-                      <TableCell>Type</TableCell>
-                      <TableCell>Description</TableCell>
-                      <TableCell>Media</TableCell>
-                      <TableCell>Emergency Code</TableCell>
-                      <TableCell>Actions</TableCell>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              component="div"
+              count={complaints.length}
+              page={complaintPage}
+              onPageChange={handleComplaintPageChange}
+              rowsPerPage={complaintRowsPerPage}
+              onRowsPerPageChange={handleComplaintRowsPerPageChange}
+              ActionsComponent={CustomPaginationActions}
+            />
+          </Container>
+        );
+      case 'emergencies':
+        return (
+          <Container sx={{ mt: 4 }}>
+            <Typography variant="h5" gutterBottom>
+              Emergencies
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Address</TableCell>
+                    <TableCell>Type</TableCell>
+                    <TableCell>Description</TableCell>
+                    <TableCell>Media</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {emergencies.map((emergency) => (
+                    <TableRow key={emergency.Name}>
+                      <TableCell>{emergency.Name}</TableCell>
+                      <TableCell>{emergency.Address}</TableCell>
+                      <TableCell>{emergency.EmergencyType}</TableCell>
+                      <TableCell>{emergency.EmergencyText}</TableCell>
+                      <TableCell>
+                  {emergency.MediaUrl ? (
+                    emergency.MediaUrl.endsWith('.jpg') || emergency.MediaUrl.endsWith('.jpeg') || emergency.MediaUrl.endsWith('.png') ? (
+                      <img src={emergency.MediaUrl} alt="Emergency Media" style={{ maxWidth: '100px' }} />
+                    ) : (
+                      <a href={emergency.MediaUrl} target="_blank" rel="noopener noreferrer">View Media Upload</a>
+                    )
+                  ) : (
+                    'No media attached'
+                  )}
+                </TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleConfirmEmergency(emergency.Name)} color="primary">Dispatch</Button>
+                        <Button onClick={() => handleDeleteEmergency(emergency.Name)} color="secondary">Delete</Button>
+                      </TableCell>
                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {emergencies.map((emergency) => {
-                    const emergencyCode = emergency.EmergencyCode || 'DefaultCode'; // Ensure fallback for undefined values
-                    return (
-                        <TableRow key={emergency.Name}>
-                          <TableCell>{emergency.Name}</TableCell>
-                          <TableCell>{emergency.Address}</TableCell>
-                          <TableCell>{emergency.EmergencyType}</TableCell>
-                          <TableCell>{emergency.EmergencyText}</TableCell>
-                          <TableCell>
-                            {emergency.MediaUrl ? (
-                              emergency.MediaUrl.endsWith('.jpg') || emergency.MediaUrl.endsWith('.jpeg') || emergency.MediaUrl.endsWith('.png') ? (
-                                <img src={emergency.MediaUrl} alt="Emergency Media" style={{ maxWidth: '100px' }} />
-                              ) : (
-                                <a href={emergency.MediaUrl} target="_blank" rel="noopener noreferrer">View Media Upload</a>
-                              )
-                            ) : (
-                              'No media attached'
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <Select
-                              value={emergencyCodes[emergency.Name] || ''} // Retrieve the emergency code from state
-                              onChange={(e) => updateEmergencyCode(emergency.Name, e.target.value)} // Update state
-                              displayEmpty
-                            >
-                              <MenuItem value="">Select Code</MenuItem>
-                              <MenuItem value="Code Red">Code Red</MenuItem>
-                              <MenuItem value="Code Yellow">Code Yellow</MenuItem>
-                              <MenuItem value="Code Blue">Code Blue</MenuItem>
-                            </Select>
-                          </TableCell>
-                          <TableCell>
-                            <Button onClick={() => handleConfirmEmergency(emergency.Name, emergencyCode)} color="primary">
-                              Dispatch
-                            </Button>
-                            <Button onClick={() => handleDeleteEmergency(emergency.Name)} color="secondary">
-                              Delete
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                component="div"
-                count={emergencies.length}
-                page={emergencyPage}
-                onPageChange={handleEmergencyPageChange}
-                rowsPerPage={emergencyRowsPerPage}
-                onRowsPerPageChange={handleEmergencyRowsPerPageChange}
-                ActionsComponent={CustomPaginationActions}
-              />
-            </Container>
-          );
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              component="div"
+              count={emergencies.length}
+              page={emergencyPage}
+              onPageChange={handleEmergencyPageChange}
+              rowsPerPage={emergencyRowsPerPage}
+              onRowsPerPageChange={handleEmergencyRowsPerPageChange}
+              ActionsComponent={CustomPaginationActions}
+            />
+          </Container>
+        );
         case 'resolvedReports': // Add new case for resolved reports list
         return (
             <Container sx={{ mt: 4 }}>
