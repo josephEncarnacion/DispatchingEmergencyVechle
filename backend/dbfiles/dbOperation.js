@@ -345,11 +345,19 @@ const getUserNotifications = async (userId) => {
                 .input('longitude', sql.Float, complaint.Longitude)
                 .input('mediaUrl', sql.VarChar, complaint.MediaURL)
                 .input('resolvedAt', sql.DateTime, new Date())
+<<<<<<< HEAD
                 .input('confirmedAt', sql.DateTime, complaint.DateConfirmed)
                 .input('resolvedBy', sql.VarChar, resolverName) // Include resolver's name
                 .query(`
                     INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt, ConfirmedAt, ResolvedBy)
                     VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt, @confirmedAt, @resolvedBy)
+=======
+                .input('ConfirmedAt', sql.DateTime, complaint.DateConfirmed)
+                .input('resolvedBy', sql.VarChar, resolverName) // Add resolver's name
+                .query(`
+                    INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt, ConfirmedAt, ResolvedBy)
+                    VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt, @ConfirmedAt, @resolvedBy)
+>>>>>>> 6ef40f5f2d85b4521053576c723fb2e16487b250
                 `);
 
             // Delete from ConfirmedComplaint_tbl

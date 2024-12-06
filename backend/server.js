@@ -224,14 +224,24 @@ app.get('/api/notifications/:userId', async (req, res) => {
 
 // Endpoint to get all resolved reports
 app.post('/api/resolveReport', async (req, res) => {
+<<<<<<< HEAD
   const { name, resolverName } = req.body; // Extract both name and resolverName from body
+=======
+  const { name } = req.body;
+  const resolverName = req.headers['x-resolver-name']; // Assume resolver name is sent in headers
+>>>>>>> 6ef40f5f2d85b4521053576c723fb2e16487b250
 
   if (!name || !resolverName) {
       return res.status(400).json({ success: false, message: 'Report name and resolver name are required.' });
   }
 
   try {
+<<<<<<< HEAD
       await dbOperation.resolveReportByName(name, resolverName); // Pass resolver's first name
+=======
+      // Resolve logic in dbOperation
+      await dbOperation.resolveReportByName(name, resolverName); // Pass resolver's name
+>>>>>>> 6ef40f5f2d85b4521053576c723fb2e16487b250
       res.status(200).json({ success: true, message: 'Report resolved successfully.' });
   } catch (error) {
       console.error('Error resolving report:', error);
