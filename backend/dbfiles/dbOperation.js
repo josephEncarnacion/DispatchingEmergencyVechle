@@ -154,7 +154,7 @@ const deleteEmergencyByName = async (name) => {
         throw error;
     }
 };
-const confirmComplaintByName = async (name, emergencyCode = 'blue') => {
+const confirmComplaintByName = async (name,emergencyCode) => {
     try {
         let pool = await sql.connect(config);
 
@@ -180,7 +180,7 @@ const confirmComplaintByName = async (name, emergencyCode = 'blue') => {
                 .input('longitude', sql.Float, complaint.Longitude)
                 .input('mediaUrl', sql.VarChar, mediaUrl)
                 .input('userId', sql.Int, userId)
-                .input('emergencyCode', sql.VarChar, emergencyCode) // New field
+                .input('emergencyCode', sql.VarChar, emergencyCode)
                 .query(`
                     INSERT INTO ConfirmedComplaint_tbl 
                     (Name, Address, ComplaintType, ComplaintText, DateConfirmed, Latitude, Longitude, MediaURL, user_id, EmergencyCode) 
@@ -216,7 +216,7 @@ const confirmComplaintByName = async (name, emergencyCode = 'blue') => {
 };
 
 
-const confirmEmergencyByName = async (name, emergencyCode = 'blue') => {
+const confirmEmergencyByName = async (name,emergencyCode) => {
     try {
         let pool = await sql.connect(config);
 

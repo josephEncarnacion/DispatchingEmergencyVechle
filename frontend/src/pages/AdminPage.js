@@ -246,33 +246,24 @@ const AdminPage = () => {
     }
   };
 
-  const handleConfirmComplaint = async (name) => {
-    if (window.confirm('Are you sure you want to confirm this complaint?')) {
-      const emergencyCode = prompt(
-        'Select an emergency code: \n1. red (High Priority) \n2. yellow (Medium Priority) \n3. blue (Default)',
-        'blue' // Default value
-     );
-    const validCodes = ['red', 'yellow', 'blue'];
-
-    if (!validCodes.includes(emergencyCode)) {
-        alert('Invalid emergency code. Confirmation canceled.');
-        return;
+  const handleConfirmComplaint = async (name, emergencyCode) => {
+    if (window.confirm(`Are you sure you want to confirm this complaint with Emergency Code: ${emergencyCode}?`)) {
+        const response = await fetch(
+            `https://newdispatchingbackend.onrender.com/complaints/confirm/${name}`, 
+            { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ emergencyCode }) 
+            }
+        );
+        const result = await response.json();
+        if (result.success) {
+            fetchComplaints(complaintPage, complaintRowsPerPage);
+        } else {
+            alert('Failed to confirm complaint');
+        }
     }
-    
-      const response = await fetch(`https://newdispatchingbackend.onrender.com/complaints/confirm/${name}`, 
-        { method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ emergencyCode }),
-       });
-      const result = await response.json();
-      if (result.success) {
-        fetchComplaints(complaintPage, complaintRowsPerPage);
-       
-      } else {
-        alert('Failed to confirm complaint');
-      }
-    }
-  };
+};
 
   const handleDeleteEmergency = async (name) => {
     if (window.confirm('Are you sure you want to delete this emergency?')) {
@@ -287,29 +278,24 @@ const AdminPage = () => {
     }
   };
 
-  const handleConfirmEmergency = async (name) => {
-    if (window.confirm('Are you sure you want to confirm this emergency?')) {
-      const emergencyCode = prompt(
-        'Select an emergency code: \n1. red (High Priority) \n2. yellow (Medium Priority) \n3. blue (Default)',
-        'blue' // Default value
-    );
-    const validCodes = ['red', 'yellow', 'blue'];
-
-    if (!validCodes.includes(emergencyCode)) {
-        alert('Invalid emergency code. Confirmation canceled.');
-        return;
+  const handleConfirmEmergency = async (name, emergencyCode) => {
+    if (window.confirm(`Are you sure you want to confirm this emergency with Emergency Code: ${emergencyCode}?`)) {
+        const response = await fetch(
+            `https://newdispatchingbackend.onrender.com/emergencies/confirm/${name}`, 
+            { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ emergencyCode }) 
+            }
+        );
+        const result = await response.json();
+        if (result.success) {
+            fetchEmergencies(emergencyPage, emergencyRowsPerPage);
+        } else {
+            alert('Failed to confirm emergency');
+        }
     }
-      const response = await fetch(`https://newdispatchingbackend.onrender.com/emergencies/confirm/${name}`, { method: 'POST',  headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emergencyCode }), });
-      const result = await response.json();
-      if (result.success) {
-        fetchEmergencies(emergencyPage, emergencyRowsPerPage);
-       
-      } else {
-        alert('Failed to confirm emergency');
-      }
-    }
-  };
+};
 
   const handleComplaintPageChange = (event, newPage) => {
     setComplaintPage(newPage);
@@ -332,13 +318,6 @@ const AdminPage = () => {
   const handleSectionChange = (section) => {
     setSelectedSection(section);
   };
-  const renderEmergencyCodeDropdown = (selectedCode, onSelectCode) => (
-    <select value={selectedCode} onChange={(e) => onSelectCode(e.target.value)}>
-        <option value="blue">Default</option>
-        <option value="yellow">Yellow</option>
-        <option value="red">Red</option>
-    </select>
-);
   
   const renderSection = () => {
     switch (selectedSection) {
@@ -432,10 +411,12 @@ const AdminPage = () => {
                   )}
                 </TableCell>
                 <TableCell>
-                    {renderEmergencyCodeDropdown(
-                        complaint.EmergencyCode || 'blue', // Default to 'blue' if no code is set
-                        (newCode) => handleSetEmergencyCode(complaint.id, newCode)
-                    )}
+                    <select value={emergencyCode} onChange={(e) => setEmergencyCode(e.target.value)}>
+                        <option value="">Select Code</option>
+                        <option value="Code Red">Code Red</option>
+                        <option value="Code Yellow">Code Yellow</option>
+                        <option value="Code Blue">Code Blue</option>
+                    </select>
                 </TableCell>
                       <TableCell>
                         <Button onClick={() => handleConfirmComplaint(complaint.Name)} color="primary">Dispatch</Button>
@@ -495,11 +476,13 @@ const AdminPage = () => {
                   )}
                 </TableCell>
                 <TableCell>
-                  {renderEmergencyCodeDropdown(
-                   complaint.EmergencyCode || 'blue', // Default to 'blue' if no code is set
-                   (newCode) => handleSetEmergencyCode(complaint.id, newCode)
-                  )}
-                  </TableCell>
+                    <select value={emergencyCode} onChange={(e) => setEmergencyCode(e.target.value)}>
+                        <option value="">Select Code</option>
+                        <option value="Code Red">Code Red</option>
+                        <option value="Code Yellow">Code Yellow</option>
+                        <option value="Code Blue">Code Blue</option>
+                    </select>
+                </TableCell>
                       <TableCell>
                         <Button onClick={() => handleConfirmEmergency(emergency.Name)} color="primary">Dispatch</Button>
                         <Button onClick={() => handleDeleteEmergency(emergency.Name)} color="secondary">Delete</Button>
