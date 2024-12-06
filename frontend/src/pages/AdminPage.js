@@ -64,11 +64,19 @@ const AdminPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all'); // Options: 'all', 'day', 'month', 'year'
   const [filteredReports, setFilteredReports] = useState([]);
+  const [emergencyCodes, setEmergencyCodes] = useState({});
 
   const prevComplaints = useRef([]);
   const prevEmergencies = useRef([]);
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
+
+  const updateEmergencyCode = (name, code) => {
+    setEmergencyCodes((prev) => ({
+      ...prev,
+      [name]: code,
+    }));
+  };
 
   // Handle search input change
   const handleSearchChange = (event) => {
@@ -412,13 +420,17 @@ const AdminPage = () => {
                               'No media attached'
                             )}
                           </TableCell>
-                          <TableCell>
-                            <select value={emergencyCode} onChange={(e) => setEmergencyCode(e.target.value)}>
-                              <option value="">Select Code</option>
-                              <option value="Code Red">Code Red</option>
-                              <option value="Code Yellow">Code Yellow</option>
-                              <option value="Code Blue">Code Blue</option>
-                            </select>
+                           <TableCell>
+                            <Select
+                              value={emergencyCodes[complaint.Name] || ''} // Retrieve the emergency code from state
+                              onChange={(e) => updateEmergencyCode(complaint.Name, e.target.value)} // Update state
+                              displayEmpty
+                            >
+                              <MenuItem value="">Select Code</MenuItem>
+                              <MenuItem value="Code Red">Code Red</MenuItem>
+                              <MenuItem value="Code Yellow">Code Yellow</MenuItem>
+                              <MenuItem value="Code Blue">Code Blue</MenuItem>
+                            </Select>
                           </TableCell>
                           <TableCell>
                             <Button onClick={() => handleConfirmComplaint(complaint.Name, emergencyCode)} color="primary">
@@ -467,7 +479,7 @@ const AdminPage = () => {
                   </TableHead>
                   <TableBody>
                     {emergencies.map((emergency) => {
-                    const emergencyCode = complaint.EmergencyCode || 'DefaultCode'; // Ensure fallback for undefined values
+                    const emergencyCode = emergency.EmergencyCode || 'DefaultCode'; // Ensure fallback for undefined values
                     return (
                         <TableRow key={emergency.Name}>
                           <TableCell>{emergency.Name}</TableCell>
@@ -486,12 +498,16 @@ const AdminPage = () => {
                             )}
                           </TableCell>
                           <TableCell>
-                            <select value={emergencyCode} onChange={(e) => setEmergencyCode(e.target.value)}>
-                              <option value="">Select Code</option>
-                              <option value="Code Red">Code Red</option>
-                              <option value="Code Yellow">Code Yellow</option>
-                              <option value="Code Blue">Code Blue</option>
-                            </select>
+                            <Select
+                              value={emergencyCodes[emergency.Name] || ''} // Retrieve the emergency code from state
+                              onChange={(e) => updateEmergencyCode(emergency.Name, e.target.value)} // Update state
+                              displayEmpty
+                            >
+                              <MenuItem value="">Select Code</MenuItem>
+                              <MenuItem value="Code Red">Code Red</MenuItem>
+                              <MenuItem value="Code Yellow">Code Yellow</MenuItem>
+                              <MenuItem value="Code Blue">Code Blue</MenuItem>
+                            </Select>
                           </TableCell>
                           <TableCell>
                             <Button onClick={() => handleConfirmEmergency(emergency.Name, emergencyCode)} color="primary">
