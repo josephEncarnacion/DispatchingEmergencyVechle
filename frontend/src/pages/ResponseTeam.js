@@ -24,7 +24,7 @@ const vehicleIcon = L.divIcon({
 });
 
 const codeRedIcon = L.icon({
-  iconUrl: 'path/to/red-icon.png', // Replace with actual red icon URL
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
@@ -33,7 +33,7 @@ const codeRedIcon = L.icon({
 });
 
 const codeYellowIcon = L.icon({
-  iconUrl: 'path/to/yellow-icon.png', // Replace with actual yellow icon URL
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
@@ -42,7 +42,7 @@ const codeYellowIcon = L.icon({
 });
 
 const codeBlueIcon = L.icon({
-  iconUrl: 'path/to/blue-icon.png', // Replace with actual blue icon URL
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
@@ -50,9 +50,10 @@ const codeBlueIcon = L.icon({
   shadowSize: [41, 41],
 });
 
+
 // Function to get marker icon based on emergency code
-const getMarkerIcon = (emergencyCode) => {
-  switch (emergencyCode) {
+const getMarkerIcon = (emergencyCodee) => {
+  switch (emergencyCodee) {
     case 'Code Red':
       return codeRedIcon;
     case 'Code Yellow':
