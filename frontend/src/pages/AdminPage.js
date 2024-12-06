@@ -394,8 +394,8 @@ const AdminPage = () => {
                   </TableHead>
                   <TableBody>
                     {complaints.map((complaint) => {
-                      const [emergencyCode, setEmergencyCode] = useState(complaint.EmergencyCode || '');
-                      return (
+                    const emergencyCode = complaint.EmergencyCode || 'DefaultCode'; // Ensure fallback for undefined values
+                    return (
                         <TableRow key={complaint.Name}>
                           <TableCell>{complaint.Name}</TableCell>
                           <TableCell>{complaint.Address}</TableCell>
@@ -467,8 +467,8 @@ const AdminPage = () => {
                   </TableHead>
                   <TableBody>
                     {emergencies.map((emergency) => {
-                      const [emergencyCode, setEmergencyCode] = useState(emergency.EmergencyCode || '');
-                      return (
+                    const emergencyCode = complaint.EmergencyCode || 'DefaultCode'; // Ensure fallback for undefined values
+                    return (
                         <TableRow key={emergency.Name}>
                           <TableCell>{emergency.Name}</TableCell>
                           <TableCell>{emergency.Address}</TableCell>
