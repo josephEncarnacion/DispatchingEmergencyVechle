@@ -333,16 +333,6 @@ const EmergencyForm = () => {
               )}
             </Box>
           )}
-          {previewUrl && (
-            <Box sx={{ mt: 2, border: '1px solid #ccc', borderRadius: '4px', padding: 2 }}>
-              <Typography variant="body1">Media Preview:</Typography>
-              {file.type.startsWith('image/') ? (
-                <img src={previewUrl} alt="Selected file preview" style={{ maxWidth: '100%' }} />
-              ) : (
-                <video src={previewUrl} controls style={{ maxWidth: '100%' }} />
-              )}
-            </Box>
-          )}
         </Box>
 
         <Box marginTop={2}>

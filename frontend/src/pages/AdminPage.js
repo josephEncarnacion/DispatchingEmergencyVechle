@@ -262,7 +262,7 @@ const AdminPage = () => {
         });
         const result = await response.json();
         if (result.success) {
-            fetchComplaints();
+            fetchComplaints(complaintPage,complaintRowsPerPage);
         } else {
             alert('Failed to confirm complaint');
         }
