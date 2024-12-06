@@ -52,8 +52,8 @@ const codeBlueIcon = L.icon({
 
 
 // Function to get marker icon based on emergency code
-const getMarkerIcon = (emergencyCodee) => {
-  switch (emergencyCodee) {
+const getMarkerIcon = (emergencyCode) => {
+  switch (emergencyCode) {
     case 'Code Red':
       return codeRedIcon;
     case 'Code Yellow':
@@ -247,7 +247,7 @@ const ResponseTeam = () => {
               <Marker
                 key={index}
                 position={[report.Latitude, report.Longitude]}
-                icon={getMarkerIcon(report.EmergencyCodee)} // Dynamically select the marker icon
+                icon={getMarkerIcon(report.EmergencyCode)} // Dynamically select the marker icon
               >
                   <Popup>
                     <strong>Name:</strong> {report.Name} <br />
