@@ -511,6 +511,7 @@ const AdminPage = () => {
                                 <TableCell>Media</TableCell>
                                 <TableCell>Dispatch At</TableCell>
                                 <TableCell>Resolved At</TableCell>
+                                <TableCell>Resolved By</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -531,6 +532,7 @@ const AdminPage = () => {
                                     </TableCell>
                                     <TableCell>{new Date(report.ConfirmedAt).toLocaleString()}</TableCell>
                                     <TableCell>{new Date(report.ResolvedAt).toLocaleString()}</TableCell>
+                                    <TableCell>{report.ResolvedBy}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

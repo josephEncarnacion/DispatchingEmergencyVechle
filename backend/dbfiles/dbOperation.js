@@ -322,11 +322,11 @@ const getUserNotifications = async (userId) => {
     }
   };
 
-  const resolveReportByName = async (name) => {
+  const resolveReportByName = async (name, resolverName) => {
     try {
         let pool = await sql.connect(config);
 
-        // Try to resolve from ConfirmedComplaint_tbl
+        // Resolve from ConfirmedComplaint_tbl
         const complaintResult = await pool.request()
             .input('name', sql.VarChar, name)
             .query('SELECT * FROM ConfirmedComplaint_tbl WHERE Name = @name');
@@ -334,7 +334,7 @@ const getUserNotifications = async (userId) => {
         if (complaintResult.recordset.length > 0) {
             const complaint = complaintResult.recordset[0];
 
-            // Insert into ResolvedReports_tbl
+            // Insert into ResolvedReports_tbl with resolver's first name
             await pool.request()
                 .input('id', sql.Int, complaint.ConfirmedComplaintID)
                 .input('name', sql.VarChar, complaint.Name)
@@ -345,10 +345,11 @@ const getUserNotifications = async (userId) => {
                 .input('longitude', sql.Float, complaint.Longitude)
                 .input('mediaUrl', sql.VarChar, complaint.MediaURL)
                 .input('resolvedAt', sql.DateTime, new Date())
-                .input('ConfirmedAt', sql.DateTime, complaint.DateConfirmed)
+                .input('confirmedAt', sql.DateTime, complaint.DateConfirmed)
+                .input('resolvedBy', sql.VarChar, resolverName) // Include resolver's name
                 .query(`
-                    INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt,  ConfirmedAt)
-                    VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt, @ConfirmedAt)
+                    INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt, ConfirmedAt, ResolvedBy)
+                    VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt, @confirmedAt, @resolvedBy)
                 `);
 
             // Delete from ConfirmedComplaint_tbl
@@ -356,11 +357,11 @@ const getUserNotifications = async (userId) => {
                 .input('name', sql.VarChar, name)
                 .query('DELETE FROM ConfirmedComplaint_tbl WHERE Name = @name');
 
-            console.log(`Complaint ${name} resolved successfully.`);
+            console.log(`Complaint ${name} resolved by ${resolverName}.`);
             return;
         }
 
-        // Try to resolve from ConfirmedEmergency_tbl if not found in ConfirmedComplaint_tbl
+        // Resolve from ConfirmedEmergency_tbl
         const emergencyResult = await pool.request()
             .input('name', sql.VarChar, name)
             .query('SELECT * FROM ConfirmedEmergency_tbl WHERE Name = @name');
@@ -368,7 +369,7 @@ const getUserNotifications = async (userId) => {
         if (emergencyResult.recordset.length > 0) {
             const emergency = emergencyResult.recordset[0];
 
-            // Insert into ResolvedReports_tbl
+            // Insert into ResolvedReports_tbl with resolver's first name
             await pool.request()
                 .input('id', sql.Int, emergency.ConfirmedEmergencyID)
                 .input('name', sql.VarChar, emergency.Name)
@@ -379,10 +380,11 @@ const getUserNotifications = async (userId) => {
                 .input('longitude', sql.Float, emergency.Longitude)
                 .input('mediaUrl', sql.VarChar, emergency.MediaURL)
                 .input('resolvedAt', sql.DateTime, new Date())
-                .input('ConfirmedAt', sql.DateTime, emergency.DateConfirmed)
+                .input('confirmedAt', sql.DateTime, emergency.DateConfirmed)
+                .input('resolvedBy', sql.VarChar, resolverName) // Include resolver's name
                 .query(`
-                    INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt, ConfirmedAt)
-                    VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt, @ConfirmedAt)
+                    INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt, ConfirmedAt, ResolvedBy)
+                    VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt, @confirmedAt, @resolvedBy)
                 `);
 
             // Delete from ConfirmedEmergency_tbl
@@ -390,7 +392,7 @@ const getUserNotifications = async (userId) => {
                 .input('name', sql.VarChar, name)
                 .query('DELETE FROM ConfirmedEmergency_tbl WHERE Name = @name');
 
-            console.log(`Emergency ${name} resolved successfully.`);
+            console.log(`Emergency ${name} resolved by ${resolverName}.`);
         } else {
             throw new Error(`No report found with the name ${name}.`);
         }
@@ -399,6 +401,7 @@ const getUserNotifications = async (userId) => {
         throw error;
     }
 };
+
 const getResolvedReports = async () => {
     try {
         let pool = await sql.connect(config);

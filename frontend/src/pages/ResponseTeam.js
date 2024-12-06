@@ -151,8 +151,16 @@ const ResponseTeam = () => {
 
    // New function to handle resolving a report
    const resolveReport = async (name) => {
+    // Extract resolver's firstName from authData in localStorage
+    const authData = JSON.parse(localStorage.getItem('authData'));
+    if (!authData || !authData.firstName) {
+        console.error('No resolver first name found in auth data.');
+        return;
+    }
     try {
-        await axios.post(`https://newdispatchingbackend.onrender.com/api/resolveReport`, { name });
+        await axios.post(`https://newdispatchingbackend.onrender.com/api/resolveReport`, {  name,
+          resolverName: authData.firstName, // Pass resolver's first name
+      });
 
         // Remove resolved report from state
         setConfirmedReports((prevReports) => prevReports.filter((report) => report.Name !== name));
