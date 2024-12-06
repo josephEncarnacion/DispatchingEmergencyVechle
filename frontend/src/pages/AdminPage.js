@@ -409,6 +409,7 @@ const AdminPage = () => {
                     <TableCell>Type</TableCell>
                     <TableCell>Description</TableCell>
                     <TableCell>Media </TableCell>
+                    <TableCell>Emergency Code</TableCell>  
                     <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
@@ -471,6 +472,7 @@ const AdminPage = () => {
                     <TableCell>Type</TableCell>
                     <TableCell>Description</TableCell>
                     <TableCell>Media</TableCell>
+                    <TableCell>Emergency Code</TableCell>  
                     <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
