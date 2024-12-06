@@ -189,7 +189,7 @@ app.delete('/emergencies/:name', async (req, res) => {
   }
 });
 
-aapp.post('/complaints/confirm/:name', async (req, res) => {
+app.post('/complaints/confirm/:name', async (req, res) => {
   const { name } = req.params;
   const { emergencyCode } = req.body; // Retrieve emergency code from request body
   try {
