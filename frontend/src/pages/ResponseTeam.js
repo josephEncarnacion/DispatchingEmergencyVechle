@@ -23,15 +23,46 @@ const vehicleIcon = L.divIcon({
   iconAnchor: [16, 16]
 });
 
-const defaultMarkerIcon = L.icon({
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+const codeRedIcon = L.icon({
+  iconUrl: 'path/to/red-icon.png', // Replace with actual red icon URL
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
-  tooltipAnchor: [16, -28],
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
   shadowSize: [41, 41],
 });
+
+const codeYellowIcon = L.icon({
+  iconUrl: 'path/to/yellow-icon.png', // Replace with actual yellow icon URL
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  shadowSize: [41, 41],
+});
+
+const codeBlueIcon = L.icon({
+  iconUrl: 'path/to/blue-icon.png', // Replace with actual blue icon URL
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  shadowSize: [41, 41],
+});
+
+// Function to get marker icon based on emergency code
+const getMarkerIcon = (emergencyCode) => {
+  switch (emergencyCode) {
+    case 'Code Red':
+      return codeRedIcon;
+    case 'Code Yellow':
+      return codeYellowIcon;
+    case 'Code Blue':
+      return codeBlueIcon;
+    default:
+      return defaultMarkerIcon;
+  }
+};
 
 const POLLING_INTERVAL = 10000; // 10 seconds
 
@@ -212,7 +243,11 @@ const ResponseTeam = () => {
                 <Popup>Your Location</Popup>
               </Marker>
               {confirmedReports.map((report, index) => (
-                <Marker key={index} position={[report.Latitude, report.Longitude]} icon={defaultMarkerIcon}>
+              <Marker
+                key={index}
+                position={[report.Latitude, report.Longitude]}
+                icon={getMarkerIcon(report.EmergencyCodee)} // Dynamically select the marker icon
+              >
                   <Popup>
                     <strong>Name:</strong> {report.Name} <br />
                     <strong>Address:</strong> {report.Address} <br />
