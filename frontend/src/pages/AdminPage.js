@@ -565,7 +565,13 @@ const AdminPage = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {resolvedReports.map((report) => (
+                          
+                        {filteredReports
+                          .slice(
+                            resolvedPage * resolvedRowsPerPage,
+                            resolvedPage * resolvedRowsPerPage + resolvedRowsPerPage
+                          )
+                          .map((report) => (
                                 <TableRow key={report.id}>
                                     <TableCell>{report.Name}</TableCell>
                                     <TableCell>{report.Address}</TableCell>
