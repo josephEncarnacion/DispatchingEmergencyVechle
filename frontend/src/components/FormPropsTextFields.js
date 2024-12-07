@@ -385,11 +385,11 @@ const ComplaintForm = () => {
           sx={{ mb: 2 }}
         />
 
-<Typography variant="caption" align="left" sx={{ mb: 1, display: 'block' }}>
+        <Typography variant="caption" align="left" sx={{ mb: 1, display: 'block' }}>
           The Maximum total size of the file is {MAX_FILE_SIZE_MB} MB.
         </Typography>
         <Typography variant="caption" align="left" sx={{ mb: 1, display: 'block' }}>
-          Supported media file types include .jpg, .jpeg, .gif, .png, .bmp, .tif, .tiff, .svg, .wav, .mp3, and .mp4.
+          Supported media file types include .jpg, .jpeg, .gif, .png, .mp3, and .mp4.
         </Typography>
         <Box sx={{ mb: 2, textAlign: 'center' }}>
           <Button variant="contained" component="label">
