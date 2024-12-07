@@ -45,6 +45,12 @@ const EmergencyForm = () => {
 
   const MAX_FILE_SIZE_MB = 200;
 
+  const currentDate = new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
+
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
@@ -55,6 +61,7 @@ const EmergencyForm = () => {
       }
       setFile(selectedFile);
       setPreviewUrl(URL.createObjectURL(selectedFile)); // Preview
+      setFileName(`${selectedFile.name.replace(/\.[^/.]+$/, '')} - ${currentDate}${selectedFile.name.match(/\.[^/.]+$/)?.[0] || ''}`);
       simulateUpload(selectedFile);
     }
   };
@@ -285,10 +292,13 @@ const EmergencyForm = () => {
             {buttonText}
             <input type="file" hidden accept="image/*,video/*" onChange={handleFileChange} />
           </Button>
-          {file && (
+          {file && (  
             <Box sx={{ mt: 2, width: '100%', position: 'relative' }}>
                <Typography variant="body2" sx={{ mb: 1, display: 'flex', justifyContent: 'space-between' }}>
-                <span>{file.name}</span>
+               <span>
+                    {file.name.replace(/\.[^/.]+$/, '')} - {currentDate}
+                    {file.name.match(/\.[^/.]+$/)?.[0] || ''}
+               </span>
                 <span>{(file.size / (1024 * 1024)).toFixed(2)} MB</span> {/* File size in MB */}
               </Typography>
               <br/>
@@ -318,8 +328,20 @@ const EmergencyForm = () => {
                 {uploadProgress.toFixed(1)}%
               </Typography>
             </Box>
-              <IconButton onClick={handleCancel} size="small" sx={{ position: 'absolute', top: 0, right: 0 }}>
-                <CancelIcon />
+            <IconButton
+              onClick={handleCancel}
+              size="small"
+              sx={{
+                position: 'absolute',
+                top: '-8px', // Adjust to move the button up slightly
+                right: '-8px', // Adjust to move the button right and out of overlap
+                backgroundColor: 'rgba(0, 0, 0, 0.1)', // Add slight background for better visibility
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                },
+              }}
+            >             
+                 <CancelIcon />
               </IconButton>
             </Box>
           )}

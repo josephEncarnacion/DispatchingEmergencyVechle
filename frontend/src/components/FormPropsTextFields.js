@@ -42,6 +42,12 @@ const ComplaintForm = () => {
   const [buttonText, setButtonText] = useState('Upload Media');
 
   const MAX_FILE_SIZE_MB = 200;
+    // Get current date in 'YYYY-MM-DD' format
+    const currentDate = new Intl.DateTimeFormat('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date());
 
   // Handle file selection and create a preview URL for images
   const handleFileChange = (event) => {
@@ -54,6 +60,7 @@ const ComplaintForm = () => {
       }
       setFile(selectedFile);
       setPreviewUrl(URL.createObjectURL(selectedFile)); // Preview
+      setFileName(`${selectedFile.name.replace(/\.[^/.]+$/, '')} - ${currentDate}${selectedFile.name.match(/\.[^/.]+$/)?.[0] || ''}`);
       simulateUpload(selectedFile);
     }
   };
@@ -399,8 +406,11 @@ const ComplaintForm = () => {
           {file && (
             <Box sx={{ mt: 2, width: '100%', position: 'relative' }}>
                <Typography variant="body2" sx={{ mb: 1, display: 'flex', justifyContent: 'space-between' }}>
-                <span>{file.name}</span>
-                <span>{(file.size / (1024 * 1024)).toFixed(2)} MB</span> {/* File size in MB */}
+               <span>
+                {file.name.replace(/\.[^/.]+$/, '')} - {currentDate}
+                {file.name.match(/\.[^/.]+$/)?.[0] || ''}
+              </span>     
+              <span>{(file.size / (1024 * 1024)).toFixed(2)} MB</span> {/* File size in MB */}
               </Typography>
               <br/>
               <Box sx={{ position: 'relative', height: '12px', borderRadius: '8px', backgroundColor: '#e0e0e0', overflow: 'hidden', mb: 1 }}>
@@ -428,9 +438,21 @@ const ComplaintForm = () => {
               >
                 {uploadProgress.toFixed(1)}%
               </Typography>
-            </Box>
-              <IconButton onClick={handleCancel} size="small" sx={{ position: 'absolute', top: 0, right: 0 }}>
-                <CancelIcon />
+              </Box>
+              <IconButton
+                    onClick={handleCancel}
+                    size="small"
+                    sx={{
+                      position: 'absolute',
+                      top: '-8px', // Adjust to move the button up slightly
+                      right: '-8px', // Adjust to move the button right and out of overlap
+                      backgroundColor: 'rgba(0, 0, 0, 0.1)', // Add slight background for better visibility
+                      '&:hover': {
+                        backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                      },
+                    }}
+                  >
+                    <CancelIcon />
               </IconButton>
             </Box>
           )}
