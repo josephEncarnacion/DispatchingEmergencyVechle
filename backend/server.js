@@ -15,7 +15,7 @@ app.use(cors({ origin: 'https://newdispatching.onrender.com', methods: ['POST', 
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 
-const responseTeamLocations = {}; 
+const responseTeamLocations = []; 
 
 // API to update the response team's location
 app.post('/api/updateLocation', (req, res) => {
@@ -27,9 +27,16 @@ app.post('/api/updateLocation', (req, res) => {
 
   const timestamp = new Date();
 
-  // Update the location by teamId (only one location per team)
-  responseTeamLocations[teamId] = { latitude, longitude, timestamp };
+   // Check if the teamId already exists in the array
+   const existingIndex = responseTeamLocations.findIndex(location => location.teamId === teamId);
 
+   if (existingIndex > -1) {
+     // Update the existing location
+     responseTeamLocations[existingIndex] = { teamId, latitude, longitude, timestamp };
+   } else {
+     // Add a new location
+     responseTeamLocations.push({ teamId, latitude, longitude, timestamp });
+   }
   res.json({ success: true, message: 'Location updated', timestamp });
 });
 
