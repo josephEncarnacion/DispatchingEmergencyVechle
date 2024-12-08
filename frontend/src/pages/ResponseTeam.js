@@ -117,12 +117,14 @@ const ResponseTeam = () => {
 
   const fetchLocation = async () => {
     try {
+      const authData = JSON.parse(localStorage.getItem('authData'));
+      const teamId = authData.id;
       const position = await new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true });
       });
       const { latitude, longitude } = position.coords;
       setCurrentPosition([latitude, longitude]);
-      await axios.post('https://newdispatchingbackend.onrender.com/api/updateLocation', { latitude, longitude, teamId: 'team1' });
+      await axios.post('https://newdispatchingbackend.onrender.com/api/updateLocation', { latitude, longitude, teamId});
     } catch (error) {
       console.error('Error fetching location:', error);
     }
