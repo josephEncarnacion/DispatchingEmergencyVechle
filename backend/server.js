@@ -5,7 +5,6 @@ const app = express();
 const API_PORT = process.env.PORT || 5000;
 const bcrypt = require('bcrypt'); // Import bcrypt
 const path = require('path');
-const responseTeamLocations = {}; 
 const SALT_ROUNDS = 10; // Define the number of salt rounds for bcrypt hashing
 
 app.use(express.json());
@@ -16,6 +15,7 @@ app.use(cors({ origin: 'https://newdispatching.onrender.com', methods: ['POST', 
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 
+const responseTeamLocations = {}; 
 
 // API to update the response team's location
 app.post('/api/updateLocation', (req, res) => {
