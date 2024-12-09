@@ -47,12 +47,12 @@ function Login() {
         );
         login(data.role);
         navigate(data.role === 'Admin' ? '/admin' : data.role === 'Response' ? '/response' : '/');
-      } else {
+      } else {  
         if (data.errors) {
           if (data.errors.username) setUsernameError(data.errors.username);
           if (data.errors.password) setPasswordError(data.errors.password);
         } else {
-          setGeneralError('Invalid credentials');
+          setGeneralError('Invalid Password or Username');
         }
       }
     } catch (error) {
