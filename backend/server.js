@@ -27,12 +27,19 @@ app.post('/api/updateLocation', (req, res) => {
 
   const timestamp = new Date();
 
-   // Update the location by teamId (only one location per team)
-   responseTeamLocations[teamId] = { latitude, longitude, timestamp };
+   // Check if the teamId already exists in the array
+   const existingIndex = responseTeamLocations.findIndex(location => location.teamId === teamId);
 
-   res.json({ success: true, message: 'Location updated', timestamp });
- });
- 
+   if (existingIndex > -1) {
+     // Update the existing location
+     responseTeamLocations[existingIndex] = { teamId, latitude, longitude, timestamp };
+   } else {
+     // Add a new location
+     responseTeamLocations.push({ teamId, latitude, longitude, timestamp });
+   }
+  res.json({ success: true, message: 'Location updated', timestamp });
+});
+
 // API to get all response team locations
 app.get('/api/responseTeamLocations', (req, res) => {
   const locations = Object.values(responseTeamLocations);

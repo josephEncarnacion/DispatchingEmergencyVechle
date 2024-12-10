@@ -646,7 +646,7 @@ const AdminPage = () => {
               <ListItemIcon>
                 <MapIcon />
               </ListItemIcon>
-              <ListItemText primary="Map" />
+              <ListItemText primary="Area Report Map" />
             </ListItem>
             <Divider />
             <ListItem button onClick={() => handleSectionChange('complaints')}>
@@ -671,7 +671,7 @@ const AdminPage = () => {
               <ListItemIcon>
                 <CheckCircleIcon /> {/* You can use a different icon */}
               </ListItemIcon>
-              <ListItemText primary="Resolve Reports" />
+              <ListItemText primary="Resolved Reports" />
             </ListItem>
           </List>
         </Box>
