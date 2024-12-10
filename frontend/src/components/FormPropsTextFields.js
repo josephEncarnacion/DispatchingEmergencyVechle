@@ -332,7 +332,7 @@ const ComplaintForm = () => {
         )}
         <Box marginTop={2} marginBottom={2}>
           <Button variant="contained" color="primary" onClick={handleGetLocation}>
-            Get My Location
+            Get My Current Location
           </Button>
           {locationError && (
             <Typography variant="body1" color="error" marginTop={2}>

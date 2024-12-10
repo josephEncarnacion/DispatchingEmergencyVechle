@@ -653,25 +653,25 @@ const AdminPage = () => {
               <ListItemIcon>
                 <ReportIcon />
               </ListItemIcon>
-              <ListItemText primary="Complaints" />
+              <ListItemText primary="Vehicle Complaints Dispatch" />
             </ListItem>
             <ListItem button onClick={() => handleSectionChange('emergencies')}>
               <ListItemIcon>
                 <ReportIcon />
               </ListItemIcon>
-              <ListItemText primary="Emergencies" />
+              <ListItemText primary="Vehicle Emergencies Dispatch" />
             </ListItem>
             <ListItem button onClick={() => handleSectionChange('monitoring')}>
               <ListItemIcon>
                 <DashboardIcon /> {/* You can use a different icon */}
               </ListItemIcon>
-              <ListItemText primary="Monitoring" />
+              <ListItemText primary="Vehicle/Report Monitoring" />
             </ListItem>
             <ListItem button onClick={() => handleSectionChange('resolvedReports')}>
               <ListItemIcon>
                 <CheckCircleIcon /> {/* You can use a different icon */}
               </ListItemIcon>
-              <ListItemText primary="Resolved Reports" />
+              <ListItemText primary="Resolved Reports List" />
             </ListItem>
           </List>
         </Box>

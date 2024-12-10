@@ -258,7 +258,7 @@ const EmergencyForm = () => {
         )}
 
         <Box marginTop={2} marginBottom={2}>
-          <Button variant="contained" color="primary" onClick={handleGetLocation}>Get My Location</Button>
+          <Button variant="contained" color="primary" onClick={handleGetLocation}>Get My Current Location</Button>
           {locationError && <Typography variant="body1" color="error" marginTop={2}>{locationError}</Typography>}
         </Box>
 
