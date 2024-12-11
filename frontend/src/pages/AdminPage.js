@@ -15,6 +15,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import GroupIcon from '@mui/icons-material/Group';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import * as XLSX from 'xlsx'; // Import xlsx library for Excel file creation
 
 
 
@@ -133,6 +134,23 @@ const AdminPage = () => {
     }
   };
 
+  const downloadExcel = () => {
+    // Prepare data for Excel
+    const worksheet = XLSX.utils.json_to_sheet(resolvedReports.map(report => ({
+        Name: report.Name,
+        Address: report.Address,
+        Type: report.Type,
+        Description: report.Text,
+        'Dispatch At': new Date(report.ConfirmedAt).toLocaleString(),
+        'Resolved At': new Date(report.ResolvedAt).toLocaleString(),
+        'Resolved By': report.ResolvedBy,
+    })));
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Resolved Reports");
+    
+    // Trigger file download
+    XLSX.writeFile(workbook, "ResolvedReports.xlsx");
+};
 
   const fetchData = async () => {
     try {
@@ -548,6 +566,11 @@ const AdminPage = () => {
                           <MenuItem value="year">This Year</MenuItem>
                       </Select>
                   </FormControl>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                  <Button variant="contained" color="primary" onClick={downloadExcel}>
+                      Download Excel
+                  </Button>
               </Box>
                 {/* Resolved reports table */}
                 <TableContainer component={Paper}>
