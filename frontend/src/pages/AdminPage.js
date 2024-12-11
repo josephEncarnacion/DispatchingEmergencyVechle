@@ -16,7 +16,31 @@ import GroupIcon from '@mui/icons-material/Group';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import * as XLSX from 'xlsx'; // Import xlsx library for Excel file creation
+import { Line, Pie, Bar } from 'react-chartjs-2';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    ArcElement,
+    BarElement,
+} from 'chart.js';
 
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    ArcElement,
+    BarElement
+);
 
 
 const defaultMarkerIcon = L.icon({
@@ -70,7 +94,55 @@ const AdminPage = () => {
   const prevComplaints = useRef([]);
   const prevEmergencies = useRef([]);
 
+
+  const [dailyResolvedData, setDailyResolvedData] = useState([]);
+  const [monthlyResolvedData, setMonthlyResolvedData] = useState([]);
+  const [emergencyCount, setEmergencyCount] = useState(0);
+  const [complaintCount, setComplaintCount] = useState(0);
+  const [otherCount, setOtherCount] = useState(0);
+  const [resolvedByStaff, setResolvedByStaff] = useState({});
+
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
+
+  const fetchAnalyticsData = async () => {
+    try {
+      const response = await axios.get(`https://newdispatchingbackend.onrender.com/api/resolvedReports`);
+      const reports = response.data.resolvedReports || [];
+
+      const dailyCounts = new Array(7).fill(0); // Weekly
+      const monthlyCounts = new Array(12).fill(0); // Monthly
+      const typeCounts = { emergency: 0, complaint: 0, other: 0 };
+      const staffCounts = {};
+
+      reports.forEach((report) => {
+        const resolvedAt = new Date(report.ResolvedAt);
+        const day = resolvedAt.getDay(); // 0 (Sunday) to 6 (Saturday)
+        const month = resolvedAt.getMonth(); // 0 (Jan) to 11 (Dec)
+
+        dailyCounts[day]++;
+        monthlyCounts[month]++;
+
+        // Type counts
+        if (report.Type === 'Emergency') typeCounts.emergency++;
+        else if (report.Type === 'Complaint') typeCounts.complaint++;
+        else typeCounts.other++;
+
+        // Staff contribution
+        staffCounts[report.ResolvedBy] = (staffCounts[report.ResolvedBy] || 0) + 1;
+      });
+
+      setDailyResolvedData(dailyCounts);
+      setMonthlyResolvedData(monthlyCounts);
+      setEmergencyCount(typeCounts.emergency);
+      setComplaintCount(typeCounts.complaint);
+      setOtherCount(typeCounts.other);
+      setResolvedByStaff(staffCounts);
+    } catch (error) {
+      console.error('Error fetching analytics data:', error);
+    }
+  };
+
+ 
 
   // Handle search input change
   const handleSearchChange = (event) => {
@@ -212,7 +284,7 @@ const AdminPage = () => {
   };
   
   useEffect(() => {
-    // Initial fetch
+    fetchAnalyticsData();
     fetchResolvedReports();
     fetchData();
     fetchResponseTeamLocations();
@@ -367,6 +439,72 @@ const AdminPage = () => {
               onClickNewEmergencies={() => handleSectionChange('emergencies')}
               onClickOngoingReports={() => handleSectionChange('monitoring')}
               />
+        );
+        case 'resolvedReportsAnalytics': // New analytics case
+        return (
+          <Container sx={{ mt: 4 }}>
+            <Typography variant="h5" gutterBottom>
+              Resolved Reports Analytics
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <Line
+                data={{
+                  labels: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                  datasets: [
+                    {
+                      label: 'Daily Resolved Reports (Last Week)',
+                      data: dailyResolvedData, // Replace with fetched data
+                      borderColor: 'rgba(75, 192, 192, 1)',
+                      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                      fill: true,
+                    },
+                  ],
+                }}
+                options={{ responsive: true }}
+              />
+              <Bar
+                data={{
+                  labels: [
+                    'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December',
+                  ],
+                  datasets: [
+                    {
+                      label: 'Monthly Resolved Reports',
+                      data: monthlyResolvedData, // Replace with fetched data
+                      backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    },
+                  ],
+                }}
+                options={{ responsive: true }}
+              />
+              <Pie
+                data={{
+                  labels: ['Emergency', 'Complaint', 'Other'],
+                  datasets: [
+                    {
+                      data: [emergencyCount, complaintCount, otherCount], // Replace with fetched data
+                      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                    },
+                  ],
+                }}
+                options={{ responsive: true }}
+              />
+              <Bar
+                data={{
+                  labels: Object.keys(resolvedByStaff),
+                  datasets: [
+                    {
+                      label: 'Resolved Reports by Staff',
+                      data: Object.values(resolvedByStaff), // Replace with fetched data
+                      backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                    },
+                  ],
+                }}
+                options={{ responsive: true }}
+              />
+            </Box>
+          </Container>
         );
         case 'map':
         return <MapComponent />;
@@ -665,6 +803,12 @@ const AdminPage = () => {
               </ListItemIcon>
               <ListItemText primary="Dashboard" />
             </ListItem>
+            <ListItem button onClick={() => handleSectionChange('resolvedReportsAnalytics')}>
+        <ListItemIcon>
+          <BarChartIcon />
+        </ListItemIcon>
+        <ListItemText primary="Reports Analytics" />
+      </ListItem>
             <ListItem button onClick={() => handleSectionChange('map')}>
               <ListItemIcon>
                 <MapIcon />
