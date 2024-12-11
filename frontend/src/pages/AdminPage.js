@@ -653,13 +653,13 @@ const AdminPage = () => {
               <ListItemIcon>
                 <ReportIcon />
               </ListItemIcon>
-              <ListItemText primary="Vehicle Complaints Dispatch" />
+              <ListItemText primary="Dispatch Complaints " />
             </ListItem>
             <ListItem button onClick={() => handleSectionChange('emergencies')}>
               <ListItemIcon>
                 <ReportIcon />
               </ListItemIcon>
-              <ListItemText primary="Vehicle Emergencies Dispatch" />
+              <ListItemText primary="Dispatch Emergencies " />
             </ListItem>
             <ListItem button onClick={() => handleSectionChange('monitoring')}>
               <ListItemIcon>
