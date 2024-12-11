@@ -17,7 +17,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import * as XLSX from 'xlsx'; // Import xlsx library for Excel file creation
-import { Line, Pie, Bar } from 'react-chartjs-2';
+import { Line , Bar } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -27,7 +27,6 @@ import {
     Title,
     Tooltip,
     Legend,
-    ArcElement,
     BarElement,
 } from 'chart.js';
 
@@ -98,9 +97,6 @@ const AdminPage = () => {
 
   const [dailyResolvedData, setDailyResolvedData] = useState([]);
   const [monthlyResolvedData, setMonthlyResolvedData] = useState([]);
-  const [emergencyCount, setEmergencyCount] = useState(0);
-  const [complaintCount, setComplaintCount] = useState(0);
-  const [otherCount, setOtherCount] = useState(0);
   const [resolvedByStaff, setResolvedByStaff] = useState({});
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
@@ -112,7 +108,6 @@ const AdminPage = () => {
 
       const dailyCounts = new Array(7).fill(0); // Weekly
       const monthlyCounts = new Array(12).fill(0); // Monthly
-      const typeCounts = { emergency: 0, complaint: 0, other: 0 };
       const staffCounts = {};
 
       reports.forEach((report) => {
@@ -123,20 +118,12 @@ const AdminPage = () => {
         dailyCounts[day]++;
         monthlyCounts[month]++;
 
-        // Type counts
-        if (report.Type === 'Emergency') typeCounts.emergency++;
-        else if (report.Type === 'Complaint') typeCounts.complaint++;
-        else typeCounts.other++;
-
         // Staff contribution
         staffCounts[report.ResolvedBy] = (staffCounts[report.ResolvedBy] || 0) + 1;
       });
 
       setDailyResolvedData(dailyCounts);
       setMonthlyResolvedData(monthlyCounts);
-      setEmergencyCount(typeCounts.emergency);
-      setComplaintCount(typeCounts.complaint);
-      setOtherCount(typeCounts.other);
       setResolvedByStaff(staffCounts);
     } catch (error) {
       console.error('Error fetching analytics data:', error);
@@ -477,18 +464,6 @@ const AdminPage = () => {
                       label: 'Monthly Resolved Reports',
                       data: monthlyResolvedData, // Replace with fetched data
                       backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    },
-                  ],
-                }}
-                options={{ responsive: true }}
-              />
-              <Pie
-                data={{
-                  labels: ['Emergency', 'Complaint', 'Other'],
-                  datasets: [
-                    {
-                      data: [emergencyCount, complaintCount, otherCount], // Replace with fetched data
-                      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
                     },
                   ],
                 }}
