@@ -38,7 +38,6 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    ArcElement,
     BarElement
 );
 
