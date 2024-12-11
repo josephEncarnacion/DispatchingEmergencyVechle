@@ -11,6 +11,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import axios from 'axios';
+import { BarChart as BarChartIcon } from '@mui/icons-material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import GroupIcon from '@mui/icons-material/Group';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
