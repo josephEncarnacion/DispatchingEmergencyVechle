@@ -143,7 +143,11 @@ const AdminPage = () => {
     }
   };
 
- 
+  useEffect(() => {
+    if (selectedSection === 'resolvedReportsAnalytics') {
+      fetchAnalyticsData();
+    }
+  }, [selectedSection]);
 
   // Handle search input change
   const handleSearchChange = (event) => {
@@ -285,7 +289,6 @@ const AdminPage = () => {
   };
   
   useEffect(() => {
-    fetchAnalyticsData();
     fetchResolvedReports();
     fetchData();
     fetchResponseTeamLocations();
