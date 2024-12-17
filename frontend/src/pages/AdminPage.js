@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-  Button,TablePagination, TableContainer, TableHead, AppBar, Toolbar, Typography, InputLabel ,FormControl, Box, TextField, Drawer, List, ListItem, ListItemIcon, ListItemText, CssBaseline, Divider, Container, Table, TableBody, TableCell,MenuItem, TableRow,Select, Paper, 
+  Button,TablePagination, TableContainer, TableHead, AppBar, Toolbar, Typography, InputLabel ,FormControl, Box, TextField, Drawer, List, ListItem, ListItemIcon, ListItemText, CssBaseline, Divider, Container, Table, TableBody, TableCell,MenuItem, TableRow,Select, Paper, Grid,
 } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import MapIcon from '@mui/icons-material/Map';
@@ -96,9 +96,18 @@ const AdminPage = () => {
 
   const [dailyResolvedData, setDailyResolvedData] = useState([]);
   const [monthlyResolvedData, setMonthlyResolvedData] = useState([]);
+  const [yearlyResolvedData, setYearlyResolvedData] = useState([]); // Yearly data
+  const [yearLabels, setYearLabels] = useState([]); // Year labels
   const [resolvedByStaff, setResolvedByStaff] = useState({});
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
+
+  const getWeekNumber = (date) => {
+    const oneJan = new Date(date.getFullYear(), 0, 1);
+    const numberOfDays = Math.floor((date - oneJan) / (24 * 60 * 60 * 1000));
+    return Math.ceil((numberOfDays + oneJan.getDay() + 1) / 7);
+  };
+
 
   const fetchAnalyticsData = async () => {
     try {
@@ -107,15 +116,32 @@ const AdminPage = () => {
 
       const dailyCounts = new Array(7).fill(0); // Weekly
       const monthlyCounts = new Array(12).fill(0); // Monthly
+      const yearlyCounts = {}; // Yearly
       const staffCounts = {};
+
+      // Initialize year range (2024-2030)
+      for (let year = 2024; year <= 2030; year++) {
+        yearlyCounts[year] = 0;
+      }
+
+      const currentWeek = getWeekNumber(new Date());
 
       reports.forEach((report) => {
         const resolvedAt = new Date(report.ResolvedAt);
         const day = resolvedAt.getDay(); // 0 (Sunday) to 6 (Saturday)
         const month = resolvedAt.getMonth(); // 0 (Jan) to 11 (Dec)
+        const year = resolvedAt.getFullYear();
+        const week = getWeekNumber(resolvedAt);
 
-        dailyCounts[day]++;
+        // Only include data for this week
+        if (week === currentWeek) {
+          dailyCounts[day]++;
+        }
+
         monthlyCounts[month]++;
+        if (yearlyCounts[year] !== undefined) {
+          yearlyCounts[year]++;
+        }
 
         // Staff contribution
         staffCounts[report.ResolvedBy] = (staffCounts[report.ResolvedBy] || 0) + 1;
@@ -123,6 +149,8 @@ const AdminPage = () => {
 
       setDailyResolvedData(dailyCounts);
       setMonthlyResolvedData(monthlyCounts);
+      setYearlyResolvedData(Object.values(yearlyCounts)); // Save yearly counts as array
+      setYearLabels(Object.keys(yearlyCounts)); // Year range labels
       setResolvedByStaff(staffCounts);
     } catch (error) {
       console.error('Error fetching analytics data:', error);
@@ -450,56 +478,96 @@ const AdminPage = () => {
         case 'resolvedReportsAnalytics': // New analytics case
         return (
           <Container sx={{ mt: 4 }}>
-            <Typography variant="h5" gutterBottom>
-              Resolved Reports Analytics
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <Line
-                data={{
-                  labels: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-                  datasets: [
-                    {
-                      label: 'Daily Resolved Reports (Last Week)',
-                      data: dailyResolvedData, // Replace with fetched data
-                      borderColor: 'rgba(75, 192, 192, 1)',
-                      backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                      fill: true,
-                    },
-                  ],
-                }}
-                options={{ responsive: true }}
-              />
-              <Bar
-                data={{
-                  labels: [
-                    'January', 'February', 'March', 'April', 'May', 'June',
-                    'July', 'August', 'September', 'October', 'November', 'December',
-                  ],
-                  datasets: [
-                    {
-                      label: 'Monthly Resolved Reports',
-                      data: monthlyResolvedData, // Replace with fetched data
-                      backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    },
-                  ],
-                }}
-                options={{ responsive: true }}
-              />
-              <Bar
-                data={{
-                  labels: Object.keys(resolvedByStaff),
-                  datasets: [
-                    {
-                      label: 'Resolved Reports by Staff',
-                      data: Object.values(resolvedByStaff), // Replace with fetched data
-                      backgroundColor: 'rgba(153, 102, 255, 0.6)',
-                    },
-                  ],
-                }}
-                options={{ responsive: true }}
-              />
-            </Box>
-          </Container>
+          <Typography variant="h5" gutterBottom>
+            Resolved Reports Analytics
+          </Typography>
+          <Grid container spacing={4}>
+            {/* Yearly Graph */}
+            <Grid item xs={12}>
+              <Paper elevation={3} sx={{ p: 2 }}>
+                <Typography variant="h6">Resolved Reports Per Year</Typography>
+                <Bar
+                  data={{
+                    labels: yearLabels, // ['2024', '2025', ..., '2030']
+                    datasets: [
+                      {
+                        label: 'Resolved Reports Per Year',
+                        data: yearlyResolvedData,
+                        backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                      },
+                    ],
+                  }}
+                  options={{ responsive: true }}
+                />
+              </Paper>
+            </Grid>
+    
+            {/* Weekly Graph */}
+            <Grid item xs={12} md={6}>
+              <Paper elevation={3} sx={{ p: 2 }}>
+                <Typography variant="h6">Daily Resolved Reports (This Week)</Typography>
+                <Line
+                  data={{
+                    labels: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                    datasets: [
+                      {
+                        label: 'Daily Resolved Reports',
+                        data: dailyResolvedData,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                      },
+                    ],
+                  }}
+                  options={{ responsive: true }}
+                />
+              </Paper>
+            </Grid>
+    
+            {/* Monthly Graph */}
+            <Grid item xs={12} md={6}>
+              <Paper elevation={3} sx={{ p: 2 }}>
+                <Typography variant="h6">Monthly Resolved Reports</Typography>
+                <Bar
+                  data={{
+                    labels: [
+                      'January', 'February', 'March', 'April', 'May', 'June',
+                      'July', 'August', 'September', 'October', 'November', 'December',
+                    ],
+                    datasets: [
+                      {
+                        label: 'Monthly Resolved Reports',
+                        data: monthlyResolvedData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                      },
+                    ],
+                  }}
+                  options={{ responsive: true }}
+                />
+              </Paper>
+            </Grid>
+    
+            {/* Resolved Reports by Staff */}
+            <Grid item xs={12}>
+              <Paper elevation={3} sx={{ p: 2 }}>
+                <Typography variant="h6">Resolved Reports by Staff</Typography>
+                <Bar
+                  data={{
+                    labels: Object.keys(resolvedByStaff),
+                    datasets: [
+                      {
+                        label: 'Resolved Reports by Staff',
+                        data: Object.values(resolvedByStaff),
+                        backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                      },
+                    ],
+                  }}
+                  options={{ responsive: true }}
+                />
+              </Paper>
+            </Grid>
+          </Grid>
+        </Container>
         );
         case 'map':
         return <MapComponent />;
