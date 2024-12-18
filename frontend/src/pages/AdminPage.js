@@ -481,27 +481,7 @@ const AdminPage = () => {
           <Typography variant="h5" gutterBottom>
             Resolved Reports Analytics
           </Typography>
-          <Grid container spacing={4}>
-            {/* Yearly Graph */}
-            <Grid item xs={12}>
-              <Paper elevation={3} sx={{ p: 2 }}>
-                <Typography variant="h6">Resolved Reports Per Year</Typography>
-                <Bar
-                  data={{
-                    labels: yearLabels, // ['2024', '2025', ..., '2030']
-                    datasets: [
-                      {
-                        label: 'Resolved Reports Per Year',
-                        data: yearlyResolvedData,
-                        backgroundColor: 'rgba(255, 159, 64, 0.6)',
-                      },
-                    ],
-                  }}
-                  options={{ responsive: true }}
-                />
-              </Paper>
-            </Grid>
-    
+          <Grid container spacing={4}>   
             {/* Weekly Graph */}
             <Grid item xs={12} md={6}>
               <Paper elevation={3} sx={{ p: 2 }}>
@@ -546,11 +526,28 @@ const AdminPage = () => {
                 />
               </Paper>
             </Grid>
-    
+            <Grid item xs={12}>
+              <Paper elevation={3} sx={{ p: 2 }}>
+                <Typography variant="h6">Resolved Reports Per Year</Typography>
+                <Bar
+                  data={{
+                    labels: yearLabels, // ['2024', '2025', ..., '2030']
+                    datasets: [
+                      {
+                        label: 'Resolved Reports Per Year',
+                        data: yearlyResolvedData,
+                        backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                      },
+                    ],
+                  }}
+                  options={{ responsive: true }}
+                />
+              </Paper>
+            </Grid>
             {/* Resolved Reports by Staff */}
             <Grid item xs={12}>
               <Paper elevation={3} sx={{ p: 2 }}>
-                <Typography variant="h6">Resolved Reports by Staff</Typography>
+                <Typography variant="h6">Resolved Reports by Response Team</Typography>
                 <Bar
                   data={{
                     labels: Object.keys(resolvedByStaff),
