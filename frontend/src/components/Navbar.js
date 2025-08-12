@@ -12,7 +12,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
+const API_URL = 'http://localhost:5000';
 
 function Navbar() {
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -54,7 +54,7 @@ function Navbar() {
     const fetchNotifications = async () => {
       if (authData && authData.id) {
         try {
-          const response = await fetch(`https://newdispatchingbackend.onrender.com/api/notifications/${authData.id}`,{ method: 'GET' });
+          const response = await fetch(`${API_URL}/api/notifications/${authData.id}`,{ method: 'GET' });
           const data = await response.json();
           setNotifications(data.notifications);
         } catch (error) {

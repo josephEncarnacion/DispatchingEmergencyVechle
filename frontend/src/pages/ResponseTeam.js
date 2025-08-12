@@ -10,7 +10,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import polyline from '@mapbox/polyline';
 import { useAuth } from '../contexts/AuthContext';
-const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
+const API_URL = 'http://localhost:5000';
 
 const vehicleIcon = L.divIcon({
   className: 'custom-div-icon',
@@ -89,7 +89,7 @@ const ResponseTeam = () => {
     if (authData && authData.id) {
       try {
         const response = await fetch(
-          `https://newdispatchingbackend.onrender.com/api/notifications/${authData.id}`,
+          `${API_URL}/api/notifications/${authData.id}`,
           {
             headers: {
               'Cache-Control': 'no-cache',
@@ -124,7 +124,7 @@ const ResponseTeam = () => {
       });
       const { latitude, longitude } = position.coords;
       setCurrentPosition([latitude, longitude]);
-      await axios.post('https://newdispatchingbackend.onrender.com/api/updateLocation', { latitude, longitude, teamId});
+      await axios.post(`${API_URL}/api/updateLocation`, { latitude, longitude, teamId});
     } catch (error) {
       console.error('Error fetching location:', error);
     }
@@ -132,7 +132,7 @@ const ResponseTeam = () => {
 
   const fetchReports = async () => {
     try {
-      const reportResponse = await axios.get('https://newdispatchingbackend.onrender.com/api/confirmedReports');
+      const reportResponse = await axios.get(`${API_URL}/api/confirmedReports`);
       setConfirmedReports([
         ...reportResponse.data.complaints,
         ...reportResponse.data.emergencies,
@@ -192,7 +192,7 @@ const ResponseTeam = () => {
         return;
     }
     try {
-        await axios.post(`https://newdispatchingbackend.onrender.com/api/resolveReport`, {  name,
+        await axios.post(`${API_URL}/api/resolveReport`, {  name,
           resolverName: authData.firstName, // Pass resolver's first name
       });
 

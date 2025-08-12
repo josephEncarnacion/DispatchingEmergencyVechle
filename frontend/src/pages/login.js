@@ -5,6 +5,7 @@ import { Grid, IconButton, TextField, Button, Typography, Paper, Box, InputAdorn
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+const API_URL = 'http://localhost:5000';
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -28,7 +29,7 @@ function Login() {
     setGeneralError('');
 
     try {
-      const response = await fetch('https://newdispatchingbackend.onrender.com/login', {
+      const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

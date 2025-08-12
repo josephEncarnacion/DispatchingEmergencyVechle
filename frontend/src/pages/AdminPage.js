@@ -100,7 +100,7 @@ const AdminPage = () => {
   const [yearLabels, setYearLabels] = useState([]); // Year labels
   const [resolvedByStaff, setResolvedByStaff] = useState({});
 
-  const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
+  const API_URL = 'http://localhost:5000';
 
   const getWeekNumber = (date) => {
     const oneJan = new Date(date.getFullYear(), 0, 1);
@@ -111,7 +111,7 @@ const AdminPage = () => {
 
   const fetchAnalyticsData = async () => {
     try {
-      const response = await axios.get(`https://newdispatchingbackend.onrender.com/api/resolvedReports`);
+      const response = await axios.get(`${API_URL}/api/resolvedReports`);
       const reports = response.data.resolvedReports || [];
 
       const dailyCounts = new Array(7).fill(0); // Weekly
@@ -218,7 +218,7 @@ const AdminPage = () => {
   
   const fetchResolvedReports = async () => {
     try {
-        const response = await axios.get(`https://newdispatchingbackend.onrender.com/api/resolvedReports`);
+        const response = await axios.get(`${API_URL}/api/resolvedReports`);
         setResolvedReports(response.data.resolvedReports || []);
     } catch (error) {
         console.error('Error fetching resolved reports:', error);
@@ -263,8 +263,8 @@ const AdminPage = () => {
   const fetchData = async () => {
     try {
       const [complaintsResponse, emergenciesResponse] = await Promise.all([
-        axios.get(`https://newdispatchingbackend.onrender.com/complaints`),
-        axios.get(`https://newdispatchingbackend.onrender.com/emergencies`),
+        axios.get(`${API_URL}/complaints`),
+        axios.get(`${API_URL}/emergencies`),
       ]);
 
       const currentComplaints = complaintsResponse.data;
@@ -292,7 +292,7 @@ const AdminPage = () => {
 
   const fetchResponseTeamLocations = async () => {
     try {
-      const response = await axios.get(`https://newdispatchingbackend.onrender.com/api/responseTeamLocations`);
+      const response = await axios.get(`${API_URL}/api/responseTeamLocations`);
       if (response.data.success) {
         console.log("Fetched locations:", response.data.locations);
         setResponseTeamLocations(response.data.locations);
@@ -310,7 +310,7 @@ const AdminPage = () => {
   
   const fetchConfirmedReports = async () => {
     try {
-      const response = await axios.get(`https://newdispatchingbackend.onrender.com/api/confirmedReports`);
+      const response = await axios.get(`${API_URL}/api/confirmedReports`);
       setComplaints(response.data.complaints || []);
       setEmergencies(response.data.emergencies || []);
       setConfirmedReports([...response.data.complaints, ...response.data.emergencies]);
@@ -348,20 +348,20 @@ const AdminPage = () => {
   }, [emergencyPage, emergencyRowsPerPage, selectedSection]);
 
   const fetchComplaints = async (page, pageSize) => {
-    const response = await fetch(`https://newdispatchingbackend.onrender.com/complaints?page=${page + 1}&pageSize=${pageSize}`);
+    const response = await fetch(`${API_URL}/complaints?page=${page + 1}&pageSize=${pageSize}`);
     const data = await response.json();
     setComplaints(data);
   };
 
   const fetchEmergencies = async (page, pageSize) => {
-    const response = await fetch(`https://newdispatchingbackend.onrender.com/emergencies?page=${page + 1}&pageSize=${pageSize}`);
+    const response = await fetch(`${API_URL}/emergencies?page=${page + 1}&pageSize=${pageSize}`);
     const data = await response.json();
     setEmergencies(data);
   };
 
   const handleDeleteComplaint = async (name) => {
     if (window.confirm('Are you sure you want to delete this complaint?')) {
-      const response = await fetch(`https://newdispatchingbackend.onrender.com/complaints/${name}`, { method: 'DELETE' });
+      const response = await fetch(`${API_URL}/complaints/${name}`, { method: 'DELETE' });
       const result = await response.json();
       if (result.success) {
         fetchComplaints(complaintPage, complaintRowsPerPage);
@@ -380,7 +380,7 @@ const AdminPage = () => {
     }
 
     if (window.confirm('Are you sure you want to confirm this complaint?')) {
-        const response = await fetch(`https://newdispatchingbackend.onrender.com/complaints/confirm/${name}`, {
+        const response = await fetch(`${API_URL}/complaints/confirm/${name}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ emergencyCode }),
@@ -396,7 +396,7 @@ const AdminPage = () => {
 
   const handleDeleteEmergency = async (name) => {
     if (window.confirm('Are you sure you want to delete this emergency?')) {
-      const response = await fetch(`https://newdispatchingbackend.onrender.com/emergencies/${name}`, { method: 'DELETE' });
+      const response = await fetch(`${API_URL}/emergencies/${name}`, { method: 'DELETE' });
       const result = await response.json();
       if (result.success) {
         fetchEmergencies(emergencyPage, emergencyRowsPerPage);
@@ -415,7 +415,7 @@ const AdminPage = () => {
   }
 
     if (window.confirm('Are you sure you want to confirm this emergency?')) {
-      const response = await fetch(`https://newdispatchingbackend.onrender.com/emergencies/confirm/${name}`, {
+      const response = await fetch(`${API_URL}/emergencies/confirm/${name}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ emergencyCode }),

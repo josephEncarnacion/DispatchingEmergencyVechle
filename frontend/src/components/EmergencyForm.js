@@ -40,7 +40,7 @@ const EmergencyForm = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [buttonText, setButtonText] = useState('Upload Media');
 
-  const API_URL = process.env.REACT_APP_BACKEND_URL || 'https://newdispatchingbackend.onrender.com';
+  const API_URL = 'http://localhost:5000';
 
 
   const MAX_FILE_SIZE_MB = 200;
@@ -218,7 +218,7 @@ const EmergencyForm = () => {
             userId 
           };
 
-          const response = await fetch(`https://newdispatchingbackend.onrender.com/submitEmergencyReport`, {
+          const response = await fetch(`${API_URL}/submitEmergencyReport`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
