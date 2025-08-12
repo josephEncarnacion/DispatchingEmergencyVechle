@@ -29,6 +29,14 @@ import {
     Legend,
     BarElement,
 } from 'chart.js';
+import { 
+  Analytics as AnalyticsIcon,
+  Assignment as AssignmentIcon,
+  LocalShipping as LocalShippingIcon,
+  Security as SecurityIcon,
+  Settings as SettingsIcon,
+  Person as PersonIcon
+} from '@mui/icons-material';
 
 ChartJS.register(
     CategoryScale,
@@ -851,56 +859,331 @@ const AdminPage = () => {
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+          [`& .MuiDrawer-paper`]: { 
+            width: drawerWidth, 
+            boxSizing: 'border-box',
+            backgroundColor: '#f8f9fa',
+            borderRight: '1px solid #e0e0e0',
+          },
         }}
       >
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
-          <List>
-            <ListItem button onClick={() => handleSectionChange('dashboard')}>
-              <ListItemIcon>
+          {/* Header Section */}
+          <Box sx={{ 
+            p: 2, 
+            borderBottom: '1px solid #e0e0e0',
+            backgroundColor: '#fff',
+            textAlign: 'center'
+          }}>
+            <PersonIcon sx={{ fontSize: 40, color: '#1976d2', mb: 1 }} />
+            <Typography variant="h6" sx={{ color: '#1976d2', fontWeight: 600 }}>
+              Admin Panel
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#666', mt: 0.5 }}>
+              Emergency Dispatch System
+            </Typography>
+          </Box>
+
+          <List sx={{ pt: 1 }}>
+            {/* Dashboard Section */}
+            <ListItem 
+              button 
+              onClick={() => handleSectionChange('dashboard')}
+              sx={{
+                mx: 1,
+                mb: 0.5,
+                borderRadius: 2,
+                '&:hover': {
+                  backgroundColor: '#e3f2fd',
+                  transform: 'translateX(4px)',
+                  transition: 'all 0.2s ease-in-out',
+                },
+                ...(selectedSection === 'dashboard' && {
+                  backgroundColor: '#e3f2fd',
+                  borderLeft: '4px solid #1976d2',
+                  '& .MuiListItemIcon-root': {
+                    color: '#1976d2',
+                  },
+                  '& .MuiListItemText-primary': {
+                    color: '#1976d2',
+                    fontWeight: 600,
+                  },
+                }),
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40 }}>
                 <DashboardIcon />
               </ListItemIcon>
-              <ListItemText primary="Dashboard" />
+              <ListItemText 
+                primary="Dashboard" 
+                primaryTypographyProps={{
+                  fontSize: '0.95rem',
+                  fontWeight: selectedSection === 'dashboard' ? 600 : 400,
+                }}
+              />
             </ListItem>
-            <ListItem button onClick={() => handleSectionChange('resolvedReportsAnalytics')}>
-        <ListItemIcon>
-          <BarChartIcon />
-        </ListItemIcon>
-        <ListItemText primary="Reports Analytics" />
-      </ListItem>
-            <ListItem button onClick={() => handleSectionChange('map')}>
-              <ListItemIcon>
+
+            {/* Analytics Section */}
+            <ListItem 
+              button 
+              onClick={() => handleSectionChange('resolvedReportsAnalytics')}
+              sx={{
+                mx: 1,
+                mb: 0.5,
+                borderRadius: 2,
+                '&:hover': {
+                  backgroundColor: '#f3e5f5',
+                  transform: 'translateX(4px)',
+                  transition: 'all 0.2s ease-in-out',
+                },
+                ...(selectedSection === 'resolvedReportsAnalytics' && {
+                  backgroundColor: '#f3e5f5',
+                  borderLeft: '4px solid #9c27b0',
+                  '& .MuiListItemIcon-root': {
+                    color: '#9c27b0',
+                  },
+                  '& .MuiListItemText-primary': {
+                    color: '#9c27b0',
+                    fontWeight: 600,
+                  },
+                }),
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40 }}>
+                <AnalyticsIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Reports Analytics" 
+                primaryTypographyProps={{
+                  fontSize: '0.95rem',
+                  fontWeight: selectedSection === 'resolvedReportsAnalytics' ? 600 : 400,
+                }}
+              />
+            </ListItem>
+
+            <Divider sx={{ my: 2, mx: 2 }} />
+
+            {/* Monitoring Section */}
+            <Typography variant="overline" sx={{ px: 3, py: 1, color: '#666', fontWeight: 600, fontSize: '0.75rem' }}>
+              MONITORING
+            </Typography>
+
+            <ListItem 
+              button 
+              onClick={() => handleSectionChange('map')}
+              sx={{
+                mx: 1,
+                mb: 0.5,
+                borderRadius: 2,
+                '&:hover': {
+                  backgroundColor: '#e8f5e9',
+                  transform: 'translateX(4px)',
+                  transition: 'all 0.2s ease-in-out',
+                },
+                ...(selectedSection === 'map' && {
+                  backgroundColor: '#e8f5e9',
+                  borderLeft: '4px solid #4caf50',
+                  '& .MuiListItemIcon-root': {
+                    color: '#4caf50',
+                  },
+                  '& .MuiListItemText-primary': {
+                    color: '#4caf50',
+                    fontWeight: 600,
+                  },
+                }),
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40 }}>
                 <MapIcon />
               </ListItemIcon>
-              <ListItemText primary="Area Report Map" />
+              <ListItemText 
+                primary="Area Report Map" 
+                primaryTypographyProps={{
+                  fontSize: '0.95rem',
+                  fontWeight: selectedSection === 'map' ? 600 : 400,
+                }}
+              />
             </ListItem>
-            <Divider />
-            <ListItem button onClick={() => handleSectionChange('complaints')}>
-              <ListItemIcon>
+
+            <ListItem 
+              button 
+              onClick={() => handleSectionChange('monitoring')}
+              sx={{
+                mx: 1,
+                mb: 0.5,
+                borderRadius: 2,
+                '&:hover': {
+                  backgroundColor: '#fff3e0',
+                  transform: 'translateX(4px)',
+                  transition: 'all 0.2s ease-in-out',
+                },
+                ...(selectedSection === 'monitoring' && {
+                  backgroundColor: '#fff3e0',
+                  borderLeft: '4px solid #ff9800',
+                  '& .MuiListItemIcon-root': {
+                    color: '#ff9800',
+                  },
+                  '& .MuiListItemText-primary': {
+                    color: '#ff9800',
+                    fontWeight: 600,
+                  },
+                }),
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40 }}>
+                <LocalShippingIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Vehicle Monitoring" 
+                primaryTypographyProps={{
+                  fontSize: '0.95rem',
+                  fontWeight: selectedSection === 'monitoring' ? 600 : 400,
+                }}
+              />
+            </ListItem>
+
+            <Divider sx={{ my: 2, mx: 2 }} />
+
+            {/* Dispatch Section */}
+            <Typography variant="overline" sx={{ px: 3, py: 1, color: '#666', fontWeight: 600, fontSize: '0.75rem' }}>
+              DISPATCH
+            </Typography>
+
+            <ListItem 
+              button 
+              onClick={() => handleSectionChange('complaints')}
+              sx={{
+                mx: 1,
+                mb: 0.5,
+                borderRadius: 2,
+                '&:hover': {
+                  backgroundColor: '#fff3e0',
+                  transform: 'translateX(4px)',
+                  transition: 'all 0.2s ease-in-out',
+                },
+                ...(selectedSection === 'complaints' && {
+                  backgroundColor: '#fff3e0',
+                  borderLeft: '4px solid #ff9800',
+                  '& .MuiListItemIcon-root': {
+                    color: '#ff9800',
+                  },
+                  '& .MuiListItemText-primary': {
+                    color: '#ff9800',
+                    fontWeight: 600,
+                  },
+                }),
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40 }}>
                 <ReportIcon />
               </ListItemIcon>
-              <ListItemText primary="Dispatch Complaints " />
+              <ListItemText 
+                primary="Dispatch Complaints" 
+                primaryTypographyProps={{
+                  fontSize: '0.95rem',
+                  fontWeight: selectedSection === 'complaints' ? 600 : 400,
+                }}
+              />
             </ListItem>
-            <ListItem button onClick={() => handleSectionChange('emergencies')}>
-              <ListItemIcon>
-                <ReportIcon />
+
+            <ListItem 
+              button 
+              onClick={() => handleSectionChange('emergencies')}
+              sx={{
+                mx: 1,
+                mb: 0.5,
+                borderRadius: 2,
+                '&:hover': {
+                  backgroundColor: '#ffebee',
+                  transform: 'translateX(4px)',
+                  transition: 'all 0.2s ease-in-out',
+                },
+                ...(selectedSection === 'emergencies' && {
+                  backgroundColor: '#ffebee',
+                  borderLeft: '4px solid #f44336',
+                  '& .MuiListItemIcon-root': {
+                    color: '#f44336',
+                  },
+                  '& .MuiListItemText-primary': {
+                    color: '#f44336',
+                    fontWeight: 600,
+                  },
+                }),
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40 }}>
+                <SecurityIcon />
               </ListItemIcon>
-              <ListItemText primary="Dispatch Emergencies " />
+              <ListItemText 
+                primary="Dispatch Emergencies" 
+                primaryTypographyProps={{
+                  fontSize: '0.95rem',
+                  fontWeight: selectedSection === 'emergencies' ? 600 : 400,
+                }}
+              />
             </ListItem>
-            <ListItem button onClick={() => handleSectionChange('monitoring')}>
-              <ListItemIcon>
-                <DashboardIcon /> {/* You can use a different icon */}
+
+            <Divider sx={{ my: 2, mx: 2 }} />
+
+            {/* Reports Section */}
+            <Typography variant="overline" sx={{ px: 3, py: 1, color: '#666', fontWeight: 600, fontSize: '0.75rem' }}>
+              REPORTS
+            </Typography>
+
+            <ListItem 
+              button 
+              onClick={() => handleSectionChange('resolvedReports')}
+              sx={{
+                mx: 1,
+                mb: 0.5,
+                borderRadius: 2,
+                '&:hover': {
+                  backgroundColor: '#f3e5f5',
+                  transform: 'translateX(4px)',
+                  transition: 'all 0.2s ease-in-out',
+                },
+                ...(selectedSection === 'resolvedReports' && {
+                  backgroundColor: '#f3e5f5',
+                  borderLeft: '4px solid #9c27b0',
+                  '& .MuiListItemIcon-root': {
+                    color: '#9c27b0',
+                  },
+                  '& .MuiListItemText-primary': {
+                    color: '#9c27b0',
+                    fontWeight: 600,
+                  },
+                }),
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40 }}>
+                <AssignmentIcon />
               </ListItemIcon>
-              <ListItemText primary="Vehicle/Report Monitoring" />
-            </ListItem>
-            <ListItem button onClick={() => handleSectionChange('resolvedReports')}>
-              <ListItemIcon>
-                <CheckCircleIcon /> {/* You can use a different icon */}
-              </ListItemIcon>
-              <ListItemText primary="Resolved Reports List" />
+              <ListItemText 
+                primary="Resolved Reports" 
+                primaryTypographyProps={{
+                  fontSize: '0.95rem',
+                  fontWeight: selectedSection === 'resolvedReports' ? 600 : 400,
+                }}
+              />
             </ListItem>
           </List>
+
+          {/* Footer Section */}
+          <Box sx={{ 
+            mt: 'auto', 
+            p: 2, 
+            borderTop: '1px solid #e0e0e0',
+            backgroundColor: '#fff',
+            textAlign: 'center'
+          }}>
+            <Typography variant="caption" sx={{ color: '#999', display: 'block' }}>
+              System Version 1.0
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#999' }}>
+              © 2024 Emergency Dispatch
+            </Typography>
+          </Box>
         </Box>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
