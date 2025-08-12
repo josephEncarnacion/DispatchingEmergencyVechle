@@ -485,94 +485,467 @@ const AdminPage = () => {
         );
         case 'resolvedReportsAnalytics': // New analytics case
         return (
-          <Container sx={{ mt: 4 }}>
-          <Typography variant="h5" gutterBottom>
-            Resolved Reports Analytics
-          </Typography>
-          <Grid container spacing={4}>   
-            {/* Weekly Graph */}
-            <Grid item xs={12} md={6}>
-              <Paper elevation={3} sx={{ p: 2 }}>
-                <Typography variant="h6">Daily Resolved Reports (This Week)</Typography>
-                <Line
-                  data={{
-                    labels: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-                    datasets: [
-                      {
-                        label: 'Daily Resolved Reports',
-                        data: dailyResolvedData,
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        fill: true,
-                      },
-                    ],
-                  }}
-                  options={{ responsive: true }}
-                />
-              </Paper>
-            </Grid>
+          <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+            {/* Header Section */}
+            <Box sx={{ mb: 4, textAlign: 'center' }}>
+              <Typography variant="h4" sx={{ 
+                fontWeight: 700, 
+                color: '#1976d2', 
+                mb: 1,
+                textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}>
+                📊 Reports Analytics Dashboard
+              </Typography>
+              <Typography variant="body1" sx={{ color: '#666', fontSize: '1.1rem' }}>
+                Comprehensive insights into emergency response performance and resolution metrics
+              </Typography>
+            </Box>
+
+            <Grid container spacing={4}>   
+              {/* Weekly Graph */}
+              <Grid item xs={12} lg={6}>
+                <Paper elevation={4} sx={{ 
+                  p: 3, 
+                  borderRadius: 3,
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  color: 'white',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <Box sx={{ position: 'relative', zIndex: 2 }}>
+                    <Typography variant="h6" sx={{ 
+                      mb: 2, 
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1
+                    }}>
+                      📅 Daily Resolved Reports (This Week)
+                    </Typography>
+                    <Box sx={{ height: 300 }}>
+                      <Line
+                        data={{
+                          labels: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                          datasets: [
+                            {
+                              label: 'Daily Resolved Reports',
+                              data: dailyResolvedData,
+                              borderColor: 'rgba(255, 255, 255, 1)',
+                              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                              fill: true,
+                              tension: 0.4,
+                              borderWidth: 3,
+                              pointBackgroundColor: 'rgba(255, 255, 255, 1)',
+                              pointBorderColor: '#667eea',
+                              pointBorderWidth: 2,
+                              pointRadius: 6,
+                              pointHoverRadius: 8,
+                            },
+                          ],
+                        }}
+                        options={{ 
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: {
+                              labels: {
+                                color: 'white',
+                                font: { size: 12, weight: 'bold' }
+                              }
+                            }
+                          },
+                          scales: {
+                            x: {
+                              ticks: { color: 'white', font: { weight: 'bold' } },
+                              grid: { color: 'rgba(255,255,255,0.2)' }
+                            },
+                            y: {
+                              ticks: { color: 'white', font: { weight: 'bold' } },
+                              grid: { color: 'rgba(255,255,255,0.2)' },
+                              beginAtZero: true
+                            }
+                          }
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                  <Box sx={{
+                    position: 'absolute',
+                    top: -50,
+                    right: -50,
+                    width: 100,
+                    height: 100,
+                    borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.1)',
+                    zIndex: 1
+                  }} />
+                </Paper>
+              </Grid>
     
-            {/* Monthly Graph */}
-            <Grid item xs={12} md={6}>
-              <Paper elevation={3} sx={{ p: 2 }}>
-                <Typography variant="h6">Monthly Resolved Reports</Typography>
-                <Bar
-                  data={{
-                    labels: [
-                      'January', 'February', 'March', 'April', 'May', 'June',
-                      'July', 'August', 'September', 'October', 'November', 'December',
-                    ],
-                    datasets: [
-                      {
-                        label: 'Monthly Resolved Reports',
-                        data: monthlyResolvedData,
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                      },
-                    ],
-                  }}
-                  options={{ responsive: true }}
-                />
-              </Paper>
+              {/* Monthly Graph */}
+              <Grid item xs={12} lg={6}>
+                <Paper elevation={4} sx={{ 
+                  p: 3, 
+                  borderRadius: 3,
+                  background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                  color: 'white',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <Box sx={{ position: 'relative', zIndex: 2 }}>
+                    <Typography variant="h6" sx={{ 
+                      mb: 2, 
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1
+                    }}>
+                      📈 Monthly Resolved Reports
+                    </Typography>
+                    <Box sx={{ height: 300 }}>
+                      <Bar
+                        data={{
+                          labels: [
+                            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+                          ],
+                          datasets: [
+                            {
+                              label: 'Monthly Resolved Reports',
+                              data: monthlyResolvedData,
+                              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                              borderColor: 'rgba(255, 255, 255, 1)',
+                              borderWidth: 2,
+                              borderRadius: 8,
+                              borderSkipped: false,
+                            },
+                          ],
+                        }}
+                        options={{ 
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: {
+                              labels: {
+                                color: 'white',
+                                font: { size: 12, weight: 'bold' }
+                              }
+                            }
+                          },
+                          scales: {
+                            x: {
+                              ticks: { color: 'white', font: { weight: 'bold' } },
+                              grid: { color: 'rgba(255,255,255,0.2)' }
+                            },
+                            y: {
+                              ticks: { color: 'white', font: { weight: 'bold' } },
+                              grid: { color: 'rgba(255,255,255,0.2)' },
+                              beginAtZero: true
+                            }
+                          }
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                  <Box sx={{
+                    position: 'absolute',
+                    bottom: -30,
+                    left: -30,
+                    width: 80,
+                    height: 80,
+                    borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.1)',
+                    zIndex: 1
+                  }} />
+                </Paper>
+              </Grid>
+
+              {/* Yearly Graph */}
+              <Grid item xs={12}>
+                <Paper elevation={4} sx={{ 
+                  p: 3, 
+                  borderRadius: 3,
+                  background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                  color: 'white',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <Box sx={{ position: 'relative', zIndex: 2 }}>
+                    <Typography variant="h6" sx={{ 
+                      mb: 2, 
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1
+                    }}>
+                      🗓️ Resolved Reports Per Year
+                    </Typography>
+                    <Box sx={{ height: 300 }}>
+                      <Bar
+                        data={{
+                          labels: yearLabels,
+                          datasets: [
+                            {
+                              label: 'Resolved Reports Per Year',
+                              data: yearlyResolvedData,
+                              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                              borderColor: 'rgba(255, 255, 255, 1)',
+                              borderWidth: 2,
+                              borderRadius: 8,
+                              borderSkipped: false,
+                            },
+                          ],
+                        }}
+                        options={{ 
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: {
+                              labels: {
+                                color: 'white',
+                                font: { size: 12, weight: 'bold' }
+                              }
+                            }
+                          },
+                          scales: {
+                            x: {
+                              ticks: { color: 'white', font: { weight: 'bold' } },
+                              grid: { color: 'rgba(255,255,255,0.2)' }
+                            },
+                            y: {
+                              ticks: { color: 'white', font: { weight: 'bold' } },
+                              grid: { color: 'rgba(255,255,255,0.2)' },
+                              beginAtZero: true
+                            }
+                          }
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                  <Box sx={{
+                    position: 'absolute',
+                    top: -40,
+                    right: -40,
+                    width: 120,
+                    height: 120,
+                    borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.1)',
+                    zIndex: 1
+                  }} />
+                </Paper>
+              </Grid>
+
+              {/* Staff Performance */}
+              <Grid item xs={12}>
+                <Paper elevation={4} sx={{ 
+                  p: 3, 
+                  borderRadius: 3,
+                  background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <Box sx={{ position: 'relative', zIndex: 2 }}>
+                    <Typography variant="h6" sx={{ 
+                      mb: 2, 
+                      fontWeight: 600,
+                      color: '#2c3e50',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1
+                    }}>
+                      👥 Response Team Performance
+                    </Typography>
+                    <Box sx={{ height: 300 }}>
+                      <Bar
+                        data={{
+                          labels: Object.keys(resolvedByStaff),
+                          datasets: [
+                            {
+                              label: 'Resolved Reports by Staff',
+                              data: Object.values(resolvedByStaff),
+                              backgroundColor: [
+                                'rgba(255, 99, 132, 0.8)',
+                                'rgba(54, 162, 235, 0.8)',
+                                'rgba(255, 206, 86, 0.8)',
+                                'rgba(75, 192, 192, 0.8)',
+                                'rgba(153, 102, 255, 0.8)',
+                                'rgba(255, 159, 64, 0.8)',
+                                'rgba(199, 199, 199, 0.8)',
+                                'rgba(83, 102, 255, 0.8)',
+                              ],
+                              borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)',
+                                'rgba(199, 199, 199, 1)',
+                                'rgba(83, 102, 255, 1)',
+                              ],
+                              borderWidth: 2,
+                              borderRadius: 8,
+                              borderSkipped: false,
+                            },
+                          ],
+                        }}
+                        options={{ 
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: {
+                              labels: {
+                                color: '#2c3e50',
+                                font: { size: 12, weight: 'bold' }
+                              }
+                            }
+                          },
+                          scales: {
+                            x: {
+                              ticks: { color: '#2c3e50', font: { weight: 'bold' } },
+                              grid: { color: 'rgba(44,62,80,0.2)' }
+                            },
+                            y: {
+                              ticks: { color: '#2c3e50', font: { weight: 'bold' } },
+                              grid: { color: 'rgba(44,62,80,0.2)' },
+                              beginAtZero: true
+                            }
+                          }
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                  <Box sx={{
+                    position: 'absolute',
+                    bottom: -50,
+                    left: -50,
+                    width: 100,
+                    height: 100,
+                    borderRadius: '50%',
+                    background: 'rgba(44,62,80,0.1)',
+                    zIndex: 1
+                  }} />
+                </Paper>
+              </Grid>
+
+              {/* Summary Cards */}
+              <Grid item xs={12}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Paper elevation={3} sx={{ 
+                      p: 3, 
+                      borderRadius: 3,
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      color: 'white',
+                      textAlign: 'center',
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}>
+                      <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
+                        {dailyResolvedData.reduce((a, b) => a + b, 0)}
+                      </Typography>
+                      <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                        This Week's Total
+                      </Typography>
+                      <Box sx={{
+                        position: 'absolute',
+                        top: -20,
+                        right: -20,
+                        width: 60,
+                        height: 60,
+                        borderRadius: '50%',
+                        background: 'rgba(255,255,255,0.1)'
+                      }} />
+                    </Paper>
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Paper elevation={3} sx={{ 
+                      p: 3, 
+                      borderRadius: 3,
+                      background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                      color: 'white',
+                      textAlign: 'center',
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}>
+                      <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
+                        {monthlyResolvedData.reduce((a, b) => a + b, 0)}
+                      </Typography>
+                      <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                        This Month's Total
+                      </Typography>
+                      <Box sx={{
+                        position: 'absolute',
+                        top: -20,
+                        right: -20,
+                        width: 60,
+                        height: 60,
+                        borderRadius: '50%',
+                        background: 'rgba(255,255,255,0.1)'
+                      }} />
+                    </Paper>
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Paper elevation={3} sx={{ 
+                      p: 3, 
+                      borderRadius: 3,
+                      background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                      color: 'white',
+                      textAlign: 'center',
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}>
+                      <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
+                        {yearlyResolvedData.reduce((a, b) => a + b, 0)}
+                      </Typography>
+                      <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                        This Year's Total
+                      </Typography>
+                      <Box sx={{
+                        position: 'absolute',
+                        top: -20,
+                        right: -20,
+                        width: 60,
+                        height: 60,
+                        borderRadius: '50%',
+                        background: 'rgba(255,255,255,0.1)'
+                      }} />
+                    </Paper>
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Paper elevation={3} sx={{ 
+                      p: 3, 
+                      borderRadius: 3,
+                      background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+                      color: '#2c3e50',
+                      textAlign: 'center',
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}>
+                      <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
+                        {Object.keys(resolvedByStaff).length}
+                      </Typography>
+                      <Typography variant="body1" sx={{ opacity: 0.8 }}>
+                        Active Teams
+                      </Typography>
+                      <Box sx={{
+                        position: 'absolute',
+                        top: -20,
+                        right: -20,
+                        width: 60,
+                        height: 60,
+                        borderRadius: '50%',
+                        background: 'rgba(44,62,80,0.1)'
+                      }} />
+                    </Paper>
+                  </Grid>
+                </Grid>
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <Paper elevation={3} sx={{ p: 2 }}>
-                <Typography variant="h6">Resolved Reports Per Year</Typography>
-                <Bar
-                  data={{
-                    labels: yearLabels, // ['2024', '2025', ..., '2030']
-                    datasets: [
-                      {
-                        label: 'Resolved Reports Per Year',
-                        data: yearlyResolvedData,
-                        backgroundColor: 'rgba(255, 159, 64, 0.6)',
-                      },
-                    ],
-                  }}
-                  options={{ responsive: true }}
-                />
-              </Paper>
-            </Grid>
-            {/* Resolved Reports by Staff */}
-            <Grid item xs={12}>
-              <Paper elevation={3} sx={{ p: 2 }}>
-                <Typography variant="h6">Resolved Reports by Response Team</Typography>
-                <Bar
-                  data={{
-                    labels: Object.keys(resolvedByStaff),
-                    datasets: [
-                      {
-                        label: 'Resolved Reports by Staff',
-                        data: Object.values(resolvedByStaff),
-                        backgroundColor: 'rgba(153, 102, 255, 0.6)',
-                      },
-                    ],
-                  }}
-                  options={{ responsive: true }}
-                />
-              </Paper>
-            </Grid>
-          </Grid>
-        </Container>
+          </Container>
         );
         case 'map':
         return <MapComponent />;
