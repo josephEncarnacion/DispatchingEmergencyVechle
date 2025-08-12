@@ -199,7 +199,7 @@ const confirmComplaintByName = async (name, emergencyCode) => {
              `);
 
              await pool.request()
-             .input('userId', sql.Int, 4) // Assuming '4' is the dispatcher ID
+             .input('userId', sql.Int, 3) // Assuming '4' is the dispatcher ID
              .query(`
                  INSERT INTO Notifications (user_id, message, is_read, created_at) 
                  VALUES (@userId, 'New confirmed complaint ready for dispatch', 0, GETDATE())
@@ -259,7 +259,7 @@ const confirmEmergencyByName = async (name, emergencyCode) => {
                 `);
 
             await pool.request()
-                .input('userId', sql.Int, 4) // Assuming '4' is the dispatcher ID
+                .input('userId', sql.Int, 3) // Assuming '4' is the dispatcher ID
                 .query(`
                     INSERT INTO Notifications (user_id, message, is_read, created_at) 
                     VALUES (@userId, 'New confirmed emergency ready for dispatch', 0, GETDATE())
@@ -336,23 +336,22 @@ const getUserNotifications = async (userId) => {
         if (complaintResult.recordset.length > 0) {
             const complaint = complaintResult.recordset[0];
 
-            // Insert into ResolvedReports_tbl with resolver's first name
-            await pool.request()
-                .input('id', sql.Int, complaint.ConfirmedComplaintID)
-                .input('name', sql.VarChar, complaint.Name)
-                .input('address', sql.VarChar, complaint.Address)
-                .input('type', sql.VarChar, 'complaint')
-                .input('text', sql.Text, complaint.ComplaintText)
-                .input('latitude', sql.Float, complaint.Latitude)
-                .input('longitude', sql.Float, complaint.Longitude)
-                .input('mediaUrl', sql.VarChar, complaint.MediaURL)
-                .input('resolvedAt', sql.DateTime, new Date())
-                .input('confirmedAt', sql.DateTime, complaint.DateConfirmed)
-                .input('resolvedBy', sql.VarChar, resolverName) // Include resolver's name
-                .query(`
-                    INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt, ConfirmedAt, ResolvedBy)
-                    VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt, @confirmedAt, @resolvedBy)
-                `);
+                         // Insert into ResolvedReports_tbl with resolver's first name
+             await pool.request()
+                 .input('name', sql.VarChar, complaint.Name)
+                 .input('address', sql.VarChar, complaint.Address)
+                 .input('type', sql.VarChar, 'complaint')
+                 .input('text', sql.Text, complaint.ComplaintText)
+                 .input('latitude', sql.Float, complaint.Latitude)
+                 .input('longitude', sql.Float, complaint.Longitude)
+                 .input('mediaUrl', sql.VarChar, complaint.MediaURL)
+                 .input('resolvedAt', sql.DateTime, new Date())
+                 .input('confirmedAt', sql.DateTime, complaint.DateConfirmed)
+                 .input('resolvedBy', sql.VarChar, resolverName) // Include resolver's name
+                 .query(`
+                     INSERT INTO ResolvedReports_tbl (Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt, ConfirmedAt, ResolvedBy)
+                     VALUES (@name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt, @confirmedAt, @resolvedBy)
+                 `);
 
             // Delete from ConfirmedComplaint_tbl
             await pool.request()
@@ -371,23 +370,22 @@ const getUserNotifications = async (userId) => {
         if (emergencyResult.recordset.length > 0) {
             const emergency = emergencyResult.recordset[0];
 
-            // Insert into ResolvedReports_tbl with resolver's first name
-            await pool.request()
-                .input('id', sql.Int, emergency.ConfirmedEmergencyID)
-                .input('name', sql.VarChar, emergency.Name)
-                .input('address', sql.VarChar, emergency.Address)
-                .input('type', sql.VarChar, 'emergency')
-                .input('text', sql.Text, emergency.EmergencyText)
-                .input('latitude', sql.Float, emergency.Latitude)
-                .input('longitude', sql.Float, emergency.Longitude)
-                .input('mediaUrl', sql.VarChar, emergency.MediaURL)
-                .input('resolvedAt', sql.DateTime, new Date())
-                .input('confirmedAt', sql.DateTime, emergency.DateConfirmed)
-                .input('resolvedBy', sql.VarChar, resolverName) // Include resolver's name
-                .query(`
-                    INSERT INTO ResolvedReports_tbl (id, Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt, ConfirmedAt, ResolvedBy)
-                    VALUES (@id, @name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt, @confirmedAt, @resolvedBy)
-                `);
+                         // Insert into ResolvedReports_tbl with resolver's first name
+             await pool.request()
+                 .input('name', sql.VarChar, emergency.Name)
+                 .input('address', sql.VarChar, emergency.Address)
+                 .input('type', sql.VarChar, 'emergency')
+                 .input('text', sql.Text, emergency.EmergencyText)
+                 .input('latitude', sql.Float, emergency.Latitude)
+                 .input('longitude', sql.Float, emergency.Longitude)
+                 .input('mediaUrl', sql.VarChar, emergency.MediaURL)
+                 .input('resolvedAt', sql.DateTime, new Date())
+                 .input('confirmedAt', sql.DateTime, emergency.DateConfirmed)
+                 .input('resolvedBy', sql.VarChar, resolverName) // Include resolver's name
+                 .query(`
+                     INSERT INTO ResolvedReports_tbl (Name, Address, Type, Text, Latitude, Longitude, MediaUrl, ResolvedAt, ConfirmedAt, ResolvedBy)
+                     VALUES (@name, @address, @type, @text, @latitude, @longitude, @mediaUrl, @resolvedAt, @confirmedAt, @resolvedBy)
+                 `);
 
             // Delete from ConfirmedEmergency_tbl
             await pool.request()

@@ -6,10 +6,44 @@ const API_PORT = process.env.PORT || 5000;
 const bcrypt = require('bcrypt'); // Import bcrypt
 const path = require('path');
 const SALT_ROUNDS = 10; // Define the number of salt rounds for bcrypt hashing
+const sql = require('mssql');
+const dbConfig = require('./dbfiles/dbConfig');
+
+// Log SQL driver errors
+sql.on('error', err => {
+  console.error('MSSQL driver error:', err);
+});
+
+// Test database connection at startup
+(async () => {
+  try {
+    console.log('Attempting database connection...');
+    const pool = await sql.connect(dbConfig);
+    await pool.request().query('SELECT 1 AS ok');
+    console.log('Database connected successfully.');
+  } catch (error) {
+    console.error('Database connection failed:', error);
+  }
+})();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Use extended to pasrse nested objects
-app.use(cors({ origin: 'https://newdispatching.onrender.com', methods: ['POST', 'GET', 'DELETE'] }));
+
+// CORS: allow local frontend
+const allowedOrigins = ['http://localhost:3000'];
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ['GET', 'POST', 'DELETE'],
+    credentials: true,
+  })
+);
 
 // Serve static files from the React app (only in production)
 app.use(express.static(path.join(__dirname, '../frontend/build')));
