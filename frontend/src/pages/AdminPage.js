@@ -948,41 +948,476 @@ const AdminPage = () => {
           </Container>
         );
         case 'map':
-        return <MapComponent />;
+        return (
+          <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+            {/* Header Section */}
+            <Box sx={{ mb: 4, textAlign: 'center' }}>
+              <Typography variant="h4" sx={{ 
+                fontWeight: 700, 
+                color: '#1976d2', 
+                mb: 1,
+                textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}>
+                🗺️ Area Report Map
+              </Typography>
+              <Typography variant="body1" sx={{ color: '#666', fontSize: '1.1rem' }}>
+                Visual overview of all reported incidents and their locations across the service area
+              </Typography>
+            </Box>
+
+            {/* Map Container with Enhanced Styling */}
+            <Paper elevation={4} sx={{ 
+              borderRadius: 3, 
+              overflow: 'hidden',
+              border: '1px solid #e0e0e0'
+            }}>
+              <Box sx={{ 
+                p: 2, 
+                backgroundColor: '#f8f9fa', 
+                borderBottom: '1px solid #e0e0e0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2
+              }}>
+                <MapIcon sx={{ color: '#1976d2', fontSize: 28 }} />
+                <Typography variant="h6" sx={{ fontWeight: 600, color: '#2c3e50' }}>
+                  Interactive Map View
+                </Typography>
+                <Box sx={{ ml: 'auto', display: 'flex', gap: 1 }}>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 1, 
+                    px: 2, 
+                    py: 1, 
+                    backgroundColor: '#e8f5e9', 
+                    borderRadius: 2,
+                    border: '1px solid #4caf50'
+                  }}>
+                    <Box sx={{ 
+                      width: 12, 
+                      height: 12, 
+                      borderRadius: '50%', 
+                      backgroundColor: '#4caf50' 
+                    }} />
+                    <Typography variant="body2" sx={{ color: '#2e7d32', fontWeight: 500 }}>
+                      Response Teams
+                    </Typography>
+                  </Box>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 1, 
+                    px: 2, 
+                    py: 1, 
+                    backgroundColor: '#fff3e0', 
+                    borderRadius: 2,
+                    border: '1px solid #ff9800'
+                  }}>
+                    <Box sx={{ 
+                      width: 12, 
+                      height: 12, 
+                      borderRadius: '50%', 
+                      backgroundColor: '#ff9800' 
+                    }} />
+                    <Typography variant="body2" sx={{ color: '#e65100', fontWeight: 500 }}>
+                      Reports
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+              
+              <Box sx={{ height: '700px', width: '100%' }}>
+                <MapComponent />
+              </Box>
+            </Paper>
+          </Container>
+        );
         case'monitoring':
         return (
-          <Container sx={{ mt: 4 }}>
-          <div>
-            <h2>ResponseTeam Monitoring</h2>
-            <MapContainer center={[14.6507, 121.1029]} zoom={13} style={{ height: '600px', width: '100%' }}>
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              {responseTeamLocations.map((location, index) => (
-                <Marker key={index} position={[location.latitude, location.longitude]} icon={vehicleIcon}>
-                  <Popup>
-                    <strong>Response Team</strong> <br />
-                    Last Updated: {new Date(location.timestamp).toLocaleString()}
-                  </Popup>
-                </Marker>
-              ))}
-            {confirmedReports.map((report, index) => (
-                <Marker key={index} position={[report.Latitude, report.Longitude]} icon={defaultMarkerIcon}>
-                  <Popup>
-                    <strong>Name:</strong> {report.Name} <br />
-                    <strong>Address:</strong> {report.Address} <br />
-                    <strong>Report:</strong> {report.EmergencyType || report.ComplaintType} <br />
-                    {report.MediaUrl && (
-                      report.MediaUrl.endsWith('.jpg') || report.MediaUrl.endsWith('.png') ? (
-                        <img src={report.MediaUrl} alt="Media" style={{ maxWidth: '100px' }} />
-                      ) : (
-                        <a href={report.MediaUrl} target="_blank" rel="noopener noreferrer">View Media</a>
-                      )
-                    )}
-                  </Popup>
-                </Marker>
-              ))}
-            </MapContainer>
-          </div>
-        </Container>
+          <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+            {/* Header Section */}
+            <Box sx={{ mb: 4, textAlign: 'center' }}>
+              <Typography variant="h4" sx={{ 
+                fontWeight: 700, 
+                color: '#1976d2', 
+                mb: 1,
+                textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}>
+                🚗 Vehicle & Report Monitoring
+              </Typography>
+              <Typography variant="body1" sx={{ color: '#666', fontSize: '1.1rem' }}>
+                Real-time tracking of response teams and ongoing incident reports
+              </Typography>
+            </Box>
+
+            {/* Stats Cards */}
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+              <Grid item xs={12} sm={6} md={3}>
+                <Paper elevation={3} sx={{ 
+                  p: 3, 
+                  borderRadius: 3,
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  color: 'white',
+                  textAlign: 'center',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <LocalShippingIcon sx={{ fontSize: 40, mb: 1, opacity: 0.9 }} />
+                  <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                    {activeResponseTeams}
+                  </Typography>
+                  <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                    Active Response Teams
+                  </Typography>
+                  <Box sx={{
+                    position: 'absolute',
+                    top: -20,
+                    right: -20,
+                    width: 60,
+                    height: 60,
+                    borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.1)'
+                  }} />
+                </Paper>
+              </Grid>
+              
+              <Grid item xs={12} sm={6} md={3}>
+                <Paper elevation={3} sx={{ 
+                  p: 3, 
+                  borderRadius: 3,
+                  background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                  color: 'white',
+                  textAlign: 'center',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <ReportIcon sx={{ fontSize: 40, mb: 1, opacity: 0.9 }} />
+                  <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                    {confirmedReports.filter(report => report.ComplaintType).length}
+                  </Typography>
+                  <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                    Active Complaints
+                  </Typography>
+                  <Box sx={{
+                    position: 'absolute',
+                    top: -20,
+                    right: -20,
+                    width: 60,
+                    height: 60,
+                    borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.1)'
+                  }} />
+                </Paper>
+              </Grid>
+              
+              <Grid item xs={12} sm={6} md={3}>
+                <Paper elevation={3} sx={{ 
+                  p: 3, 
+                  borderRadius: 3,
+                  background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                  color: 'white',
+                  textAlign: 'center',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <SecurityIcon sx={{ fontSize: 40, mb: 1, opacity: 0.9 }} />
+                  <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                    {confirmedReports.filter(report => report.EmergencyType).length}
+                  </Typography>
+                  <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                    Active Emergencies
+                  </Typography>
+                  <Box sx={{
+                    position: 'absolute',
+                    top: -20,
+                    right: -20,
+                    width: 60,
+                    height: 60,
+                    borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.1)'
+                  }} />
+                </Paper>
+              </Grid>
+              
+              <Grid item xs={12} sm={6} md={3}>
+                <Paper elevation={3} sx={{ 
+                  p: 3, 
+                  borderRadius: 3,
+                  background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+                  color: '#2c3e50',
+                  textAlign: 'center',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <CheckCircleIcon sx={{ fontSize: 40, mb: 1, opacity: 0.9 }} />
+                  <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                    {confirmedReports.length}
+                  </Typography>
+                  <Typography variant="body1" sx={{ opacity: 0.8 }}>
+                    Total Active Reports
+                  </Typography>
+                  <Box sx={{
+                    position: 'absolute',
+                    top: -20,
+                    right: -20,
+                    width: 60,
+                    height: 60,
+                    borderRadius: '50%',
+                    background: 'rgba(44,62,80,0.1)'
+                  }} />
+                </Paper>
+              </Grid>
+            </Grid>
+
+            {/* Enhanced Map Container */}
+            <Paper elevation={4} sx={{ 
+              borderRadius: 3, 
+              overflow: 'hidden',
+              border: '1px solid #e0e0e0'
+            }}>
+              <Box sx={{ 
+                p: 2, 
+                backgroundColor: '#f8f9fa', 
+                borderBottom: '1px solid #e0e0e0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2
+              }}>
+                <LocalShippingIcon sx={{ color: '#1976d2', fontSize: 28 }} />
+                <Typography variant="h6" sx={{ fontWeight: 600, color: '#2c3e50' }}>
+                  Live Monitoring Dashboard
+                </Typography>
+                <Box sx={{ ml: 'auto', display: 'flex', gap: 1 }}>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 1, 
+                    px: 2, 
+                    py: 1, 
+                    backgroundColor: '#e8f5e9', 
+                    borderRadius: 2,
+                    border: '1px solid #4caf50'
+                  }}>
+                    <Box sx={{ 
+                      width: 12, 
+                      height: 12, 
+                      borderRadius: '50%', 
+                      backgroundColor: '#4caf50' 
+                    }} />
+                    <Typography variant="body2" sx={{ color: '#2e7d32', fontWeight: 500 }}>
+                      Response Teams
+                    </Typography>
+                  </Box>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 1, 
+                    px: 2, 
+                    py: 1, 
+                    backgroundColor: '#fff3e0', 
+                    borderRadius: 2,
+                    border: '1px solid #ff9800'
+                  }}>
+                    <Box sx={{ 
+                      width: 12, 
+                      height: 12, 
+                      borderRadius: '50%', 
+                      backgroundColor: '#ff9800' 
+                    }} />
+                    <Typography variant="body2" sx={{ color: '#e65100', fontWeight: 500 }}>
+                      Active Reports
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+              
+              <Box sx={{ height: '600px', width: '100%' }}>
+                <MapContainer 
+                  center={[14.6507, 121.1029]} 
+                  zoom={13} 
+                  style={{ height: '100%', width: '100%' }}
+                >
+                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  
+                  {/* Response Team Markers */}
+                  {responseTeamLocations.map((location, index) => (
+                    <Marker 
+                      key={`team-${index}`} 
+                      position={[location.latitude, location.longitude]} 
+                      icon={vehicleIcon}
+                    >
+                      <Popup>
+                        <Box sx={{ p: 1, minWidth: 200 }}>
+                          <Typography variant="h6" sx={{ 
+                            fontWeight: 600, 
+                            color: '#2e7d32',
+                            mb: 1,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1
+                          }}>
+                            🚗 Response Team #{location.teamId || index + 1}
+                          </Typography>
+                          <Typography variant="body2" sx={{ mb: 1 }}>
+                            <strong>Last Updated:</strong> {new Date(location.timestamp).toLocaleString()}
+                          </Typography>
+                          <Typography variant="body2" sx={{ mb: 1 }}>
+                            <strong>Coordinates:</strong> {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
+                          </Typography>
+                          <Box sx={{ 
+                            mt: 1, 
+                            p: 1, 
+                            backgroundColor: '#e8f5e9', 
+                            borderRadius: 1,
+                            border: '1px solid #4caf50'
+                          }}>
+                            <Typography variant="caption" sx={{ color: '#2e7d32', fontWeight: 500 }}>
+                              🟢 Active and Responding
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Popup>
+                    </Marker>
+                  ))}
+                  
+                  {/* Confirmed Reports Markers */}
+                  {confirmedReports.map((report, index) => (
+                    <Marker 
+                      key={`report-${index}`} 
+                      position={[report.Latitude, report.Longitude]} 
+                      icon={defaultMarkerIcon}
+                    >
+                      <Popup>
+                        <Box sx={{ p: 1, minWidth: 250 }}>
+                          <Typography variant="h6" sx={{ 
+                            fontWeight: 600, 
+                            color: report.EmergencyType ? '#f44336' : '#ff9800',
+                            mb: 1,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1
+                          }}>
+                            {report.EmergencyType ? '🚨 Emergency' : '📋 Complaint'}
+                          </Typography>
+                          <Typography variant="body2" sx={{ mb: 1 }}>
+                            <strong>Name:</strong> {report.Name}
+                          </Typography>
+                          <Typography variant="body2" sx={{ mb: 1 }}>
+                            <strong>Address:</strong> {report.Address}
+                          </Typography>
+                          <Typography variant="body2" sx={{ mb: 1 }}>
+                            <strong>Type:</strong> {report.EmergencyType || report.ComplaintType}
+                          </Typography>
+                          {report.MediaUrl && (
+                            <Box sx={{ mt: 2, textAlign: 'center' }}>
+                              {report.MediaUrl.endsWith('.jpg') || report.MediaUrl.endsWith('.png') ? (
+                                <img 
+                                  src={report.MediaUrl} 
+                                  alt="Media" 
+                                  style={{ 
+                                    maxWidth: '100%', 
+                                    maxHeight: '120px', 
+                                    borderRadius: '8px',
+                                    border: '2px solid #e0e0e0'
+                                  }} 
+                                />
+                              ) : (
+                                <Button 
+                                  variant="outlined" 
+                                  size="small" 
+                                  href={report.MediaUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  sx={{ mt: 1 }}
+                                >
+                                  📎 View Media
+                                </Button>
+                              )}
+                            </Box>
+                          )}
+                          <Box sx={{ 
+                            mt: 2, 
+                            p: 1, 
+                            backgroundColor: report.EmergencyType ? '#ffebee' : '#fff3e0', 
+                            borderRadius: 1,
+                            border: `1px solid ${report.EmergencyType ? '#f44336' : '#ff9800'}`
+                          }}>
+                            <Typography variant="caption" sx={{ 
+                              color: report.EmergencyType ? '#c62828' : '#e65100', 
+                              fontWeight: 500 
+                            }}>
+                              {report.EmergencyType ? '🚨 High Priority' : '📋 Standard Priority'}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Popup>
+                    </Marker>
+                  ))}
+                </MapContainer>
+              </Box>
+            </Paper>
+
+            {/* Real-time Status */}
+            <Paper elevation={3} sx={{ 
+              mt: 4, 
+              p: 3, 
+              borderRadius: 3,
+              backgroundColor: '#f8f9fa',
+              border: '1px solid #e0e0e0'
+            }}>
+              <Typography variant="h6" sx={{ 
+                fontWeight: 600, 
+                color: '#2c3e50', 
+                mb: 2,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1
+              }}>
+                📡 Real-time Status
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <Box sx={{ 
+                    p: 2, 
+                    backgroundColor: '#fff', 
+                    borderRadius: 2,
+                    border: '1px solid #e0e0e0'
+                  }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#2c3e50', mb: 1 }}>
+                      System Status
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ 
+                        width: 8, 
+                        height: 8, 
+                        borderRadius: '50%', 
+                        backgroundColor: '#4caf50' 
+                      }} />
+                      <Typography variant="body2" sx={{ color: '#2e7d32' }}>
+                        All systems operational
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Box sx={{ 
+                    p: 2, 
+                    backgroundColor: '#fff', 
+                    borderRadius: 2,
+                    border: '1px solid #e0e0e0'
+                  }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#2c3e50', mb: 1 }}>
+                      Last Update
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#666' }}>
+                      {new Date().toLocaleString()}
+                    </Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+            </Paper>
+          </Container>
         );
       case 'complaints':
         return (
