@@ -1421,227 +1421,946 @@ const AdminPage = () => {
         );
       case 'complaints':
         return (
-          <Container sx={{ mt: 4 }}>
-          <Typography variant="h5" gutterBottom>
-              Complaints
-          </Typography>
-          <TableContainer component={Paper} sx={{ mb: 4 }}>
-              <Table>
+          <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+            {/* Header Section */}
+            <Box sx={{ mb: 4, textAlign: 'center' }}>
+              <Typography variant="h4" sx={{ 
+                fontWeight: 700, 
+                color: '#ff9800', 
+                mb: 1,
+                textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}>
+                📋 Dispatch Complaints
+              </Typography>
+              <Typography variant="body1" sx={{ color: '#666', fontSize: '1.1rem' }}>
+                Review and dispatch incoming complaint reports to response teams
+              </Typography>
+            </Box>
+
+            {/* Stats Card */}
+            <Paper elevation={3} sx={{ 
+              p: 3, 
+              mb: 4, 
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #ff9800 0%, #f57c00 100%)',
+              color: 'white',
+              textAlign: 'center'
+            }}>
+              <Typography variant="h6" sx={{ mb: 1, opacity: 0.9 }}>
+                Pending Complaints
+              </Typography>
+              <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                {complaints.length}
+              </Typography>
+            </Paper>
+
+            {/* Enhanced Table */}
+            <Paper elevation={4} sx={{ 
+              borderRadius: 3, 
+              overflow: 'hidden',
+              border: '1px solid #e0e0e0'
+            }}>
+              <Box sx={{ 
+                p: 2, 
+                backgroundColor: '#fff3e0', 
+                borderBottom: '1px solid #e0e0e0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2
+              }}>
+                <ReportIcon sx={{ color: '#ff9800', fontSize: 28 }} />
+                <Typography variant="h6" sx={{ fontWeight: 600, color: '#e65100' }}>
+                  Complaint Reports
+                </Typography>
+                <Box sx={{ ml: 'auto' }}>
+                  <Typography variant="body2" sx={{ color: '#e65100', fontWeight: 500 }}>
+                    {complaints.length} reports pending dispatch
+                  </Typography>
+                </Box>
+              </Box>
+
+              <TableContainer>
+                <Table>
                   <TableHead>
-                      <TableRow>
-                          <TableCell>Name</TableCell>
-                          <TableCell>Address</TableCell>
-                          <TableCell>Type</TableCell>
-                          <TableCell>Description</TableCell>
-                          <TableCell>Media</TableCell>
-                          <TableCell>Emergency Code</TableCell>
-                          <TableCell>Actions</TableCell>
-                      </TableRow>
+                    <TableRow sx={{ backgroundColor: '#fafafa' }}>
+                      <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Name</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Address</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Type</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Description</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Media</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Emergency Code</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Actions</TableCell>
+                    </TableRow>
                   </TableHead>
                   <TableBody>
-                      {complaints.map((complaint) => (
-                          <TableRow key={complaint.Name}>
-                              <TableCell>{complaint.Name}</TableCell>
-                              <TableCell>{complaint.Address}</TableCell>
-                              <TableCell>{complaint.ComplaintType}</TableCell>
-                              <TableCell>{complaint.ComplaintText}</TableCell>
-                              <TableCell>
-                                  {complaint.MediaUrl ? (
-                                      complaint.MediaUrl.endsWith('.jpg') || complaint.MediaUrl.endsWith('.jpeg') || complaint.MediaUrl.endsWith('.png') ? (
-                                          <img src={complaint.MediaUrl} alt="complaint Media" style={{ maxWidth: '100px' }} />
-                                      ) : (
-                                          <a href={complaint.MediaUrl} target="_blank" rel="noopener noreferrer">View Media Upload</a>
-                                      )
-                                  ) : (
-                                      'No media attached'
-                                  )}
-                              </TableCell>
-                              <TableCell>
-                                  <Select
-                                      defaultValue=""
-                                      onChange={(e) => setEmergencyCode(complaint.Name, e.target.value)}
-                                      style={{ width: 150 }}
-                                  >
-                                      <MenuItem value="Code Red">Code Red</MenuItem>
-                                      <MenuItem value="Code Yellow">Code Yellow</MenuItem>
-                                      <MenuItem value="Code Blue">Code Blue</MenuItem>
-                                  </Select>
-                              </TableCell>
-                              <TableCell>
-                                  <Button onClick={() => handleConfirmComplaint(complaint.Name)} color="primary">Dispatch</Button>
-                                  <Button onClick={() => handleDeleteComplaint(complaint.Name)} color="secondary">Delete</Button>
-                              </TableCell>
-                          </TableRow>
-                      ))}
+                    {complaints.map((complaint, index) => (
+                      <TableRow 
+                        key={complaint.Name}
+                        sx={{ 
+                          '&:nth-of-type(odd)': { backgroundColor: '#fafafa' },
+                          '&:hover': { backgroundColor: '#fff3e0' }
+                        }}
+                      >
+                        <TableCell>
+                          <Box>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#2c3e50' }}>
+                              {complaint.Name}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#666' }}>
+                              ID: {complaint.id || index + 1}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                            {complaint.Address}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ 
+                            px: 2, 
+                            py: 0.5, 
+                            backgroundColor: '#fff3e0', 
+                            borderRadius: 2,
+                            border: '1px solid #ff9800',
+                            display: 'inline-block'
+                          }}>
+                            <Typography variant="body2" sx={{ color: '#e65100', fontWeight: 500 }}>
+                              {complaint.ComplaintType}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" sx={{ color: '#2c3e50', maxWidth: 200 }}>
+                            {complaint.ComplaintText}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          {complaint.MediaUrl ? (
+                            complaint.MediaUrl.endsWith('.jpg') || complaint.MediaUrl.endsWith('.jpeg') || complaint.MediaUrl.endsWith('.png') ? (
+                              <Box sx={{ 
+                                position: 'relative',
+                                display: 'inline-block'
+                              }}>
+                                <img 
+                                  src={complaint.MediaUrl} 
+                                  alt="Complaint Media" 
+                                  style={{ 
+                                    maxWidth: '80px', 
+                                    maxHeight: '80px',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e0e0e0'
+                                  }} 
+                                />
+                                <Box sx={{
+                                  position: 'absolute',
+                                  top: -8,
+                                  right: -8,
+                                  width: 20,
+                                  height: 20,
+                                  backgroundColor: '#4caf50',
+                                  borderRadius: '50%',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center'
+                                }}>
+                                  <Typography variant="caption" sx={{ color: 'white', fontSize: '10px' }}>
+                                    📷
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            ) : (
+                              <Button 
+                                variant="outlined" 
+                                size="small" 
+                                href={complaint.MediaUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                sx={{ 
+                                  borderColor: '#ff9800',
+                                  color: '#ff9800',
+                                  '&:hover': {
+                                    borderColor: '#f57c00',
+                                    backgroundColor: '#fff3e0'
+                                  }
+                                }}
+                              >
+                                📎 View Media
+                              </Button>
+                            )
+                          ) : (
+                            <Box sx={{ 
+                              px: 2, 
+                              py: 1, 
+                              backgroundColor: '#f5f5f5', 
+                              borderRadius: 2,
+                              border: '1px solid #e0e0e0',
+                              textAlign: 'center'
+                            }}>
+                              <Typography variant="body2" sx={{ color: '#999', fontSize: '0.8rem' }}>
+                                No media
+                              </Typography>
+                            </Box>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <FormControl fullWidth size="small">
+                            <Select
+                              defaultValue=""
+                              onChange={(e) => setEmergencyCode(complaint.Name, e.target.value)}
+                              sx={{
+                                '& .MuiOutlinedInput-notchedOutline': {
+                                  borderColor: '#ff9800',
+                                },
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                  borderColor: '#f57c00',
+                                },
+                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                  borderColor: '#ff9800',
+                                }
+                              }}
+                            >
+                              <MenuItem value="Code Red">🚨 Code Red</MenuItem>
+                              <MenuItem value="Code Yellow">⚠️ Code Yellow</MenuItem>
+                              <MenuItem value="Code Blue">🔵 Code Blue</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
+                            <Button 
+                              onClick={() => handleConfirmComplaint(complaint.Name)} 
+                              variant="contained" 
+                              size="small"
+                              sx={{ 
+                                backgroundColor: '#4caf50',
+                                '&:hover': { backgroundColor: '#388e3c' },
+                                fontWeight: 600
+                              }}
+                            >
+                              🚗 Dispatch
+                            </Button>
+                            <Button 
+                              onClick={() => handleDeleteComplaint(complaint.Name)} 
+                              variant="outlined" 
+                              size="small"
+                              sx={{ 
+                                borderColor: '#f44336',
+                                color: '#f44336',
+                                '&:hover': {
+                                  borderColor: '#d32f2f',
+                                  backgroundColor: '#ffebee'
+                                }
+                              }}
+                            >
+                              🗑️ Delete
+                            </Button>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
-              </Table>
-          </TableContainer>
-          <TablePagination
-              component="div"
-              count={complaints.length}
-              page={complaintPage}
-              onPageChange={handleComplaintPageChange}
-              rowsPerPage={complaintRowsPerPage}
-              onRowsPerPageChange={handleComplaintRowsPerPageChange}
-              ActionsComponent={CustomPaginationActions}
-          />
-      </Container>
+                </Table>
+              </TableContainer>
+            </Paper>
+
+            {/* Enhanced Pagination */}
+            <Paper elevation={2} sx={{ 
+              mt: 3, 
+              borderRadius: 3,
+              border: '1px solid #e0e0e0'
+            }}>
+              <TablePagination
+                component="div"
+                count={complaints.length}
+                page={complaintPage}
+                onPageChange={handleComplaintPageChange}
+                rowsPerPage={complaintRowsPerPage}
+                onRowsPerPageChange={handleComplaintRowsPerPageChange}
+                ActionsComponent={CustomPaginationActions}
+                sx={{
+                  '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
+                    color: '#2c3e50',
+                    fontWeight: 500
+                  }
+                }}
+              />
+            </Paper>
+          </Container>
         );
       case 'emergencies':
         return (
-          <Container sx={{ mt: 4 }}>
-            <Typography variant="h5" gutterBottom>
-              Emergencies
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Address</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Description</TableCell>
-                    <TableCell>Media</TableCell>
-                    <TableCell>Emergency Code</TableCell>
-                    <TableCell>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {emergencies.map((emergency) => (
-                    <TableRow key={emergency.Name}>
-                      <TableCell>{emergency.Name}</TableCell>
-                      <TableCell>{emergency.Address}</TableCell>
-                      <TableCell>{emergency.EmergencyType}</TableCell>
-                      <TableCell>{emergency.EmergencyText}</TableCell>
-                      <TableCell>
-                  {emergency.MediaUrl ? (
-                    emergency.MediaUrl.endsWith('.jpg') || emergency.MediaUrl.endsWith('.jpeg') || emergency.MediaUrl.endsWith('.png') ? (
-                      <img src={emergency.MediaUrl} alt="Emergency Media" style={{ maxWidth: '100px' }} />
-                    ) : (
-                      <a href={emergency.MediaUrl} target="_blank" rel="noopener noreferrer">View Media Upload</a>
-                    )
-                  ) : (
-                    'No media attached'
-                  )}
-                </TableCell>
-                <TableCell>
-                       <Select
-                        defaultValue=""
-                        onChange={(e) => setEmergencyCode(emergency.Name, e.target.value)}
-                        style={{ width: 150 }}
-                        >
-                        <MenuItem value="Code Red">Code Red</MenuItem>
-                        <MenuItem value="Code Yellow">Code Yellow</MenuItem>
-                        <MenuItem value="Code Blue">Code Blue</MenuItem>
-                    </Select>
-                  </TableCell>
-                      <TableCell>
-                        <Button onClick={() => handleConfirmEmergency(emergency.Name)} color="primary">Dispatch</Button>
-                        <Button onClick={() => handleDeleteEmergency(emergency.Name)} color="secondary">Delete</Button>
-                      </TableCell>
+          <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+            {/* Header Section */}
+            <Box sx={{ mb: 4, textAlign: 'center' }}>
+              <Typography variant="h4" sx={{ 
+                fontWeight: 700, 
+                color: '#f44336', 
+                mb: 1,
+                textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}>
+                🚨 Dispatch Emergencies
+              </Typography>
+              <Typography variant="body1" sx={{ color: '#666', fontSize: '1.1rem' }}>
+                High-priority emergency reports requiring immediate response team dispatch
+              </Typography>
+            </Box>
+
+            {/* Stats Card */}
+            <Paper elevation={3} sx={{ 
+              p: 3, 
+              mb: 4, 
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #f44336 0%, #d32f2f 100%)',
+              color: 'white',
+              textAlign: 'center'
+            }}>
+              <Typography variant="h6" sx={{ mb: 1, opacity: 0.9 }}>
+                Pending Emergencies
+              </Typography>
+              <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                {emergencies.length}
+              </Typography>
+            </Paper>
+
+            {/* Enhanced Table */}
+            <Paper elevation={4} sx={{ 
+              borderRadius: 3, 
+              overflow: 'hidden',
+              border: '1px solid #e0e0e0'
+            }}>
+              <Box sx={{ 
+                p: 2, 
+                backgroundColor: '#ffebee', 
+                borderBottom: '1px solid #e0e0e0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2
+              }}>
+                <SecurityIcon sx={{ color: '#f44336', fontSize: 28 }} />
+                <Typography variant="h6" sx={{ fontWeight: 600, color: '#c62828' }}>
+                  Emergency Reports
+                </Typography>
+                <Box sx={{ ml: 'auto' }}>
+                  <Typography variant="body2" sx={{ color: '#c62828', fontWeight: 500 }}>
+                    {emergencies.length} emergencies requiring immediate attention
+                  </Typography>
+                </Box>
+              </Box>
+
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow sx={{ backgroundColor: '#fafafa' }}>
+                      <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Name</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Address</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Type</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Description</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Media</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Emergency Code</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Actions</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              component="div"
-              count={emergencies.length}
-              page={emergencyPage}
-              onPageChange={handleEmergencyPageChange}
-              rowsPerPage={emergencyRowsPerPage}
-              onRowsPerPageChange={handleEmergencyRowsPerPageChange}
-              ActionsComponent={CustomPaginationActions}
-            />
+                  </TableHead>
+                  <TableBody>
+                    {emergencies.map((emergency, index) => (
+                      <TableRow 
+                        key={emergency.Name}
+                        sx={{ 
+                          '&:nth-of-type(odd)': { backgroundColor: '#fafafa' },
+                          '&:hover': { backgroundColor: '#ffebee' }
+                        }}
+                      >
+                        <TableCell>
+                          <Box>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#2c3e50' }}>
+                              {emergency.Name}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#666' }}>
+                              ID: {emergency.id || index + 1}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                            {emergency.Address}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ 
+                            px: 2, 
+                            py: 0.5, 
+                            backgroundColor: '#ffebee', 
+                            borderRadius: 2,
+                            border: '1px solid #f44336',
+                            display: 'inline-block'
+                          }}>
+                            <Typography variant="body2" sx={{ color: '#c62828', fontWeight: 500 }}>
+                              {emergency.EmergencyType}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" sx={{ color: '#2c3e50', maxWidth: 200 }}>
+                            {emergency.EmergencyText}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          {emergency.MediaUrl ? (
+                            emergency.MediaUrl.endsWith('.jpg') || emergency.MediaUrl.endsWith('.jpeg') || emergency.MediaUrl.endsWith('.png') ? (
+                              <Box sx={{ 
+                                position: 'relative',
+                                display: 'inline-block'
+                              }}>
+                                <img 
+                                  src={emergency.MediaUrl} 
+                                  alt="Emergency Media" 
+                                  style={{ 
+                                    maxWidth: '80px', 
+                                    maxHeight: '80px',
+                                    borderRadius: '8px',
+                                    border: '2px solid #e0e0e0'
+                                  }} 
+                                />
+                                <Box sx={{
+                                  position: 'absolute',
+                                  top: -8,
+                                  right: -8,
+                                  width: 20,
+                                  height: 20,
+                                  backgroundColor: '#f44336',
+                                  borderRadius: '50%',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center'
+                                }}>
+                                  <Typography variant="caption" sx={{ color: 'white', fontSize: '10px' }}>
+                                    🚨
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            ) : (
+                              <Button 
+                                variant="outlined" 
+                                size="small" 
+                                href={emergency.MediaUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                sx={{ 
+                                  borderColor: '#f44336',
+                                  color: '#f44336',
+                                  '&:hover': {
+                                    borderColor: '#d32f2f',
+                                    backgroundColor: '#ffebee'
+                                  }
+                                }}
+                              >
+                                📎 View Media
+                              </Button>
+                            )
+                          ) : (
+                            <Box sx={{ 
+                              px: 2, 
+                              py: 1, 
+                              backgroundColor: '#f5f5f5', 
+                              borderRadius: 2,
+                              border: '1px solid #e0e0e0',
+                              textAlign: 'center'
+                            }}>
+                              <Typography variant="body2" sx={{ color: '#999', fontSize: '0.8rem' }}>
+                                No media
+                              </Typography>
+                            </Box>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <FormControl fullWidth size="small">
+                            <Select
+                              defaultValue=""
+                              onChange={(e) => setEmergencyCode(emergency.Name, e.target.value)}
+                              sx={{
+                                '& .MuiOutlinedInput-notchedOutline': {
+                                  borderColor: '#f44336',
+                                },
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                  borderColor: '#d32f2f',
+                                },
+                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                  borderColor: '#f44336',
+                                }
+                              }}
+                            >
+                              <MenuItem value="Code Red">🚨 Code Red</MenuItem>
+                              <MenuItem value="Code Yellow">⚠️ Code Yellow</MenuItem>
+                              <MenuItem value="Code Blue">🔵 Code Blue</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
+                            <Button 
+                              onClick={() => handleConfirmEmergency(emergency.Name)} 
+                              variant="contained" 
+                              size="small"
+                              sx={{ 
+                                backgroundColor: '#f44336',
+                                '&:hover': { backgroundColor: '#d32f2f' },
+                                fontWeight: 600
+                              }}
+                            >
+                              🚨 Dispatch
+                            </Button>
+                            <Button 
+                              onClick={() => handleDeleteEmergency(emergency.Name)} 
+                              variant="outlined" 
+                              size="small"
+                              sx={{ 
+                                borderColor: '#9e9e9e',
+                                color: '#9e9e9e',
+                                '&:hover': {
+                                  borderColor: '#757575',
+                                  backgroundColor: '#fafafa'
+                                }
+                              }}
+                            >
+                              🗑️ Delete
+                            </Button>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Paper>
+
+            {/* Enhanced Pagination */}
+            <Paper elevation={2} sx={{ 
+              mt: 3, 
+              borderRadius: 3,
+              border: '1px solid #e0e0e0'
+            }}>
+              <TablePagination
+                component="div"
+                count={emergencies.length}
+                page={emergencyPage}
+                onPageChange={handleEmergencyPageChange}
+                rowsPerPage={emergencyRowsPerPage}
+                onRowsPerPageChange={handleEmergencyRowsPerPageChange}
+                ActionsComponent={CustomPaginationActions}
+                sx={{
+                  '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
+                    color: '#2c3e50',
+                    fontWeight: 500
+                  }
+                }}
+              />
+            </Paper>
           </Container>
         );
         case 'resolvedReports': // Add new case for resolved reports list
         return (
-            <Container sx={{ mt: 4 }}>
-                <Typography variant="h5" gutterBottom>Resolved Reports</Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                  <TextField
-                      label="Search by Name"
-                      variant="outlined"
-                      value={searchQuery}
-                      onChange={handleSearchChange}
-                      sx={{ width: '60%' }}
-                  />
-                  <FormControl sx={{ width: '35%' }}>
-                      <InputLabel>Filter by</InputLabel>
-                      <Select
+            <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+                {/* Header Section */}
+                <Box sx={{ mb: 4, textAlign: 'center' }}>
+                  <Typography variant="h4" sx={{ 
+                    fontWeight: 700, 
+                    color: '#9c27b0', 
+                    mb: 1,
+                    textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                  }}>
+                    📊 Resolved Reports
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: '#666', fontSize: '1.1rem' }}>
+                    Complete history of resolved incidents and response team performance
+                  </Typography>
+                </Box>
+
+                {/* Stats Cards */}
+                <Grid container spacing={3} sx={{ mb: 4 }}>
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Paper elevation={3} sx={{ 
+                      p: 3, 
+                      borderRadius: 3,
+                      background: 'linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%)',
+                      color: 'white',
+                      textAlign: 'center'
+                    }}>
+                      <Typography variant="h6" sx={{ mb: 1, opacity: 0.9 }}>
+                        Total Resolved
+                      </Typography>
+                      <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                        {resolvedReports.length}
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Paper elevation={3} sx={{ 
+                      p: 3, 
+                      borderRadius: 3,
+                      background: 'linear-gradient(135deg, #4caf50 0%, #388e3c 100%)',
+                      color: 'white',
+                      textAlign: 'center'
+                    }}>
+                      <Typography variant="h6" sx={{ mb: 1, opacity: 0.9 }}>
+                        This Month
+                      </Typography>
+                      <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                        {monthlyResolvedData.reduce((a, b) => a + b, 0)}
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Paper elevation={3} sx={{ 
+                      p: 3, 
+                      borderRadius: 3,
+                      background: 'linear-gradient(135deg, #2196f3 0%, #1976d2 100%)',
+                      color: 'white',
+                      textAlign: 'center'
+                    }}>
+                      <Typography variant="h6" sx={{ mb: 1, opacity: 0.9 }}>
+                        This Week
+                      </Typography>
+                      <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                        {dailyResolvedData.reduce((a, b) => a + b, 0)}
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Paper elevation={3} sx={{ 
+                      p: 3, 
+                      borderRadius: 3,
+                      background: 'linear-gradient(135deg, #ff9800 0%, #f57c00 100%)',
+                      color: 'white',
+                      textAlign: 'center'
+                    }}>
+                      <Typography variant="h6" sx={{ mb: 1, opacity: 0.9 }}>
+                        Active Teams
+                      </Typography>
+                      <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                        {Object.keys(resolvedByStaff).length}
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                </Grid>
+
+                {/* Search and Filter Section */}
+                <Paper elevation={3} sx={{ 
+                  p: 3, 
+                  mb: 4, 
+                  borderRadius: 3,
+                  backgroundColor: '#f8f9fa',
+                  border: '1px solid #e0e0e0'
+                }}>
+                  <Grid container spacing={3} alignItems="center">
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        label="Search by Name"
+                        variant="outlined"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        fullWidth
+                        InputProps={{
+                          startAdornment: (
+                            <Box sx={{ mr: 1, color: '#666' }}>🔍</Box>
+                          ),
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            '&:hover fieldset': {
+                              borderColor: '#9c27b0',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#9c27b0',
+                            },
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <FormControl fullWidth>
+                        <InputLabel>Filter by Time Period</InputLabel>
+                        <Select
                           value={filterType}
                           onChange={handleFilterChange}
-                          label="Filter by"
+                          label="Filter by Time Period"
+                          sx={{
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#9c27b0',
+                            },
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#7b1fa2',
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#9c27b0',
+                            }
+                          }}
+                        >
+                          <MenuItem value="all">📅 All Time</MenuItem>
+                          <MenuItem value="day">📅 Today</MenuItem>
+                          <MenuItem value="month">📅 This Month</MenuItem>
+                          <MenuItem value="year">📅 This Year</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12} md={2}>
+                      <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={downloadExcel}
+                        fullWidth
+                        sx={{ 
+                          backgroundColor: '#4caf50',
+                          '&:hover': { backgroundColor: '#388e3c' },
+                          fontWeight: 600,
+                          py: 1.5
+                        }}
                       >
-                          <MenuItem value="all">All</MenuItem>
-                          <MenuItem value="day">Today</MenuItem>
-                          <MenuItem value="month">This Month</MenuItem>
-                          <MenuItem value="year">This Year</MenuItem>
-                      </Select>
-                  </FormControl>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-                  <Button variant="contained" color="primary" onClick={downloadExcel}>
-                      Download Excel
-                  </Button>
-              </Box>
-                {/* Resolved reports table */}
-                <TableContainer component={Paper}>
+                        📥 Download Excel
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </Paper>
+
+                {/* Enhanced Table */}
+                <Paper elevation={4} sx={{ 
+                  borderRadius: 3, 
+                  overflow: 'hidden',
+                  border: '1px solid #e0e0e0'
+                }}>
+                  <Box sx={{ 
+                    p: 2, 
+                    backgroundColor: '#f3e5f5', 
+                    borderBottom: '1px solid #e0e0e0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 2
+                  }}>
+                    <AssignmentIcon sx={{ color: '#9c27b0', fontSize: 28 }} />
+                    <Typography variant="h6" sx={{ fontWeight: 600, color: '#7b1fa2' }}>
+                      Resolved Reports ({filteredReports.length})
+                    </Typography>
+                    <Box sx={{ ml: 'auto' }}>
+                      <Typography variant="body2" sx={{ color: '#7b1fa2', fontWeight: 500 }}>
+                        Showing {Math.min(filteredReports.length, resolvedRowsPerPage)} of {filteredReports.length} reports
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <TableContainer>
                     <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Address</TableCell>
-                                <TableCell>Type</TableCell>
-                                <TableCell>Description</TableCell>
-                                <TableCell>Media</TableCell>
-                                <TableCell>Dispatch At</TableCell>
-                                <TableCell>Resolved At</TableCell>
-                                <TableCell>Resolved By</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          
+                      <TableHead>
+                        <TableRow sx={{ backgroundColor: '#fafafa' }}>
+                          <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Name</TableCell>
+                          <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Address</TableCell>
+                          <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Type</TableCell>
+                          <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Description</TableCell>
+                          <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Media</TableCell>
+                          <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Dispatch At</TableCell>
+                          <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Resolved At</TableCell>
+                          <TableCell sx={{ fontWeight: 600, color: '#2c3e50' }}>Resolved By</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
                         {filteredReports
                           .slice(
                             resolvedPage * resolvedRowsPerPage,
                             resolvedPage * resolvedRowsPerPage + resolvedRowsPerPage
                           )
-                          .map((report) => (
-                                <TableRow key={report.id}>
-                                    <TableCell>{report.Name}</TableCell>
-                                    <TableCell>{report.Address}</TableCell>
-                                    <TableCell>{report.Type}</TableCell>
-                                    <TableCell>{report.Text}</TableCell>
-                                    <TableCell>
-                                        {report.MediaUrl ? (
-                                            report.MediaUrl.endsWith('.jpg') || report.MediaUrl.endsWith('.png') ? (
-                                                <img src={report.MediaUrl} alt="Media" style={{ maxWidth: '100px' }} />
-                                            ) : (
-                                                <a href={report.MediaUrl} target="_blank" rel="noopener noreferrer">View Media</a>
-                                            )
-                                        ) : 'No Media'}
-                                    </TableCell>
-                                    <TableCell>{new Date(report.ConfirmedAt).toLocaleString()}</TableCell>
-                                    <TableCell>{new Date(report.ResolvedAt).toLocaleString()}</TableCell>
-                                    <TableCell>{report.ResolvedBy}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
+                          .map((report, index) => (
+                            <TableRow 
+                              key={report.id}
+                              sx={{ 
+                                '&:nth-of-type(odd)': { backgroundColor: '#fafafa' },
+                                '&:hover': { backgroundColor: '#f3e5f5' }
+                              }}
+                            >
+                              <TableCell>
+                                <Box>
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#2c3e50' }}>
+                                    {report.Name}
+                                  </Typography>
+                                  <Typography variant="caption" sx={{ color: '#666' }}>
+                                    ID: {report.id || index + 1}
+                                  </Typography>
+                                </Box>
+                              </TableCell>
+                              <TableCell>
+                                <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                                  {report.Address}
+                                </Typography>
+                              </TableCell>
+                              <TableCell>
+                                <Box sx={{ 
+                                  px: 2, 
+                                  py: 0.5, 
+                                  backgroundColor: report.Type === 'Emergency' ? '#ffebee' : '#fff3e0', 
+                                  borderRadius: 2,
+                                  border: `1px solid ${report.Type === 'Emergency' ? '#f44336' : '#ff9800'}`,
+                                  display: 'inline-block'
+                                }}>
+                                  <Typography variant="body2" sx={{ 
+                                    color: report.Type === 'Emergency' ? '#c62828' : '#e65100', 
+                                    fontWeight: 500 
+                                  }}>
+                                    {report.Type}
+                                  </Typography>
+                                </Box>
+                              </TableCell>
+                              <TableCell>
+                                <Typography variant="body2" sx={{ color: '#2c3e50', maxWidth: 200 }}>
+                                  {report.Text}
+                                </Typography>
+                              </TableCell>
+                              <TableCell>
+                                {report.MediaUrl ? (
+                                  report.MediaUrl.endsWith('.jpg') || report.MediaUrl.endsWith('.png') ? (
+                                    <Box sx={{ 
+                                      position: 'relative',
+                                      display: 'inline-block'
+                                    }}>
+                                      <img 
+                                        src={report.MediaUrl} 
+                                        alt="Media" 
+                                        style={{ 
+                                          maxWidth: '80px', 
+                                          maxHeight: '80px',
+                                          borderRadius: '8px',
+                                          border: '2px solid #e0e0e0'
+                                        }} 
+                                      />
+                                      <Box sx={{
+                                        position: 'absolute',
+                                        top: -8,
+                                        right: -8,
+                                        width: 20,
+                                        height: 20,
+                                        backgroundColor: '#4caf50',
+                                        borderRadius: '50%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                      }}>
+                                        <Typography variant="caption" sx={{ color: 'white', fontSize: '10px' }}>
+                                          📷
+                                        </Typography>
+                                      </Box>
+                                    </Box>
+                                  ) : (
+                                    <Button 
+                                      variant="outlined" 
+                                      size="small" 
+                                      href={report.MediaUrl} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      sx={{ 
+                                        borderColor: '#9c27b0',
+                                        color: '#9c27b0',
+                                        '&:hover': {
+                                          borderColor: '#7b1fa2',
+                                          backgroundColor: '#f3e5f5'
+                                        }
+                                      }}
+                                    >
+                                      📎 View Media
+                                    </Button>
+                                  )
+                                ) : (
+                                  <Box sx={{ 
+                                    px: 2, 
+                                    py: 1, 
+                                    backgroundColor: '#f5f5f5', 
+                                    borderRadius: 2,
+                                    border: '1px solid #e0e0e0',
+                                    textAlign: 'center'
+                                  }}>
+                                    <Typography variant="body2" sx={{ color: '#999', fontSize: '0.8rem' }}>
+                                      No media
+                                    </Typography>
+                                  </Box>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                <Box sx={{ 
+                                  px: 2, 
+                                  py: 1, 
+                                  backgroundColor: '#e3f2fd', 
+                                  borderRadius: 2,
+                                  border: '1px solid #2196f3',
+                                  textAlign: 'center'
+                                }}>
+                                  <Typography variant="body2" sx={{ color: '#1976d2', fontWeight: 500, fontSize: '0.8rem' }}>
+                                    {new Date(report.ConfirmedAt).toLocaleDateString()}
+                                  </Typography>
+                                  <Typography variant="caption" sx={{ color: '#1976d2', fontSize: '0.7rem' }}>
+                                    {new Date(report.ConfirmedAt).toLocaleTimeString()}
+                                  </Typography>
+                                </Box>
+                              </TableCell>
+                              <TableCell>
+                                <Box sx={{ 
+                                  px: 2, 
+                                  py: 1, 
+                                  backgroundColor: '#e8f5e9', 
+                                  borderRadius: 2,
+                                  border: '1px solid #4caf50',
+                                  textAlign: 'center'
+                                }}>
+                                  <Typography variant="body2" sx={{ color: '#2e7d32', fontWeight: 500, fontSize: '0.8rem' }}>
+                                    {new Date(report.ResolvedAt).toLocaleDateString()}
+                                  </Typography>
+                                  <Typography variant="caption" sx={{ color: '#2e7d32', fontSize: '0.7rem' }}>
+                                    {new Date(report.ResolvedAt).toLocaleTimeString()}
+                                  </Typography>
+                                </Box>
+                              </TableCell>
+                              <TableCell>
+                                <Box sx={{ 
+                                  px: 2, 
+                                  py: 1, 
+                                  backgroundColor: '#fff3e0', 
+                                  borderRadius: 2,
+                                  border: '1px solid #ff9800',
+                                  textAlign: 'center'
+                                }}>
+                                  <Typography variant="body2" sx={{ color: '#e65100', fontWeight: 500 }}>
+                                    {report.ResolvedBy}
+                                  </Typography>
+                                </Box>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                      </TableBody>
                     </Table>
-                </TableContainer>
-                <TablePagination
-                component="div"
-                count={filteredReports.length}
-                page={resolvedPage}
-                onPageChange={(event, newPage) => setResolvedPage(newPage)}
-                rowsPerPage={resolvedRowsPerPage}
-                onRowsPerPageChange={(event) => {
-                    setResolvedRowsPerPage(parseInt(event.target.value, 10));
-                    setResolvedPage(0);
-                }}
-            />
+                  </TableContainer>
+                </Paper>
+
+                {/* Enhanced Pagination */}
+                <Paper elevation={2} sx={{ 
+                  mt: 3, 
+                  borderRadius: 3,
+                  border: '1px solid #e0e0e0'
+                }}>
+                  <TablePagination
+                    component="div"
+                    count={filteredReports.length}
+                    page={resolvedPage}
+                    onPageChange={(event, newPage) => setResolvedPage(newPage)}
+                    rowsPerPage={resolvedRowsPerPage}
+                    onRowsPerPageChange={(event) => {
+                      setResolvedRowsPerPage(parseInt(event.target.value, 10));
+                      setResolvedPage(0);
+                    }}
+                    sx={{
+                      '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
+                        color: '#2c3e50',
+                        fontWeight: 500
+                      }
+                    }}
+                  />
+                </Paper>
             </Container>
         );
 
