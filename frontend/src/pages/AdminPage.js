@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-  Button,TablePagination, TableContainer, TableHead, AppBar, Toolbar, Typography, InputLabel ,FormControl, Box, TextField, Drawer, List, ListItem, ListItemIcon, ListItemText, CssBaseline, Divider, Container, Table, TableBody, TableCell,MenuItem, TableRow,Select, Paper, Grid,
+  Button,TablePagination, TableContainer, TableHead, AppBar, Toolbar, Typography, InputLabel ,FormControl, Box, TextField, Drawer, List, ListItem, ListItemIcon, ListItemText, CssBaseline, Divider, Container, Table, TableBody, TableCell,MenuItem, TableRow,Select, Paper, Grid, Chip,
 } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import MapIcon from '@mui/icons-material/Map';
@@ -97,6 +97,14 @@ const AdminPage = () => {
   const [filterType, setFilterType] = useState('all'); // Options: 'all', 'day', 'month', 'year'
   const [filteredReports, setFilteredReports] = useState([]);
   const [emergencyCodes, setEmergencyCodes] = useState({});
+
+  // Track previous counts to detect new reports
+  const [prevComplaintsCount, setPrevComplaintsCount] = useState(0);
+  const [prevEmergenciesCount, setPrevEmergenciesCount] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [currentTotalComplaints, setCurrentTotalComplaints] = useState(0);
+  const [currentTotalEmergencies, setCurrentTotalEmergencies] = useState(0);
+  
 
   const prevComplaints = useRef([]);
   const prevEmergencies = useRef([]);
@@ -270,28 +278,32 @@ const AdminPage = () => {
 
   const fetchData = async () => {
     try {
-      const [complaintsResponse, emergenciesResponse] = await Promise.all([
-        axios.get(`${API_URL}/complaints`),
-        axios.get(`${API_URL}/emergencies`),
+      const [complaintsCountResponse, emergenciesCountResponse] = await Promise.all([
+        axios.get(`${API_URL}/api/complaints/count`),
+        axios.get(`${API_URL}/api/emergencies/count`),
       ]);
 
-      const currentComplaints = complaintsResponse.data;
-      const currentEmergencies = emergenciesResponse.data;
+      const currentComplaintsCount = complaintsCountResponse.data.total;
+      const currentEmergenciesCount = emergenciesCountResponse.data.total;
 
-  const newComplaints = currentComplaints.filter(
-        (complaint) => !prevComplaints.current.some((prev) => prev.id === complaint.id)
-      );
+      // Track current totals for debugging display
+      setCurrentTotalComplaints(currentComplaintsCount);
+      setCurrentTotalEmergencies(currentEmergenciesCount);
 
-      // Identify new emergencies
-      const newEmergencies = currentEmergencies.filter(
-        (emergency) => !prevEmergencies.current.some((prev) => prev.id === emergency.id)
-      );
-
-      // Update new counts
-      setNewComplaintsCount(newComplaints.length);
-      setNewEmergenciesCount(newEmergencies.length);
-      prevComplaints.current = currentComplaints;
-      prevEmergencies.current = currentEmergencies;
+      // Calculate new counts only after initialization
+      if (!isInitialized) {
+        // Initialize baseline counts on first run
+        setPrevComplaintsCount(currentComplaintsCount);
+        setPrevEmergenciesCount(currentEmergenciesCount);
+        setNewComplaintsCount(0);
+        setNewEmergenciesCount(0);
+        setIsInitialized(true);
+      } else {
+        const newComplaints = Math.max(0, currentComplaintsCount - prevComplaintsCount);
+        const newEmergencies = Math.max(0, currentEmergenciesCount - prevEmergenciesCount);
+        setNewComplaintsCount(newComplaints);
+        setNewEmergenciesCount(newEmergencies);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -332,12 +344,21 @@ const AdminPage = () => {
     fetchData();
     fetchResponseTeamLocations();
     fetchConfirmedReports();
-    // Polling every 10 seconds
-    const intervalId = setInterval(() => {
+    
+    // Polling every 10 seconds for response team locations
+    const locationIntervalId = setInterval(() => {
       fetchResponseTeamLocations();
-      }, POLLING_INTERVAL)
+    }, POLLING_INTERVAL);
+    
+    // Polling every 5 seconds for new reports
+    const dataIntervalId = setInterval(() => {
+      fetchData();
+    }, 5000);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      clearInterval(locationIntervalId);
+      clearInterval(dataIntervalId);
+    };
   }, []);
   
 
@@ -458,30 +479,76 @@ const AdminPage = () => {
 
   const handleSectionChange = (section) => {
     setSelectedSection(section);
+    
+    // Reset new counts when viewing complaints or emergencies
+    if (section === 'complaints') {
+      setNewComplaintsCount(0);
+      // Acknowledge: set baseline to current total so future polls count from now
+      setPrevComplaintsCount(currentTotalComplaints);
+    } else if (section === 'emergencies') {
+      setNewEmergenciesCount(0);
+      // Acknowledge: set baseline to current total so future polls count from now
+      setPrevEmergenciesCount(currentTotalEmergencies);
+    }
   };
 
   const setEmergencyCode = (name, code) => {
     setEmergencyCodes((prev) => ({ ...prev, [name]: code }));
-};
+  };
 
-
+  // Function to manually refresh dashboard data
+  const refreshDashboardData = () => {
+    fetchData();
+    fetchConfirmedReports();
+    fetchResolvedReports();
+  };
 
   const renderSection = () => {
     switch (selectedSection) {
       case 'dashboard':
         return (
-            <DashboardMetrics
-              newComplaintsCount={newComplaintsCount}
-              newEmergenciesCount={newEmergenciesCount}
-              confirmedComplaints={confirmedReports.filter(report => report.ComplaintType).length}
-              confirmedEmergencies={confirmedReports.filter(report => report.EmergencyType).length}
-              activeResponseTeams={activeResponseTeams}
-              resolvedReportsCount={resolvedReports.length} // Pass resolved reports count here
-              onClickResolvedReports={() => handleSectionChange('resolvedReports')} // Pass navigation handler
-              onClickNewComplaints={() => handleSectionChange('complaints')}
-              onClickNewEmergencies={() => handleSectionChange('emergencies')}
-              onClickOngoingReports={() => handleSectionChange('monitoring')}
+            <Box sx={{ mt: 4 }}>
+              {/* Header with refresh button */}
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+                <Typography variant="h4" sx={{ 
+                  fontWeight: 700, 
+                  color: '#1976d2',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}>
+                  📊 Dashboard Overview
+                </Typography>
+                <Button 
+                  variant="outlined" 
+                  onClick={refreshDashboardData}
+                  startIcon={<Box>🔄</Box>}
+                  sx={{ 
+                    borderColor: '#1976d2',
+                    color: '#1976d2',
+                    '&:hover': {
+                      borderColor: '#1565c0',
+                      backgroundColor: '#e3f2fd'
+                    }
+                  }}
+                >
+                  Refresh Data
+                </Button>
+              </Box>
+              
+              <DashboardMetrics
+                newComplaintsCount={newComplaintsCount}
+                newEmergenciesCount={newEmergenciesCount}
+                confirmedComplaints={confirmedReports.filter(report => report.ComplaintType).length}
+                confirmedEmergencies={confirmedReports.filter(report => report.EmergencyType).length}
+                activeResponseTeams={activeResponseTeams}
+                resolvedReportsCount={resolvedReports.length}
+                onClickResolvedReports={() => handleSectionChange('resolvedReports')}
+                onClickNewComplaints={() => handleSectionChange('complaints')}
+                onClickNewEmergencies={() => handleSectionChange('emergencies')}
+                onClickOngoingReports={() => handleSectionChange('monitoring')}
+                 currentTotalComplaints={currentTotalComplaints}
+                 currentTotalEmergencies={currentTotalEmergencies}
               />
+            </Box>
         );
         case 'resolvedReportsAnalytics': // New analytics case
         return (
@@ -1452,6 +1519,15 @@ const AdminPage = () => {
               <Typography variant="h3" sx={{ fontWeight: 700 }}>
                 {complaints.length}
               </Typography>
+              <Box sx={{ mt: 1, display: 'flex', justifyContent: 'center', gap: 1 }}>
+                <Chip label={`New: ${newComplaintsCount}`} color={newComplaintsCount > 0 ? 'error' : 'default'} size="small" />
+                <Chip label={`Total: ${currentTotalComplaints}`} variant="outlined" size="small" />
+              </Box>
+              {newComplaintsCount > 0 && (
+                <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
+                  Debug new since last check: {newComplaintsCount}
+                </Typography>
+              )}
             </Paper>
 
             {/* Enhanced Table */}
@@ -1721,6 +1797,15 @@ const AdminPage = () => {
               <Typography variant="h3" sx={{ fontWeight: 700 }}>
                 {emergencies.length}
               </Typography>
+              <Box sx={{ mt: 1, display: 'flex', justifyContent: 'center', gap: 1 }}>
+                <Chip label={`New: ${newEmergenciesCount}`} color={newEmergenciesCount > 0 ? 'error' : 'default'} size="small" />
+                <Chip label={`Total: ${currentTotalEmergencies}`} variant="outlined" size="small" />
+              </Box>
+              {newEmergenciesCount > 0 && (
+                <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
+                  Debug new since last check: {newEmergenciesCount}
+                </Typography>
+              )}
             </Paper>
 
             {/* Enhanced Table */}
@@ -2726,54 +2811,179 @@ const DashboardMetrics = ({
    confirmedComplaints,
    confirmedEmergencies,
    activeResponseTeams,
-   resolvedReportsCount, // New prop for resolved reports count
+   resolvedReportsCount,
    onClickResolvedReports,
    onClickNewComplaints, 
     onClickNewEmergencies, 
-    onClickOngoingReports
-
-    
+    onClickOngoingReports,
+    currentTotalComplaints,
+    currentTotalEmergencies
     }) => (
   <Box sx={{ mt: 4 }}>
-    <Typography variant="h5" gutterBottom>Dashboard Overview</Typography>
     <Box
       sx={{
         display: 'grid',
         gap: 3,
-        gridTemplateColumns: 'repeat(2, 1fr)',
+        gridTemplateColumns: 'repeat(3, 1fr)',
         mb: 4,
       }}
     >
-    <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffe0b2', color: '#f57c00' ,cursor: 'pointer'}}
-      onClick={onClickNewComplaints} >
-        <NotificationsActiveIcon sx={{ fontSize: 40, color: '#f57c00' }} />
-        <Typography variant="h6">New Complaints</Typography>
-        <Typography variant="h4">{newComplaintsCount}</Typography>
-      </Paper>
+    <Paper 
+      elevation={3} 
+      sx={{ 
+        p: 3, 
+        textAlign: 'center', 
+        backgroundColor: '#ffe0b2', 
+        color: '#f57c00',
+        cursor: 'pointer',
+        position: 'relative',
+        overflow: 'hidden',
+        '&:hover': {
+          transform: 'translateY(-2px)',
+          boxShadow: 6,
+          transition: 'all 0.3s ease-in-out'
+        }
+      }}
+      onClick={onClickNewComplaints}
+    >
+      {/* New indicator badge */}
+      {newComplaintsCount > 0 && (
+        <Box sx={{
+          position: 'absolute',
+          top: 10,
+          right: 10,
+          backgroundColor: '#f44336',
+          color: 'white',
+          borderRadius: '50%',
+          width: 24,
+          height: 24,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '12px',
+          fontWeight: 'bold',
+          animation: 'pulse 2s infinite'
+        }}>
+          {newComplaintsCount}
+        </Box>
+      )}
+      <NotificationsActiveIcon sx={{ fontSize: 40, color: '#f57c00' }} />
+      <Typography variant="h6">New Complaints</Typography>
+      <Typography variant="h4">{currentTotalComplaints}</Typography>
+      {newComplaintsCount > 0 && (
+        <Typography variant="body2" sx={{ color: '#e65100', fontWeight: 600, mt: 1 }}>
+          ⚠️ New reports require attention
+        </Typography>
+      )}
+    </Paper>
 
-      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffebee', color: '#e91e63',cursor: 'pointer' }}
-       onClick={onClickNewEmergencies} >
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          p: 3, 
+          textAlign: 'center', 
+          backgroundColor: '#ffebee', 
+          color: '#e91e63',
+          cursor: 'pointer',
+          position: 'relative',
+          overflow: 'hidden',
+          '&:hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: 6,
+            transition: 'all 0.3s ease-in-out'
+          }
+        }}
+        onClick={onClickNewEmergencies}
+      >
+        {/* New indicator badge */}
+        {newEmergenciesCount > 0 && (
+          <Box sx={{
+            position: 'absolute',
+            top: 10,
+            right: 10,
+            backgroundColor: '#f44336',
+            color: 'white',
+            borderRadius: '50%',
+            width: 24,
+            height: 24,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            animation: 'pulse 2s infinite'
+          }}>
+            {newEmergenciesCount}
+          </Box>
+        )}
         <NotificationsActiveIcon sx={{ fontSize: 40, color: '#e91e63' }} />
         <Typography variant="h6">New Emergencies</Typography>
-        <Typography variant="h4">{newEmergenciesCount}</Typography>
+        <Typography variant="h4">{currentTotalEmergencies}</Typography>
+        {newEmergenciesCount > 0 && (
+          <Typography variant="body2" sx={{ color: '#c2185b', fontWeight: 600, mt: 1 }}>
+            🚨 High priority - immediate action required
+          </Typography>
+        )}
       </Paper>
 
-      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e3f2fd', color: '#2196f3',cursor: 'pointer' }}
-      onClick={onClickOngoingReports} >
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          p: 3, 
+          textAlign: 'center', 
+          backgroundColor: '#e3f2fd', 
+          color: '#2196f3',
+          cursor: 'pointer',
+          '&:hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: 6,
+            transition: 'all 0.3s ease-in-out'
+          }
+        }}
+        onClick={onClickOngoingReports}
+      >
         <CheckCircleIcon sx={{ fontSize: 40, color: '#2196f3' }} />
         <Typography variant="h6">Ongoing Complaints</Typography>
         <Typography variant="h4">{confirmedComplaints}</Typography>
       </Paper>
 
-      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#ffebee', color: '#e91e63',cursor: 'pointer' }}
-      onClick={onClickOngoingReports} >
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          p: 3, 
+          textAlign: 'center', 
+          backgroundColor: '#ffebee', 
+          color: '#e91e63',
+          cursor: 'pointer',
+          '&:hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: 6,
+            transition: 'all 0.3s ease-in-out'
+          }
+        }}
+        onClick={onClickOngoingReports}
+      >
         <ReportProblemIcon sx={{ fontSize: 40, color: '#e91e63' }} />
         <Typography variant="h6">Ongoing Emergencies</Typography>
         <Typography variant="h4">{confirmedEmergencies}</Typography>
       </Paper>
 
-      <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: '#e8f5e9', color: '#4caf50',cursor: 'pointer'  }}
-      onClick={onClickOngoingReports} >
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          p: 3, 
+          textAlign: 'center', 
+          backgroundColor: '#e8f5e9', 
+          color: '#4caf50',
+          cursor: 'pointer',
+          '&:hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: 6,
+            transition: 'all 0.3s ease-in-out'
+          }
+        }}
+        onClick={onClickOngoingReports}
+      >
         <GroupIcon sx={{ fontSize: 40, color: '#4caf50' }} />
         <Typography variant="h6">Active Response Teams</Typography>
         <Typography variant="h4">{activeResponseTeams}</Typography>
@@ -2786,15 +2996,32 @@ const DashboardMetrics = ({
           textAlign: 'center', 
           backgroundColor: '#d1c4e9', 
           color: '#673ab7', 
-          cursor: 'pointer' 
+          cursor: 'pointer',
+          '&:hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: 6,
+            transition: 'all 0.3s ease-in-out'
+          }
         }}
-        onClick={onClickResolvedReports} // Navigate to resolved reports list
+        onClick={onClickResolvedReports}
       >
         <CheckCircleIcon sx={{ fontSize: 40, color: '#673ab7' }} />
         <Typography variant="h6">Resolved Reports</Typography>
         <Typography variant="h4">{resolvedReportsCount}</Typography>
       </Paper>
+
     </Box>
+    
+    {/* Add CSS for pulse animation */}
+    <style>
+      {`
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+          100% { transform: scale(1); }
+        }
+      `}
+    </style>
   </Box>
 );
 
