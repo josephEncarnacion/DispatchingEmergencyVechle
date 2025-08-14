@@ -82,7 +82,7 @@ app.get('/api/responseTeamLocations', (req, res) => {
 
 
 const { getConfirmedComplaints, getConfirmedEmergencies } = require('./dbfiles/dbOperation');
-const { getPaginatedComplaints, getPaginatedEmergencies } = require('./dbfiles/dbOperation');
+const { getPaginatedComplaints, getPaginatedEmergencies, getTotalComplaintsCount, getTotalEmergenciesCount } = require('./dbfiles/dbOperation');
 
 
 
@@ -125,6 +125,26 @@ app.get('/emergencies', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch emergencies' });
     }
   });
+
+// Get total count of complaints
+app.get('/api/complaints/count', async (req, res) => {
+    try {
+        const totalCount = await getTotalComplaintsCount();
+        res.json({ total: totalCount });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch complaints count' });
+    }
+});
+
+// Get total count of emergencies
+app.get('/api/emergencies/count', async (req, res) => {
+    try {
+        const totalCount = await getTotalEmergenciesCount();
+        res.json({ total: totalCount });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch emergencies count' });
+    }
+});
   
 
 // Route to handle form submission

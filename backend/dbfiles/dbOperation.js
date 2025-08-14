@@ -417,6 +417,31 @@ const getResolvedReports = async () => {
     }
 };
 
+// Get total count of complaints
+const getTotalComplaintsCount = async () => {
+    try {
+        let pool = await sql.connect(config);
+        const query = 'SELECT COUNT(*) as total FROM Complaint_tbl';
+        const result = await pool.request().query(query);
+        return result.recordset[0].total;
+    } catch (error) {
+        console.error('Error retrieving total complaints count:', error);
+        throw error;
+    }
+};
+
+// Get total count of emergencies
+const getTotalEmergenciesCount = async () => {
+    try {
+        let pool = await sql.connect(config);
+        const query = 'SELECT COUNT(*) as total FROM Emergency_tbl';
+        const result = await pool.request().query(query);
+        return result.recordset[0].total;
+    } catch (error) {
+        console.error('Error retrieving total emergencies count:', error);
+        throw error;
+    }
+};
 
 module.exports = {
     resolveReportByName,
@@ -434,4 +459,6 @@ module.exports = {
     confirmEmergencyByName,
     getConfirmedComplaints,
     getConfirmedEmergencies,
+    getTotalComplaintsCount,
+    getTotalEmergenciesCount,
 };
